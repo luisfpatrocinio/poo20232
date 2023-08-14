@@ -1,0 +1,64 @@
+1 - Uma classe pode ser interpretada como uma representação abstrata de um objeto do mundo real, incorporando métodos e atributos que se assemelham às características de entidades existentes na vida real. Entretanto, ela é adaptada e simplificada para abordar problemas específicos. Por outro lado, um objeto é como uma "instância ativa" de uma classe. Quando uma classe é instanciada para criar um objeto, é reservado um espaço na memória que armazena uma versão concreta da classe, ou seja, todos os seus atributos e métodos efetivos.
+
+2 - Atributos são abstrações das qualidades que pertencem a objetos no contexto real, frequentemente associados a substantivos descritivos. Já os métodos são abstrações das ações realizadas ou a serem executadas por um objeto específico, muitas vezes associados a verbos. Um exemplo disso é uma situação em uma instituição financeira onde temos a classe "Conta", que possui atributos como "numero_conta", "nome_titular" e "cpf_titular", bem como métodos como "realizarDeposito()" e "consultarSaldo()".
+
+3 - 
+Atributo	 	        Sistema em que é importante
+--------		        ---------------------------
+Peso		 	        Avaliação física de atletas em uma competição
+Tipo de CNH	 	        Classificação de motoristas em uma empresa
+Tipo Sanguíneo		    Sistema de um banco de sangue, ao receber sangue de um doador
+
+Habilidade destra	    Sistema de registro de alunos em uma escola, para saber a quantidade   			
+ 		                de cadeiras para canhotos a ser requisitada dependendo de quantos alunos 		
+ 		                não são destros. Sistema para uma empresa que vende violões
+ 		        
+Percentual de gordura	Sistema de avaliação física
+Saldo em conta		    Sistema bancário
+Etnia			        Carteira de indentidade, registro de cidadãos
+
+4 - 
+a. Sim, seria interessante em um sistema bancário que um objeto "conta" possuísse um objeto "pessoa" como atributo interno representando o titular da conta. Isso permite uma relação clara entre as contas e seus titulares, simplificando a associação entre essas entidades no sistema.
+b. Sim, seria interessante uma pessoa possuir mais de uma conta como atributo. Isso é comum em sistemas bancários, pois uma pessoa pode ter várias contas diferentes. O elemento da programação orientada a objetos que melhor representa o conjunto de contas de uma pessoa seria uma "coleção" (como um array ou uma lista) de objetos "conta". Isso permitiria armazenar e gerenciar todas as contas associadas a uma única pessoa.
+
+5 - Professor, Disciplina, Turma, Avaliação, Horário
+
+6 - Jogo de Navinha (Shoot'em Up):
+Jogador (Player):
+Atributos: posição, vida, pontuação, velocidade, poder de ataque.
+Métodos: mover, atirar, receber dano, morrer.
+
+Inimigos (Enemies):
+Atributos: posição, vida, tipo, velocidade, pontos concedidos ao serem destruídos.
+Métodos: mover, atirar (dependendo do tipo), receber dano, ser destruído.
+
+Projéteis (Projectiles):
+Atributos: posição, velocidade, dano.
+Métodos: mover, colidir com objetos, causar dano.
+
+Power-Ups:
+Atributos: tipo (aumento de velocidade, arma melhorada, escudo etc.).
+Métodos: ser coletado pelo jogador, ativar efeito no jogador.
+
+Cenário (Background):
+Atributos: elementos visuais de fundo, parallax scrolling (efeito de profundidade).
+Métodos: exibir, mover (para criar sensação de movimento).
+
+Chefes (Bosses):
+Atributos: posição, vida, padrões de ataque, fases de movimento.
+Métodos: executar padrões de ataque, receber dano, trocar de fase.
+
+Barra de Pontuação (Score Bar):
+Atributos: pontuação atual.
+Métodos: atualizar pontuação.
+
+Barra de Vida (Health Bar):
+Atributos: vida atual.
+Métodos: atualizar vida.
+
+Sistema de Colisão:
+Métodos: detectar colisões entre objetos, lidar com consequências de colisões.
+
+Tela de Jogo (Game Screen):
+Atributos: resolução, interface do usuário (UI), HUD (Heads-Up Display).
+Métodos: exibir informações do jogo, atualizar a tela.
