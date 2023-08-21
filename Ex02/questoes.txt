@@ -1,0 +1,83 @@
+1 - Uma linguagem dinamicamente tipada é aquela em que quando uma variável é declarada
+seu tipo não necessariamente precisa estar explicito e pode ser alterado ao longo do programa,
+com isso, o tipo é determinado durante o tempo de execução do programa. Já uma linguagem estaticamente tipada
+obriga o programador a definir um tipo para a declaração da variável logo na sua inicialização, caso esse
+critério não seja obedecido, o compilador já retorna o erro antes da execução do programa
+
+2 - A tipagem dinâmica não oferece segurança em relação aos dados, visto que podem receber valores diferentes
+dos originalmente definidos, por exemplo, uma variável "nome", escrita em uma classe Pessoa, poderia ter seu valor
+atribuido a 2, um inteiro, o que poderia acontecer durante a execução do programa, mas não necessariamente seria um erro, 
+fazendo com que a atribuição de nome ficasse incorreta em uma base de dados.
+
+3 - Um exemplo, em python, linguagem dinamicamente tipada é a função criada:
+
+        def soma(a, b):
+            return a + b
+
+        a = "1"; c = 1
+        b = "2"; d = 2
+
+        print(soma(c,d)) # 3, os inteiros se somam
+        print(soma(a,b)) # 12, as strings se concatenam
+
+    Nisso, a função acaba tendo resultados diferentes conforme tipos diferentes são dados
+    como input da função, sem gerar erros, mas gerando resultados inesperados,
+
+    Agora em C++, uma linguagem estaticamente tipada:
+        #include <iostream>
+
+        using std::cout ;
+
+        int soma(int a, int b){
+            return a + b;
+        }
+
+        int main(){
+            cout << soma("1", "2");
+            return 0;
+        }
+        
+    Antes de sequer o programa executar, o compilador retorna um erro, assumindo que os tipos passados
+    para a função não são os mesmos esperados, gerando uma segurança maior sobre o uso dessa função
+
+
+4 - Porque algumas operações com tipos ainda podem acontecer, como a seguinte operação:
+
+    #include <stdio.h>
+
+    int main(){
+        char caractere_minusculo = 'a';
+        int sub = caractere_minusculo - 32;
+        char caractere_maiusculo = sub;
+
+        printf("%c\n", caractere_maiusculo); // Exibe "A"
+
+        return 0;
+    }
+
+ Onde o programa consegue executar a operação de subtração de uma variável do tipo caractere e uma variável do tipo inteiro, sem maiores problemas,
+ ainda convertendo esse resultado para caractere somente alterando o seu tipo
+
+5 - TypeScript não é necessariamente de tipagem fraca por conta dessa característica, o tipo number vem do java script e guarda
+ dados numéricos (tanto inteiros quanto números de ponto flutuante), em virtude disso, não é correto afirmar que possui uma tipagem fraca
+ já que o tipo number abarca todos os possíveis números.
+
+6 - * no arquivo *
+
+
+7 - As alterações no arquivo de configuração ../tsconfig.js foram realizadas:
+{
+    "outDir": "./build",
+    "allowUnreachableCode": true,
+    "noImplicitAny": true,
+    "target": "ES3",
+    "ignoreDeprecations": "5.0",
+    "strictNullChecks": false   
+
+}
+
+* exemplos em ./exemplos
+
+
+    
+
