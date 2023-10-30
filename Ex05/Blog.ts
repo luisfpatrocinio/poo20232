@@ -18,7 +18,7 @@ b. Crie uma classe Microblog e nela:
 */
 
 import { question } from "readline-sync";
-import { obterTexto, showCenterText, enterToContinue, limparTerminal } from "./utils";
+import { obterTexto, showCenterText, enterToContinue, limparTerminal } from "../utils";
 import { readFileSync } from "fs";
 
 class Postagem {
