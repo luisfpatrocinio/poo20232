@@ -1,41 +1,34 @@
+"use strict";
 class Empregado {
-    salario: number = 500;
-    calcularSalario(): number {
+    constructor() {
+        this.salario = 500;
+    }
+    calcularSalario() {
         return this.salario;
     }
 }
-
 class Diarista extends Empregado {
-    calcularSalario(): number {
+    calcularSalario() {
         return this.salario / 30;
     }
 }
-
 class Horista extends Diarista {
-    calcularSalario(): number {
+    calcularSalario() {
         return this.salario / 24;
     }
 }
-
 class Pessoa {
-    _nome: string;
-    _sobreNome: string;
-
-    get nome(): string {
+    get nome() {
         return this._nome;
     }
-
-    get nomeCompleto(): string {
+    get nomeCompleto() {
         return this._nome + " " + this._sobreNome;
     }
-
-    constructor(nome: string, sobreNome: string) {
+    constructor(nome, sobreNome) {
         this._nome = nome;
         this._sobreNome = sobreNome;
     }
 }
-
-
 /*
 class Funcionario extends Pessoa {
     _matricula: string;
@@ -49,4 +42,4 @@ class Funcionario extends Pessoa {
         return this._salario;
     }
 }
-*/
+*/ 
