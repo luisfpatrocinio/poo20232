@@ -1,9 +1,12 @@
+// Importar bibliotecas principais:
 import {question} from 'readline-sync';
 import {Perfil} from './Classes/perfil';
 import {Postagem} from './Classes/postagem';
 import {PostagemAvancada} from './Classes/postagem';
 import {RedeSocial} from './Classes/redeSocial';
 
+// Importar Utils
+import {obterNumeroInteiro, exibirTexto} from './Utils/ioUtils';
 class App {
     private _redeSocial: RedeSocial;
     private menuOpcoes: Array<string> = [
@@ -21,19 +24,10 @@ class App {
         console.log(texto);
     }
 
-    obterNumeroInteiro(mensagem: string): number {
-        let numero: number = Number(question(mensagem));
-        while (isNaN(numero)) {
-            this.exibirTexto("Número inválido. Tente novamente.");
-            numero = Number(question(mensagem));
-        }
-        return numero;
-    }
-
     obterOpcao(): number {
-        let opcao: number = Number(question("Opção: "));
+        let opcao: number = obterNumeroInteiro("Opção: ");
         while (opcao < 0 || opcao > this.menuOpcoes.length) {
-            this.exibirTexto("Opção inválida. Tente novamente.");
+            exibirTexto("Opção inválida. Tente novamente.");
             opcao = Number(question("Opção: "));
         }
         return opcao;
@@ -84,7 +78,7 @@ class App {
         let perfil: Perfil | null = this._redeSocial.consultarPerfil(idPerfil, undefined, undefined);
         let tentativasDeEncontrarPerfil = 0;
         while (idPerfil < 0) {
-            idPerfil = this.obterNumeroInteiro("ID do perfil: ");
+            idPerfil = obterNumeroInteiro("ID do perfil: ");
 
             // Aqui seria interessante listar os perfis, e mostrar a opção 0 - Cancelar.
             perfil = this._redeSocial.consultarPerfil(idPerfil, undefined, undefined);
