@@ -31,6 +31,14 @@ export function mainBackground(): void{
         if (i > 1 && i < obterAlturaTerminal() - 2) console.log(`|${" ".repeat(obterLarguraTerminal() - 2)}|`);
         if (i == obterAlturaTerminal() - 1) console.log(`${"=".repeat(obterLarguraTerminal())}`);
     }
+
+    // Rodapé
+    readline.cursorTo(process.stdout, 1, obterAlturaTerminal() - 4);
+    var _data = new Date;
+    var _dataStr = `${_data.toUTCString()}`;
+    exibirTextoEsquerda(`${_dataStr}`);
+
+
     // Mover cursor para o início da tela:
     readline.cursorTo(process.stdout, 1, 1);
     
@@ -53,6 +61,11 @@ export function prepararTelaPostagem(perfil: Perfil): void {
     cabecalhoPrincipal("Criar Postagem");
     exibirTextoEsquerda(`Perfil: ${perfil.nome} (${perfil.email})`);
     readline.cursorTo(process.stdout, 2);
+}
+
+
+export function feedView() : void {
+    cabecalhoPrincipal("PatroFeed");
 }
 
 // @TODO: Rodapé com informações:

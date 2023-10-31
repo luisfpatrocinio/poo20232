@@ -105,19 +105,12 @@ export class RedeSocial {
         return _postagensFiltradas;
     }
 
-    obterQuantidadeDePostagens(): number {
-        return this._repPostagens.obterQuantidadeDePostagens();
+    obterPerfis(): Array<Perfil> {
+        return this._repPerfis.perfis;
     }
 
-    listarPerfis(): void {
-        let perfis = this._repPerfis.perfis;
-        for (let i = 0; i < perfis.length; i++) {
-            var _perfil: Perfil = perfis[i];
-            exibirTexto(`Perfil ${_perfil.id} - ${_perfil.nome}`);
-        }
-
-        if (perfis.length == 0) {
-            exibirTexto("Nenhum perfil encontrado.");
-        }
+    obterPostagens(): Array<Postagem> {
+        // Retorna todas as postagens.
+        return this._repPostagens.consultar();
     }
 }

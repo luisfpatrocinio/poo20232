@@ -19,6 +19,7 @@ class App {
             ["Criar Postagem", this.criarPostagem, () => this._qntPerfisCriados > 0],
             ["Listar Perfis", this.listarPerfis, () => this._qntPerfisCriados > 0],
             ["Ver Feed", this.verFeed, () => this._qntPostagensCriadas > 0],
+            ["Editar Perfis", this.editarPerfis, () => this._qntPerfisCriados > 0]
         ];
         this._redeSocial = new redeSocial_1.RedeSocial;
     }
@@ -73,12 +74,7 @@ class App {
         (0, viewUtils_1.exibirTextoNoCentro)(`ID: ${id}`);
     }
     criarPostagem() {
-        (0, ioUtils_1.exibirTextoCentralizado)("# Criar Postagem #");
-        // Checar se há perfis criados.
-        if (this._qntPerfisCriados == 0) {
-            (0, ioUtils_1.exibirTexto)("Nenhum perfil encontrado. Crie um perfil antes de criar uma postagem.");
-            return;
-        }
+        (0, viewUtils_1.cabecalhoPrincipal)("Criar Postagem");
         let id = this._qntPostagensCriadas + 1;
         let curtidas = 0;
         let descurtidas = 0;
@@ -89,10 +85,15 @@ class App {
         let tentativasDeEncontrarPerfil = 0;
         while (idPerfil < 0) {
             // Listar perfis.
-            this.listarPerfis();
+            this.listarPerfisCurto();
             (0, ioUtils_1.exibirTexto)("0 - Cancelar");
             // Obter ID do perfil:
             idPerfil = (0, ioUtils_1.obterNumeroInteiro)("ID do perfil: ");
+            // Optou por sair:
+            if (idPerfil == 0) {
+                (0, ioUtils_1.exibirTexto)("Cancelando...");
+                return;
+            }
             perfil = this._redeSocial.consultarPerfil(idPerfil, undefined, undefined);
             if (perfil === null) {
                 (0, ioUtils_1.exibirTexto)("Perfil não encontrado.");
@@ -117,26 +118,61 @@ class App {
             (0, viewUtils_1.exibirTextoNoCentro)(`Postagem No ${id} criada com sucesso.`);
         }
     }
-    listarPerfis() {
-        if (this._qntPerfisCriados == 0) {
-            (0, ioUtils_1.exibirTexto)("Nenhum perfil encontrado.");
-            return;
+    listarPerfisCurto() {
+        let perfis = this._redeSocial.obterPerfis();
+        for (let i = 0; i < perfis.length; i++) {
+            var _perfil = perfis[i];
+            (0, ioUtils_1.exibirTexto)(`Perfil ${_perfil.id} - ${_perfil.nome}`);
         }
-        this._redeSocial.listarPerfis();
+        if (perfis.length == 0) {
+            (0, ioUtils_1.exibirTexto)("Nenhum perfil encontrado.");
+        }
+    }
+    listarPerfis() {
+        (0, viewUtils_1.cabecalhoPrincipal)("Perfis Cadastrados");
+        let perfis = this._redeSocial.obterPerfis();
+        // @TODO: Limitar exibições por página, semelhante a função verFeed
+        for (let i = 0; i < perfis.length; i++) {
+            var _p = perfis[i];
+            (0, ioUtils_1.exibirTexto)(`ID ${_p.id}:`);
+            (0, ioUtils_1.exibirTexto)(`Nome: ${_p.nome}`);
+            (0, ioUtils_1.exibirTexto)(`Email: ${_p.email}`);
+            (0, viewUtils_1.exibirTextoNoCentro)(`x`);
+            console.log();
+        }
     }
     verFeed() {
-        (0, ioUtils_1.exibirTexto)("Feed da Rede Social");
-        let postagens = this._redeSocial.consultarPostagens(undefined, undefined, undefined, undefined);
-        postagens.forEach((post) => {
-            (0, ioUtils_1.exibirTexto)(`Postagem ${post.id}, por ${post.perfil.nome}: ${post.texto}`);
-            console.log();
-        });
+        let postagens = this._redeSocial.obterPostagens();
+        var _pagina = 0;
+        var _postsPorPagina = Math.floor(((0, viewUtils_1.obterAlturaTerminal)() - 10) / 4);
+        _postsPorPagina = 4;
+        var _totalPaginas = Math.ceil(postagens.length / _postsPorPagina);
+        while (_pagina < _totalPaginas) {
+            (0, viewUtils_1.feedView)();
+            for (let i = 0; i < _postsPorPagina; i++) {
+                var n = _pagina * _postsPorPagina + i;
+                if (n >= postagens.length)
+                    break;
+                var _post = postagens[n];
+                (0, ioUtils_1.exibirTexto)(`${_post.data.toUTCString()}`);
+                (0, ioUtils_1.exibirTexto)(`${_post.perfil.nome}:`);
+                (0, ioUtils_1.exibirTexto)(`${_post.texto}`);
+                var _curtidasStr = `${_post.curtidas} curtidas, ${_post.descurtidas} descurtidas.`;
+                (0, ioUtils_1.exibirTexto)(_curtidasStr);
+                (0, viewUtils_1.exibirTextoNoCentro)("x");
+                console.log();
+            }
+            (0, viewUtils_1.exibirTextoNoCentro)(`Página ${_pagina + 1}/${_totalPaginas}`);
+            _pagina++;
+            (0, ioUtils_1.enterToContinue)();
+        }
+    }
+    editarPerfis() {
     }
     executar() {
         let opcao = -1;
         while (opcao != 0) {
             (0, viewUtils_1.limparTerminal)();
-            (0, ioUtils_1.exibirTextoCentralizado)("Rede Social");
             this.exibirMenu();
             opcao = this.obterOpcao();
             this.executarOpcao(opcao);

@@ -6,7 +6,7 @@ import {RedeSocial} from './Classes/redeSocial';
 
 // Importar Utils
 import {obterNumeroInteiro, exibirTexto, exibirTextoCentralizado, obterTexto, enterToContinue} from './Utils/ioUtils';
-import { mainBackground, exibirTextoEsquerda, showBlogLogo, exibirTextoNoCentro, prepararTelaPostagem, limparTerminal, cabecalhoPrincipal } from './Utils/viewUtils';
+import { mainBackground, exibirTextoEsquerda, showBlogLogo, exibirTextoNoCentro, prepararTelaPostagem, limparTerminal, cabecalhoPrincipal, feedView, obterAlturaTerminal } from './Utils/viewUtils';
 
 import chalk from 'chalk';
 
@@ -21,6 +21,7 @@ class App {
         ["Criar Postagem", this.criarPostagem, () => this._qntPerfisCriados > 0],
         ["Listar Perfis", this.listarPerfis, () => this._qntPerfisCriados > 0],
         ["Ver Feed", this.verFeed, () => this._qntPostagensCriadas > 0],
+        ["Editar Perfis", this.editarPerfis, () => this._qntPerfisCriados > 0]
 
     ]
 
@@ -87,13 +88,7 @@ class App {
     }
 
     criarPostagem(): void {
-        exibirTextoCentralizado("# Criar Postagem #");
-
-        // Checar se há perfis criados.
-        if (this._qntPerfisCriados == 0) {
-            exibirTexto("Nenhum perfil encontrado. Crie um perfil antes de criar uma postagem.");
-            return;            
-        }
+        cabecalhoPrincipal("Criar Postagem");
 
         let id: number = this._qntPostagensCriadas + 1;
         let curtidas: number = 0;
@@ -106,11 +101,17 @@ class App {
         let tentativasDeEncontrarPerfil = 0;
         while (idPerfil < 0) {
             // Listar perfis.
-            this.listarPerfis();
+            this.listarPerfisCurto();
             exibirTexto("0 - Cancelar");
 
             // Obter ID do perfil:
-            idPerfil = obterNumeroInteiro("ID do perfil: ");            
+            idPerfil = obterNumeroInteiro("ID do perfil: "); 
+            
+            // Optou por sair:
+            if (idPerfil == 0) {
+                exibirTexto("Cancelando...");
+                return;
+            }
 
             perfil = this._redeSocial.consultarPerfil(idPerfil, undefined, undefined);
             if (perfil === null) {
@@ -140,28 +141,75 @@ class App {
 
     }
 
-    listarPerfis(): void {
-        if (this._qntPerfisCriados == 0) {
-            exibirTexto("Nenhum perfil encontrado.");
-            return;
+    listarPerfisCurto(): void {
+        let perfis = this._redeSocial.obterPerfis();
+        for (let i = 0; i < perfis.length; i++) {
+            var _perfil: Perfil = perfis[i];
+            exibirTexto(`Perfil ${_perfil.id} - ${_perfil.nome}`);
         }
-        this._redeSocial.listarPerfis();
+
+        if (perfis.length == 0) {
+            exibirTexto("Nenhum perfil encontrado.");
+        }
+    }
+
+    listarPerfis(): void {
+        cabecalhoPrincipal("Perfis Cadastrados");
+        let perfis = this._redeSocial.obterPerfis();
+        // @TODO: Limitar exibições por página, semelhante a função verFeed
+        for (let i = 0; i < perfis.length; i++) {
+            var _p = perfis[i];
+            exibirTexto(`ID ${_p.id}:`);
+            exibirTexto(`Nome: ${_p.nome}`);
+            exibirTexto(`Email: ${_p.email}`);
+            exibirTextoNoCentro(`x`);
+            console.log();
+        }
     }
 
     verFeed(): void {
-        exibirTexto("Feed da Rede Social");
-        let postagens = this._redeSocial.consultarPostagens(undefined, undefined, undefined, undefined);
-        postagens.forEach((post) => {
-            exibirTexto(`Postagem ${post.id}, por ${post.perfil.nome}: ${post.texto}`);
-            console.log();
-        })
+        let postagens = this._redeSocial.obterPostagens();
+        var _pagina = 0;
+        var _postsPorPagina = Math.floor((obterAlturaTerminal() - 10) / 4);
+        _postsPorPagina = 4;
+        var _totalPaginas = Math.ceil(postagens.length/_postsPorPagina);
+
+        while (_pagina < _totalPaginas) {
+            feedView();
+            for (let i = 0; i < _postsPorPagina; i++) {
+                var n = _pagina * _postsPorPagina + i;
+
+                if (n >= postagens.length) break;
+
+                var _post = postagens[n];
+                
+                exibirTexto(`${_post.data.toUTCString()}`)
+                exibirTexto(`${_post.perfil.nome}:`)
+                exibirTexto(`${_post.texto}`);
+
+                var _curtidasStr = `${_post.curtidas} curtidas, ${_post.descurtidas} descurtidas.`;
+                exibirTexto(_curtidasStr);
+
+                exibirTextoNoCentro("x");
+                console.log();
+            }
+
+            exibirTextoNoCentro(`Página ${_pagina + 1}/${_totalPaginas}`)
+            
+            _pagina++;
+
+            enterToContinue();
+        }
+    }
+
+    editarPerfis(): void {
+
     }
 
     executar(): void {
         let opcao: number = -1;
         while (opcao != 0) {
             limparTerminal();
-            exibirTextoCentralizado("Rede Social");
             this.exibirMenu();
             opcao = this.obterOpcao();
             this.executarOpcao(opcao);

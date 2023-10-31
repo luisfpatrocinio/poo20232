@@ -4,7 +4,6 @@ exports.RedeSocial = void 0;
 const postagem_1 = require("./postagem");
 const perfisRep_1 = require("./perfisRep");
 const postagensRep_1 = require("../postagensRep");
-const ioUtils_1 = require("../Utils/ioUtils");
 class RedeSocial {
     constructor() {
         this._repPostagens = new postagensRep_1.RepositorioDePostagens;
@@ -91,18 +90,12 @@ class RedeSocial {
         }
         return _postagensFiltradas;
     }
-    obterQuantidadeDePostagens() {
-        return this._repPostagens.obterQuantidadeDePostagens();
+    obterPerfis() {
+        return this._repPerfis.perfis;
     }
-    listarPerfis() {
-        let perfis = this._repPerfis.perfis;
-        for (let i = 0; i < perfis.length; i++) {
-            var _perfil = perfis[i];
-            (0, ioUtils_1.exibirTexto)(`Perfil ${_perfil.id} - ${_perfil.nome}`);
-        }
-        if (perfis.length == 0) {
-            (0, ioUtils_1.exibirTexto)("Nenhum perfil encontrado.");
-        }
+    obterPostagens() {
+        // Retorna todas as postagens.
+        return this._repPostagens.consultar();
     }
 }
 exports.RedeSocial = RedeSocial;

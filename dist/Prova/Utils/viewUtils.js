@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.prepararTelaPostagem = exports.cabecalhoPrincipal = exports.showBlogLogo = exports.mainBackground = exports.exibirTextoEsquerda = exports.exibirTextoNoCentro = exports.limparTerminal = exports.obterAlturaTerminal = exports.obterLarguraTerminal = void 0;
+exports.feedView = exports.prepararTelaPostagem = exports.cabecalhoPrincipal = exports.showBlogLogo = exports.mainBackground = exports.exibirTextoEsquerda = exports.exibirTextoNoCentro = exports.limparTerminal = exports.obterAlturaTerminal = exports.obterLarguraTerminal = void 0;
 var readline = require('readline');
 function obterLarguraTerminal() {
     return process.stdout.columns;
@@ -35,6 +35,11 @@ function mainBackground() {
         if (i == obterAlturaTerminal() - 1)
             console.log(`${"=".repeat(obterLarguraTerminal())}`);
     }
+    // Rodapé
+    readline.cursorTo(process.stdout, 1, obterAlturaTerminal() - 4);
+    var _data = new Date;
+    var _dataStr = `${_data.toUTCString()}`;
+    exibirTextoEsquerda(`${_dataStr}`);
     // Mover cursor para o início da tela:
     readline.cursorTo(process.stdout, 1, 1);
 }
@@ -58,6 +63,10 @@ function prepararTelaPostagem(perfil) {
     readline.cursorTo(process.stdout, 2);
 }
 exports.prepararTelaPostagem = prepararTelaPostagem;
+function feedView() {
+    cabecalhoPrincipal("PatroFeed");
+}
+exports.feedView = feedView;
 // @TODO: Rodapé com informações:
 // Quantidade de perfis criados
 // Quantidade de postagens criadas
