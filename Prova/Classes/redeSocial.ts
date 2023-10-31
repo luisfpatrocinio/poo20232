@@ -1,7 +1,8 @@
 import { Perfil } from "./perfil";
 import { Postagem, PostagemAvancada } from "./postagem";
 import { RepositorioDePerfis } from "./perfisRep";
-import { RepositorioDePostagens } from "./postagensRep";
+import { RepositorioDePostagens } from "../postagensRep";
+import { exibirTexto } from "../Utils/ioUtils";
 
 export class RedeSocial {
     private _repPostagens: RepositorioDePostagens = new RepositorioDePostagens;
@@ -104,16 +105,19 @@ export class RedeSocial {
         return _postagensFiltradas;
     }
 
-    // Made by Patro
-    obterQuantidadeDePerfis(): number {
-        return this._repPerfis.obterQuantidadeDePerfis();
-    }
-
     obterQuantidadeDePostagens(): number {
         return this._repPostagens.obterQuantidadeDePostagens();
     }
 
     listarPerfis(): void {
-        return this._repPerfis.listarPerfis();
+        let perfis = this._repPerfis.perfis;
+        for (let i = 0; i < perfis.length; i++) {
+            var _perfil: Perfil = perfis[i];
+            exibirTexto(`Perfil ${_perfil.id} - ${_perfil.nome}`);
+        }
+
+        if (perfis.length == 0) {
+            exibirTexto("Nenhum perfil encontrado.");
+        }
     }
 }

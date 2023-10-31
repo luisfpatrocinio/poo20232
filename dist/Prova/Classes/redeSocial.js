@@ -3,7 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RedeSocial = void 0;
 const postagem_1 = require("./postagem");
 const perfisRep_1 = require("./perfisRep");
-const postagensRep_1 = require("./postagensRep");
+const postagensRep_1 = require("../postagensRep");
+const ioUtils_1 = require("../Utils/ioUtils");
 class RedeSocial {
     constructor() {
         this._repPostagens = new postagensRep_1.RepositorioDePostagens;
@@ -90,15 +91,18 @@ class RedeSocial {
         }
         return _postagensFiltradas;
     }
-    // Made by Patro
-    obterQuantidadeDePerfis() {
-        return this._repPerfis.obterQuantidadeDePerfis();
-    }
     obterQuantidadeDePostagens() {
         return this._repPostagens.obterQuantidadeDePostagens();
     }
     listarPerfis() {
-        return this._repPerfis.listarPerfis();
+        let perfis = this._repPerfis.perfis;
+        for (let i = 0; i < perfis.length; i++) {
+            var _perfil = perfis[i];
+            (0, ioUtils_1.exibirTexto)(`Perfil ${_perfil.id} - ${_perfil.nome}`);
+        }
+        if (perfis.length == 0) {
+            (0, ioUtils_1.exibirTexto)("Nenhum perfil encontrado.");
+        }
     }
 }
 exports.RedeSocial = RedeSocial;

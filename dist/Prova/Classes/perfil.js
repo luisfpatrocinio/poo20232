@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Perfil = void 0;
-// Classe Perfil
 class Perfil {
     constructor(_id, _nome, _email) {
         this._id = _id;

@@ -29,15 +29,7 @@ export class RepositorioDePerfis {
         return null;
     }  
 
-    // Criei para ser usada na classe RedeSocial
-    obterQuantidadeDePerfis(): number {
-        return this._perfis.length;
-    }
-
-    listarPerfis(): void {
-        for (let i = 0; i < this._perfis.length; i++) {
-            let _perfil: Perfil = this._perfis[i];
-            console.log(`Perfil ${_perfil.id} - ${_perfil.nome}`);
-        }
+    get perfis(): Array<Perfil> {
+        return this._perfis;
     }
 }

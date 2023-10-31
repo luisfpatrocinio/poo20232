@@ -1,21 +1,26 @@
 // Importar bibliotecas principais:
 import {question} from 'readline-sync';
 import {Perfil} from './Classes/perfil';
-import {Postagem} from './Classes/postagem';
-import {PostagemAvancada} from './Classes/postagem';
+import {Postagem, PostagemAvancada} from './Classes/postagem';
 import {RedeSocial} from './Classes/redeSocial';
 
 // Importar Utils
 import {obterNumeroInteiro, exibirTexto, exibirTextoCentralizado} from './Utils/ioUtils';
 import { enterToContinue, limparTerminal } from '../utils';
+import { mainBackground, exibirTextoEsquerda, showBlogLogo, exibirTextoNoCentro, prepararTelaPostagem } from './Utils/viewUtils';
+
 class App {
     private _redeSocial: RedeSocial;
-    private menuOpcoes: Array<string> = [
-        "Criar Perfil",
-        "Criar Postagem",
-        "Listar Perfis",
-        "Ver Feed"
-        ]
+    private _qntPerfisCriados: number = 0;
+    private _qntPostagensCriadas: number = 0;
+    // @TODO: Essa quantidade deve ser salva em arquivo, para que não seja perdida ao reiniciar o programa.
+    private menuOpcoes: Array<[string, () => void]> = [
+        ["Criar Perfil", this.criarPerfil],
+        ["Criar Postagem", this.criarPostagem],
+        ["Listar Perfis", this.listarPerfis],
+        ["Ver Feed", this.verFeed],
+
+    ]
 
     constructor() {
         this._redeSocial = new RedeSocial;
@@ -30,43 +35,46 @@ class App {
         return opcao;
     }
 
-    exibirOpcoes(): void {
-        exibirTextoCentralizado("--- MENU ---");
+    exibirMenu(): void {
+        mainBackground();
+        showBlogLogo();
+        exibirTextoNoCentro("~ Menu Principal ~");
         for (let i = 0; i < this.menuOpcoes.length; i++) {
-            exibirTexto(`${i+1} - ${this.menuOpcoes[i]}`);
+            exibirTextoEsquerda(`${i+1} - ${this.menuOpcoes[i][0]}`);
         }
-        exibirTexto("0 - Sair");
+        exibirTextoEsquerda("0 - Sair");
     }
 
     executarOpcao(opcao: number): void {
-        switch (opcao) {
-            case 1:
-                this.criarPerfil();
-                break;
-            case 2:
-                this.criarPostagem();
-                break;
-            case 3:
-                this.listarPerfis();
-                break;
-            case 4:
-                this.verFeed();
-                break;
-        }
+        if (opcao == 0) return;
+        let funcao = this.menuOpcoes[opcao-1][1];
+        funcao.call(this);
     }
 
     criarPerfil(): void {
         exibirTexto("# Criar Perfil");
-        let id: number = this._redeSocial.obterQuantidadeDePerfis() + 1;
+        let id: number = ++this._qntPerfisCriados;
         let nome: string = question("Nome: ");
-        let email: string = question("Email: ");
+        let email: string;
+        do {
+            // @TODO: Apagar a última linha caso nao tenha sido inserido email válido.
+            email = question("Email: ");
+        } while (!email.includes("@") || !email.includes("."));
         let perfil: Perfil = new Perfil(id, nome, email);
         this._redeSocial.incluirPerfil(perfil);
+        exibirTexto(`Perfil ${nome} criado com sucesso. ID: ${id}`);
     }
 
     criarPostagem(): void {
-        exibirTexto("# Criar Postagem");
-        let id: number = this._redeSocial.obterQuantidadeDePostagens() + 1;
+        exibirTextoCentralizado("# Criar Postagem #");
+
+        // Checar se há perfis criados.
+        if (this._qntPerfisCriados == 0) {
+            exibirTexto("Nenhum perfil encontrado. Crie um perfil antes de criar uma postagem.");
+            return;            
+        }
+
+        let id: number = ++this._qntPostagensCriadas;
         let curtidas: number = 0;
         let descurtidas: number = 0;
         let data: Date = new Date;  // Obter data atual do sistema
@@ -76,9 +84,13 @@ class App {
         let perfil: Perfil | null = this._redeSocial.consultarPerfil(idPerfil, undefined, undefined);
         let tentativasDeEncontrarPerfil = 0;
         while (idPerfil < 0) {
-            idPerfil = obterNumeroInteiro("ID do perfil: ");
+            // Listar perfis.
+            this.listarPerfis();
+            exibirTexto("0 - Cancelar");
 
-            // Aqui seria interessante listar os perfis, e mostrar a opcao 0 - Cancelar.
+            // Obter ID do perfil:
+            idPerfil = obterNumeroInteiro("ID do perfil: ");            
+
             perfil = this._redeSocial.consultarPerfil(idPerfil, undefined, undefined);
             if (perfil === null) {
                 exibirTexto("Perfil não encontrado.");
@@ -94,6 +106,7 @@ class App {
         }
 
         // Perfil encontrado, continuar a criação da postagem:
+        prepararTelaPostagem(perfil);
         let texto: string = question("Texto: ");
 
         // Condição impossível, mas necessária para evitar erros.
@@ -106,6 +119,10 @@ class App {
     }
 
     listarPerfis(): void {
+        if (this._qntPerfisCriados == 0) {
+            exibirTexto("Nenhum perfil encontrado.");
+            return;
+        }
         this._redeSocial.listarPerfis();
     }
 
@@ -123,7 +140,7 @@ class App {
         while (opcao != 0) {
             limparTerminal();
             exibirTextoCentralizado("Rede Social");
-            this.exibirOpcoes();
+            this.exibirMenu();
             opcao = this.obterOpcao();
             this.executarOpcao(opcao);
             enterToContinue();
