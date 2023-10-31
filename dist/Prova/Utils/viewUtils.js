@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.prepararTelaPostagem = exports.showBlogLogo = exports.mainBackground = exports.exibirTextoEsquerda = exports.exibirTextoNoCentro = exports.limparTerminal = exports.obterAlturaTerminal = exports.obterLarguraTerminal = void 0;
+exports.prepararTelaPostagem = exports.cabecalhoPrincipal = exports.showBlogLogo = exports.mainBackground = exports.exibirTextoEsquerda = exports.exibirTextoNoCentro = exports.limparTerminal = exports.obterAlturaTerminal = exports.obterLarguraTerminal = void 0;
 var readline = require('readline');
 function obterLarguraTerminal() {
     return process.stdout.columns;
@@ -46,11 +46,20 @@ function showBlogLogo() {
     exibirTextoNoCentro("                              _/  ");
 }
 exports.showBlogLogo = showBlogLogo;
-function prepararTelaPostagem(perfil) {
+function cabecalhoPrincipal(texto) {
     mainBackground();
     showBlogLogo();
-    exibirTextoNoCentro("~ Criar Postagem ~");
+    exibirTextoNoCentro(`~ ${texto} ~`);
+}
+exports.cabecalhoPrincipal = cabecalhoPrincipal;
+function prepararTelaPostagem(perfil) {
+    cabecalhoPrincipal("Criar Postagem");
     exibirTextoEsquerda(`Perfil: ${perfil.nome} (${perfil.email})`);
     readline.cursorTo(process.stdout, 2);
 }
 exports.prepararTelaPostagem = prepararTelaPostagem;
+// @TODO: Rodapé com informações:
+// Quantidade de perfis criados
+// Quantidade de postagens criadas
+// Hashtags, etc
+// Curtidas

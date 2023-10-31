@@ -7,7 +7,6 @@ const postagem_1 = require("./Classes/postagem");
 const redeSocial_1 = require("./Classes/redeSocial");
 // Importar Utils
 const ioUtils_1 = require("./Utils/ioUtils");
-const utils_1 = require("../utils");
 const viewUtils_1 = require("./Utils/viewUtils");
 class App {
     constructor() {
@@ -15,10 +14,11 @@ class App {
         this._qntPostagensCriadas = 0;
         // @TODO: Essa quantidade deve ser salva em arquivo, para que não seja perdida ao reiniciar o programa.
         this.menuOpcoes = [
-            ["Criar Perfil", this.criarPerfil],
-            ["Criar Postagem", this.criarPostagem],
-            ["Listar Perfis", this.listarPerfis],
-            ["Ver Feed", this.verFeed],
+            // Nome da opção, função a ser executada, condição para habilitar a opção
+            ["Criar Perfil", this.criarPerfil, () => true],
+            ["Criar Postagem", this.criarPostagem, () => this._qntPerfisCriados > 0],
+            ["Listar Perfis", this.listarPerfis, () => this._qntPerfisCriados > 0],
+            ["Ver Feed", this.verFeed, () => this._qntPostagensCriadas > 0],
         ];
         this._redeSocial = new redeSocial_1.RedeSocial;
     }
@@ -30,12 +30,25 @@ class App {
         }
         return opcao;
     }
+    obterMenuParaExibir() {
+        var menu = new Array;
+        // Filtramos o menu, para mostrar apenas as opções que satisfaçam a função no índice 2.
+        for (let i = 0; i < this.menuOpcoes.length; i++) {
+            var opt = this.menuOpcoes[i];
+            if (opt[2]()) {
+                menu.push(opt);
+            }
+        }
+        return menu;
+    }
     exibirMenu() {
         (0, viewUtils_1.mainBackground)();
         (0, viewUtils_1.showBlogLogo)();
         (0, viewUtils_1.exibirTextoNoCentro)("~ Menu Principal ~");
-        for (let i = 0; i < this.menuOpcoes.length; i++) {
-            (0, viewUtils_1.exibirTextoEsquerda)(`${i + 1} - ${this.menuOpcoes[i][0]}`);
+        // O menu exibido será o menu 
+        const menuParaExibir = this.obterMenuParaExibir();
+        for (let i = 0; i < menuParaExibir.length; i++) {
+            (0, viewUtils_1.exibirTextoEsquerda)(`${i + 1} - ${menuParaExibir[i][0]}`);
         }
         (0, viewUtils_1.exibirTextoEsquerda)("0 - Sair");
     }
@@ -46,17 +59,18 @@ class App {
         funcao.call(this);
     }
     criarPerfil() {
-        (0, ioUtils_1.exibirTexto)("# Criar Perfil");
+        (0, viewUtils_1.cabecalhoPrincipal)("Criar Perfil");
         let id = ++this._qntPerfisCriados;
-        let nome = (0, readline_sync_1.question)("Nome: ");
+        let nome = (0, ioUtils_1.obterTexto)("Nome: ");
         let email;
         do {
             // @TODO: Apagar a última linha caso nao tenha sido inserido email válido.
-            email = (0, readline_sync_1.question)("Email: ");
+            email = (0, ioUtils_1.obterTexto)("Email: ");
         } while (!email.includes("@") || !email.includes("."));
         let perfil = new perfil_1.Perfil(id, nome, email);
         this._redeSocial.incluirPerfil(perfil);
-        (0, ioUtils_1.exibirTexto)(`Perfil ${nome} criado com sucesso. ID: ${id}`);
+        (0, viewUtils_1.exibirTextoNoCentro)(`Perfil ${nome} criado com sucesso.`);
+        (0, viewUtils_1.exibirTextoNoCentro)(`ID: ${id}`);
     }
     criarPostagem() {
         (0, ioUtils_1.exibirTextoCentralizado)("# Criar Postagem #");
@@ -65,7 +79,7 @@ class App {
             (0, ioUtils_1.exibirTexto)("Nenhum perfil encontrado. Crie um perfil antes de criar uma postagem.");
             return;
         }
-        let id = ++this._qntPostagensCriadas;
+        let id = this._qntPostagensCriadas + 1;
         let curtidas = 0;
         let descurtidas = 0;
         let data = new Date; // Obter data atual do sistema
@@ -91,14 +105,16 @@ class App {
                 return;
             }
         }
-        // Perfil encontrado, continuar a criação da postagem:
-        (0, viewUtils_1.prepararTelaPostagem)(perfil);
-        let texto = (0, readline_sync_1.question)("Texto: ");
+        // Perfil encontrado, continuar a criação da postagem.
         // Condição impossível, mas necessária para evitar erros.
         if (perfil != null) {
+            (0, viewUtils_1.prepararTelaPostagem)(perfil);
+            let texto = (0, readline_sync_1.question)("Texto: ");
             var _postagem = new postagem_1.Postagem(id, texto, curtidas, descurtidas, data, perfil);
             this._redeSocial.incluirPostagem(_postagem);
-            (0, ioUtils_1.exibirTexto)(`Postagem No ${id} criada com sucesso.`);
+            this._qntPostagensCriadas++;
+            1;
+            (0, viewUtils_1.exibirTextoNoCentro)(`Postagem No ${id} criada com sucesso.`);
         }
     }
     listarPerfis() {
@@ -119,12 +135,12 @@ class App {
     executar() {
         let opcao = -1;
         while (opcao != 0) {
-            (0, utils_1.limparTerminal)();
+            (0, viewUtils_1.limparTerminal)();
             (0, ioUtils_1.exibirTextoCentralizado)("Rede Social");
             this.exibirMenu();
             opcao = this.obterOpcao();
             this.executarOpcao(opcao);
-            (0, utils_1.enterToContinue)();
+            (0, ioUtils_1.enterToContinue)();
         }
         (0, ioUtils_1.exibirTextoCentralizado)("=== FIM ===");
     }

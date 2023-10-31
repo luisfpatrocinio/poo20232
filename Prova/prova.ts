@@ -5,20 +5,22 @@ import {Postagem, PostagemAvancada} from './Classes/postagem';
 import {RedeSocial} from './Classes/redeSocial';
 
 // Importar Utils
-import {obterNumeroInteiro, exibirTexto, exibirTextoCentralizado} from './Utils/ioUtils';
-import { enterToContinue, limparTerminal } from '../utils';
-import { mainBackground, exibirTextoEsquerda, showBlogLogo, exibirTextoNoCentro, prepararTelaPostagem } from './Utils/viewUtils';
+import {obterNumeroInteiro, exibirTexto, exibirTextoCentralizado, obterTexto, enterToContinue} from './Utils/ioUtils';
+import { mainBackground, exibirTextoEsquerda, showBlogLogo, exibirTextoNoCentro, prepararTelaPostagem, limparTerminal, cabecalhoPrincipal } from './Utils/viewUtils';
+
+import chalk from 'chalk';
 
 class App {
     private _redeSocial: RedeSocial;
     private _qntPerfisCriados: number = 0;
     private _qntPostagensCriadas: number = 0;
     // @TODO: Essa quantidade deve ser salva em arquivo, para que não seja perdida ao reiniciar o programa.
-    private menuOpcoes: Array<[string, () => void]> = [
-        ["Criar Perfil", this.criarPerfil],
-        ["Criar Postagem", this.criarPostagem],
-        ["Listar Perfis", this.listarPerfis],
-        ["Ver Feed", this.verFeed],
+    private menuOpcoes: Array<[string, () => void, () => boolean]> = [
+        // Nome da opção, função a ser executada, condição para habilitar a opção
+        ["Criar Perfil", this.criarPerfil, () => true],
+        ["Criar Postagem", this.criarPostagem, () => this._qntPerfisCriados > 0],
+        ["Listar Perfis", this.listarPerfis, () => this._qntPerfisCriados > 0],
+        ["Ver Feed", this.verFeed, () => this._qntPostagensCriadas > 0],
 
     ]
 
@@ -35,12 +37,29 @@ class App {
         return opcao;
     }
 
+    obterMenuParaExibir(): Array<[string, () => void, () => boolean]> {
+        var menu = new Array<[string, () => void, () => boolean]>;
+
+        // Filtramos o menu, para mostrar apenas as opções que satisfaçam a função no índice 2.
+        for (let i = 0; i < this.menuOpcoes.length; i++) {
+            var opt = this.menuOpcoes[i];
+            if (opt[2]()) {
+                menu.push(opt); 
+            }
+        }
+        return menu;
+    }
+
     exibirMenu(): void {
         mainBackground();
         showBlogLogo();
         exibirTextoNoCentro("~ Menu Principal ~");
-        for (let i = 0; i < this.menuOpcoes.length; i++) {
-            exibirTextoEsquerda(`${i+1} - ${this.menuOpcoes[i][0]}`);
+    
+        // O menu exibido será o menu 
+        const menuParaExibir = this.obterMenuParaExibir();
+
+        for (let i = 0; i < menuParaExibir.length; i++) {
+            exibirTextoEsquerda(`${i+1} - ${menuParaExibir[i][0]}`);
         }
         exibirTextoEsquerda("0 - Sair");
     }
@@ -52,17 +71,19 @@ class App {
     }
 
     criarPerfil(): void {
-        exibirTexto("# Criar Perfil");
+        cabecalhoPrincipal("Criar Perfil");
+
         let id: number = ++this._qntPerfisCriados;
-        let nome: string = question("Nome: ");
+        let nome: string = obterTexto("Nome: ");
         let email: string;
         do {
             // @TODO: Apagar a última linha caso nao tenha sido inserido email válido.
-            email = question("Email: ");
+            email = obterTexto("Email: ");
         } while (!email.includes("@") || !email.includes("."));
         let perfil: Perfil = new Perfil(id, nome, email);
         this._redeSocial.incluirPerfil(perfil);
-        exibirTexto(`Perfil ${nome} criado com sucesso. ID: ${id}`);
+        exibirTextoNoCentro(`Perfil ${nome} criado com sucesso.`);
+        exibirTextoNoCentro(`ID: ${id}`);
     }
 
     criarPostagem(): void {
@@ -74,7 +95,7 @@ class App {
             return;            
         }
 
-        let id: number = ++this._qntPostagensCriadas;
+        let id: number = this._qntPostagensCriadas + 1;
         let curtidas: number = 0;
         let descurtidas: number = 0;
         let data: Date = new Date;  // Obter data atual do sistema
@@ -105,15 +126,16 @@ class App {
             }
         }
 
-        // Perfil encontrado, continuar a criação da postagem:
-        prepararTelaPostagem(perfil);
-        let texto: string = question("Texto: ");
-
+        // Perfil encontrado, continuar a criação da postagem.
         // Condição impossível, mas necessária para evitar erros.
         if (perfil != null) {
+            prepararTelaPostagem(perfil);
+            let texto: string = question("Texto: ");
             var _postagem = new Postagem(id, texto, curtidas, descurtidas, data, perfil);
             this._redeSocial.incluirPostagem(_postagem);
-            exibirTexto(`Postagem No ${id} criada com sucesso.`)
+            this._qntPostagensCriadas++;1
+            
+            exibirTextoNoCentro(`Postagem No ${id} criada com sucesso.`)
         }
 
     }

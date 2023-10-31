@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.enterToContinue = exports.exibirTextoCentralizado = exports.exibirTexto = exports.obterNumeroInteiro = void 0;
+exports.obterTexto = exports.enterToContinue = exports.exibirTextoCentralizado = exports.exibirTexto = exports.obterNumeroInteiro = void 0;
 const readline_sync_1 = require("readline-sync");
 const viewUtils_1 = require("./viewUtils");
 var readline = require('readline');
@@ -26,6 +26,13 @@ function exibirTextoCentralizado(texto) {
 }
 exports.exibirTextoCentralizado = exibirTextoCentralizado;
 function enterToContinue() {
+    var _x = Math.floor((0, viewUtils_1.obterLarguraTerminal)() / 2 - "[ENTER]".length / 2);
+    readline.cursorTo(process.stdout, _x);
     (0, readline_sync_1.question)("[ENTER]", { hideEchoBack: true, mask: 'x' });
 }
 exports.enterToContinue = enterToContinue;
+function obterTexto(texto) {
+    readline.cursorTo(process.stdout, 2);
+    return (0, readline_sync_1.question)(texto);
+}
+exports.obterTexto = obterTexto;

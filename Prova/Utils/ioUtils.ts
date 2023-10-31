@@ -24,5 +24,12 @@ export function exibirTextoCentralizado(texto: string): void {
 }
 
 export function enterToContinue(): void {
+    var _x = Math.floor(obterLarguraTerminal()/2 - "[ENTER]".length/2);
+    readline.cursorTo(process.stdout, _x);
     question("[ENTER]", {hideEchoBack: true, mask: 'x'});
+}
+
+export function obterTexto(texto: string): string {
+    readline.cursorTo(process.stdout, 2);
+    return question(texto)
 }

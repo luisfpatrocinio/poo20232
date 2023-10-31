@@ -43,11 +43,20 @@ export function showBlogLogo(): void {
     exibirTextoNoCentro("                              _/  ");
 }
 
-export function prepararTelaPostagem(perfil: Perfil): void {
+export function cabecalhoPrincipal(texto: string): void {
     mainBackground();
     showBlogLogo();
-    exibirTextoNoCentro("~ Criar Postagem ~");
+    exibirTextoNoCentro(`~ ${texto} ~`);
+}
 
+export function prepararTelaPostagem(perfil: Perfil): void {
+    cabecalhoPrincipal("Criar Postagem");
     exibirTextoEsquerda(`Perfil: ${perfil.nome} (${perfil.email})`);
     readline.cursorTo(process.stdout, 2);
 }
+
+// @TODO: Rodapé com informações:
+// Quantidade de perfis criados
+// Quantidade de postagens criadas
+// Hashtags, etc
+// Curtidas
