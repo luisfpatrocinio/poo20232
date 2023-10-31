@@ -20,23 +20,19 @@ class App {
         this._redeSocial = new RedeSocial;
     }
 
-    exibirTexto(texto: string): void {
-        console.log(texto);
-    }
-
     obterOpcao(): number {
         let opcao: number = obterNumeroInteiro("Opção: ");
         while (opcao < 0 || opcao > this.menuOpcoes.length) {
             exibirTexto("Opção inválida. Tente novamente.");
-            opcao = Number(question("Opção: "));
+            opcao = this.obterOpcao();
         }
         return opcao;
     }
 
     exibirOpcoes(): void {
-        this.exibirTexto("--- MENU ---");
+        exibirTexto("--- MENU ---");
         for (let i = 0; i < this.menuOpcoes.length; i++) {
-            this.exibirTexto(`${i+1} - ${this.menuOpcoes[i]}`);
+            exibirTexto(`${i+1} - ${this.menuOpcoes[i]}`);
         }
     }
 
@@ -58,7 +54,7 @@ class App {
     }
 
     criarPerfil(): void {
-        this.exibirTexto("# Criar Perfil");
+        exibirTexto("# Criar Perfil");
         let id: number = this._redeSocial.obterQuantidadeDePerfis() + 1;
         let nome: string = question("Nome: ");
         let email: string = question("Email: ");
@@ -67,7 +63,7 @@ class App {
     }
 
     criarPostagem(): void {
-        this.exibirTexto("# Criar Postagem");
+        exibirTexto("# Criar Postagem");
         let id: number = this._redeSocial.obterQuantidadeDePostagens() + 1;
         let curtidas: number = 0;
         let descurtidas: number = 0;
@@ -83,14 +79,14 @@ class App {
             // Aqui seria interessante listar os perfis, e mostrar a opção 0 - Cancelar.
             perfil = this._redeSocial.consultarPerfil(idPerfil, undefined, undefined);
             if (perfil === null) {
-                this.exibirTexto("Perfil não encontrado.");
+                exibirTexto("Perfil não encontrado.");
                 idPerfil = -1; // Voltando a -1, faz permanecer no ciclo.
                 tentativasDeEncontrarPerfil++;
             }
 
             // Porém, se esgotar 3 tentativas, é melhor abortar a criação de postagem.
             if (tentativasDeEncontrarPerfil > 3) {
-                this.exibirTexto("Tente novamente mais tarde.")
+                exibirTexto("Tente novamente mais tarde.")
                 return;
             }
         }
@@ -102,7 +98,7 @@ class App {
         if (perfil != null) {
             var _postagem = new Postagem(id, texto, curtidas, descurtidas, data, perfil);
             this._redeSocial.incluirPostagem(_postagem);
-            this.exibirTexto(`Postagem No ${id} criada com sucesso.`)
+            exibirTexto(`Postagem No ${id} criada com sucesso.`)
         }
 
     }
@@ -112,10 +108,10 @@ class App {
     }
 
     verFeed(): void {
-        this.exibirTexto("Feed da Rede Social");
+        exibirTexto("Feed da Rede Social");
         let postagens = this._redeSocial.consultarPostagens(undefined, undefined, undefined, undefined);
         postagens.forEach((post) => {
-            this.exibirTexto(`Postagem ${post.id}, por ${post.perfil.nome}: ${post.texto}`);
+            exibirTexto(`Postagem ${post.id}, por ${post.perfil.nome}: ${post.texto}`);
             console.log();
         })
     }
