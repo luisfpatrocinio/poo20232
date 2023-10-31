@@ -1,0 +1,47 @@
+Gerenciar Perfis:
+- Criar perfil,
+- Listar perfis,
+- Consultar perfil,
+- Excluir perfil,
+- Editar perfil
+
+Gerenciar postagens:
+- Criar postagem (simples e avançada) --- lembrar de usar data atual do sistema
+- Listar postagens,
+- Consultar postagem,
+- Excluir postagem,
+- Editar postagem,
+- Curtir postagem,
+- Descurtir postagem
+- Postagem Avançada: Adicionar hashtag, exibir postagens por hashtag
+- Postagem Avançada: Visualizações restantes
+
+Ver Feed:
+- Exibir postagens por perfil,
+- Exibir postagens por hashtag
+
+# Funções do Menu:
+- Exibir opções
+- Obter opção
+- Executar Opção
+
+# Extras X1:
+- Leitura e gravação de arquivos (ao iniciar e encerrar o programa)
+
+# Extras X2:
+- Exibir postagens populares
+- Exibir hashtags populares (as que estão presentes em mais postagens)
+
+# Extras X3:
+- Exibir postagens classificando por data, curtidas, descurtidas, visualizações
+- Excluir postagens por perfil, hashtag ou data
+- Favoritar postagem (auto-explicativo)
+- Exibir postagens favoritas
+- Arquivar postagem (impedir de ser exibida normalmente, mas permitir que seja exibida por meio de uma opção no menu)
+- Exibir postagens arquivadas
+
+# Extras X4:
+- Tela de início animada
+- Tela de encerramento animada
+- Menu interativo (com setas e teclas de atalho)
+- Ver feed por data de postagem
