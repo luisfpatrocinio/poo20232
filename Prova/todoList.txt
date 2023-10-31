@@ -44,4 +44,4 @@ Ver Feed:
 - Tela de início animada
 - Tela de encerramento animada
 - Menu interativo (com setas e teclas de atalho)
-- Ver feed por data de postagem
+- Ver feed por data de postagem     

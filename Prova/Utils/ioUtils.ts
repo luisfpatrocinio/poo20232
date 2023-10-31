@@ -12,3 +12,21 @@ export function obterNumeroInteiro(mensagem: string): number {
 export function exibirTexto(texto: string): void {
     console.log(texto);
 }
+
+export function exibirTextoCentralizado(texto: string): void {
+    var larguraTerminal: number = obterLarguraTerminal();
+    var espacos: number = (larguraTerminal - texto.length) / 2;
+    exibirTexto(" ".repeat(espacos) + texto);
+}
+
+export function obterLarguraTerminal(): number {
+    return process.stdout.columns;
+}
+
+export function limparTerminal(): void {
+    console.clear();
+}
+
+export function enterToContinue(): void {
+    question("[ENTER]", {hideEchoBack: true, mask: 'x'});
+}

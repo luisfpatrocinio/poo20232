@@ -6,7 +6,8 @@ import {PostagemAvancada} from './Classes/postagem';
 import {RedeSocial} from './Classes/redeSocial';
 
 // Importar Utils
-import {obterNumeroInteiro, exibirTexto} from './Utils/ioUtils';
+import {obterNumeroInteiro, exibirTexto, exibirTextoCentralizado} from './Utils/ioUtils';
+import { enterToContinue, limparTerminal } from '../utils';
 class App {
     private _redeSocial: RedeSocial;
     private menuOpcoes: Array<string> = [
@@ -21,19 +22,20 @@ class App {
     }
 
     obterOpcao(): number {
-        let opcao: number = obterNumeroInteiro("Opção: ");
+        let opcao: number = obterNumeroInteiro("Opcao: ");
         while (opcao < 0 || opcao > this.menuOpcoes.length) {
-            exibirTexto("Opção inválida. Tente novamente.");
+            exibirTexto("Opcao inválida. Tente novamente.");
             opcao = this.obterOpcao();
         }
         return opcao;
     }
 
     exibirOpcoes(): void {
-        exibirTexto("--- MENU ---");
+        exibirTextoCentralizado("--- MENU ---");
         for (let i = 0; i < this.menuOpcoes.length; i++) {
             exibirTexto(`${i+1} - ${this.menuOpcoes[i]}`);
         }
+        exibirTexto("0 - Sair");
     }
 
     executarOpcao(opcao: number): void {
@@ -76,7 +78,7 @@ class App {
         while (idPerfil < 0) {
             idPerfil = obterNumeroInteiro("ID do perfil: ");
 
-            // Aqui seria interessante listar os perfis, e mostrar a opção 0 - Cancelar.
+            // Aqui seria interessante listar os perfis, e mostrar a opcao 0 - Cancelar.
             perfil = this._redeSocial.consultarPerfil(idPerfil, undefined, undefined);
             if (perfil === null) {
                 exibirTexto("Perfil não encontrado.");
@@ -117,13 +119,16 @@ class App {
     }
 
     executar(): void {
-        this.exibirOpcoes();
-        let opcao: number = this.obterOpcao();
+        let opcao: number = -1;
         while (opcao != 0) {
-            this.executarOpcao(opcao);
+            limparTerminal();
+            exibirTextoCentralizado("Rede Social");
+            this.exibirOpcoes();
             opcao = this.obterOpcao();
+            this.executarOpcao(opcao);
+            enterToContinue();
         }
-        console.log("Fim do Programa.")
+        exibirTextoCentralizado("=== FIM ===")
     }
 }
 
