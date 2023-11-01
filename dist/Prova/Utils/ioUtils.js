@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.obterTexto = exports.enterToContinue = exports.exibirTextoCentralizado = exports.exibirTexto = exports.obterNumeroInteiro = void 0;
+exports.obterTexto = exports.enterToContinue = exports.exibirTextoCentralizado = exports.exibirTextoPostagem = exports.exibirTexto = exports.obterNumeroInteiro = void 0;
 const readline_sync_1 = require("readline-sync");
 const viewUtils_1 = require("./viewUtils");
 var readline = require('readline');
@@ -19,6 +19,15 @@ function exibirTexto(texto) {
     console.log(texto);
 }
 exports.exibirTexto = exibirTexto;
+function exibirTextoPostagem(texto) {
+    let _tamanho = (0, viewUtils_1.obterLarguraTerminal)() - 3;
+    for (let i = 0; i < texto.length; i += _tamanho) {
+        var _pedaco = texto.substring(i, i + _tamanho);
+        readline.cursorTo(process.stdout, 2);
+        console.log(_pedaco);
+    }
+}
+exports.exibirTextoPostagem = exibirTextoPostagem;
 function exibirTextoCentralizado(texto) {
     var larguraTerminal = (0, viewUtils_1.obterLarguraTerminal)() - 2;
     var espacos = Math.floor((larguraTerminal - texto.length) / 2);

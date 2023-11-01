@@ -6,8 +6,9 @@ import {Postagem, PostagemAvancada} from './Classes/postagem';
 import {RedeSocial} from './Classes/redeSocial';
 
 // Importar Utils
-import {obterNumeroInteiro, exibirTexto, exibirTextoCentralizado, obterTexto, enterToContinue} from './Utils/ioUtils';
+import {obterNumeroInteiro, exibirTexto, exibirTextoPostagem, exibirTextoCentralizado, obterTexto, enterToContinue} from './Utils/ioUtils';
 import { mainBackground, exibirTextoEsquerda, showBlogLogo, exibirTextoNoCentro, prepararTelaPostagem, limparTerminal, cabecalhoPrincipal, feedView, obterAlturaTerminal, exibirTextoCentroCentro, saltarLinhas, obterLarguraTerminal } from './Utils/viewUtils';
+import { sleep } from './Utils/generalUtils';
 
 // Leitura e Gravação de Arquivos
 import { readFileSync, writeFile, writeFileSync } from 'fs';
@@ -135,7 +136,7 @@ class App {
                 _views = String(p.visualizacoesRestantes);
             }
             
-            saveString += `${p.id}#${_adv}#${p.texto}#${p.curtidas}#${p.descurtidas}#40#${p.perfil.id}#${_hashtagsString}#${_views}\n}`
+            saveString += `${p.id}#${_adv}#${p.texto}#${p.curtidas}#${p.descurtidas}#40#${p.perfil.id}#${_hashtagsString}#${_views}\n`
         }
 
         const file = writeFileSync("savePostagens.txt", saveString)
@@ -375,12 +376,21 @@ class App {
                 
                 exibirTexto(`${_post.data.toUTCString()}`)
                 exibirTexto(`${_post.perfil.nome}:`)
-                exibirTexto(`${_post.texto}`);
+                exibirTextoPostagem(`${_post.texto}`);
+
+                // Mostrar hashtags:
+                if (_post instanceof PostagemAvancada) {
+                    let hashtagsString = "";
+                    _post.hashtags.forEach((h) => {
+                        hashtagsString += "#" + h + " ";
+                    });
+                    exibirTexto(hashtagsString);
+                }
 
                 var _curtidasStr = `${_post.curtidas} curtidas, ${_post.descurtidas} descurtidas.`;
                 exibirTexto(_curtidasStr);
                 
-                exibirTextoNoCentro("x");
+                exibirTextoNoCentro("-=-");
                 console.log();
             }
 

@@ -26,7 +26,7 @@ Ver Feed:
 - Executar Opção
 
 # Extras X1:
-- Leitura e gravação de arquivos (ao iniciar e encerrar o programa)
+OK Leitura e gravação de arquivos (ao iniciar e encerrar o programa)
 
 # Extras X2:
 - Exibir postagens populares

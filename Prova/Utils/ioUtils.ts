@@ -17,6 +17,15 @@ export function exibirTexto(texto: string): void {
     console.log(texto);
 }
 
+export function exibirTextoPostagem(texto: string): void {
+    let _tamanho = obterLarguraTerminal() - 3;
+    for (let i = 0; i < texto.length; i += _tamanho) {
+        var _pedaco = texto.substring(i, i + _tamanho);
+        readline.cursorTo(process.stdout, 2);
+        console.log(_pedaco);
+    }
+}
+
 export function exibirTextoCentralizado(texto: string): void {
     var larguraTerminal: number = obterLarguraTerminal() - 2;
     var espacos: number = Math.floor((larguraTerminal - texto.length) / 2);

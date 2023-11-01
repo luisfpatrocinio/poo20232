@@ -114,7 +114,7 @@ class App {
                 }
                 _views = String(p.visualizacoesRestantes);
             }
-            saveString += `${p.id}#${_adv}#${p.texto}#${p.curtidas}#${p.descurtidas}#40#${p.perfil.id}#${_hashtagsString}#${_views}\n}`;
+            saveString += `${p.id}#${_adv}#${p.texto}#${p.curtidas}#${p.descurtidas}#40#${p.perfil.id}#${_hashtagsString}#${_views}\n`;
         }
         const file = (0, fs_1.writeFileSync)("savePostagens.txt", saveString);
     }
@@ -316,10 +316,18 @@ class App {
                 var _post = postagens[n];
                 (0, ioUtils_1.exibirTexto)(`${_post.data.toUTCString()}`);
                 (0, ioUtils_1.exibirTexto)(`${_post.perfil.nome}:`);
-                (0, ioUtils_1.exibirTexto)(`${_post.texto}`);
+                (0, ioUtils_1.exibirTextoPostagem)(`${_post.texto}`);
+                // Mostrar hashtags:
+                if (_post instanceof postagem_1.PostagemAvancada) {
+                    let hashtagsString = "";
+                    _post.hashtags.forEach((h) => {
+                        hashtagsString += "#" + h + " ";
+                    });
+                    (0, ioUtils_1.exibirTexto)(hashtagsString);
+                }
                 var _curtidasStr = `${_post.curtidas} curtidas, ${_post.descurtidas} descurtidas.`;
                 (0, ioUtils_1.exibirTexto)(_curtidasStr);
-                (0, viewUtils_1.exibirTextoNoCentro)("x");
+                (0, viewUtils_1.exibirTextoNoCentro)("-=-");
                 console.log();
             }
             (0, viewUtils_1.exibirTextoNoCentro)(`Página ${_pagina + 1}/${_totalPaginas}`);
