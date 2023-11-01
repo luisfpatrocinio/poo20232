@@ -24,29 +24,26 @@ class App {
             ["Editar Perfis", this.editarPerfis, () => this._qntPerfisCriados > 0],
         ];
         this._redeSocial = new redeSocial_1.RedeSocial;
-        // Inicializar App
-        // Ler arquivo:
         try {
             // Carregar Arquivos caso hajam.
             this.carregarPerfis();
             this.carregarPostagens();
-            // Tela de início
-            this.wakeUpScreen();
-            (0, ioUtils_1.enterToContinue)();
         }
         catch (erro) {
             // Iniciando pela primeira vez.
             (0, viewUtils_1.mainBackground)();
-            (0, viewUtils_1.exibirTextoCentroCentro)("Iniciando pela primeira vez.");
-            (0, fs_1.writeFileSync)("savePerfis.txt", "oi");
+            (0, ioUtils_1.exibirTextoCentralizado)("Iniciando pela primeira vez.");
+            (0, ioUtils_1.enterToContinue)();
         }
     }
     wakeUpScreen() {
         (0, viewUtils_1.mainBackground)();
         (0, viewUtils_1.saltarLinhas)(Math.floor((0, viewUtils_1.obterAlturaTerminal)() / 2) - 3);
         (0, viewUtils_1.showBlogLogo)();
-        (0, ioUtils_1.exibirTextoCentralizado)(`${this._qntPerfisCriados} perfis carregados`);
-        (0, ioUtils_1.exibirTextoCentralizado)(`${this._qntPostagensCriadas} postagens carregadas`);
+        if (this._qntPerfisCriados > 0)
+            (0, ioUtils_1.exibirTextoCentralizado)(`${this._qntPerfisCriados} perfis carregados`);
+        if (this._qntPostagensCriadas > 0)
+            (0, ioUtils_1.exibirTextoCentralizado)(`${this._qntPostagensCriadas} postagens carregadas`);
     }
     salvarPerfis() {
         let saveString = "";
@@ -89,9 +86,10 @@ class App {
             this.salvarPerfis();
         }
         catch (err) {
-            console.log("###");
-            console.log("ERRO AO CARREGAR PERFIS#");
-            console.log("###");
+            // mainBackground();
+            // saltarLinhas(obterLarguraTerminal()/2);
+            // exibirTextoCentralizado("Não foram encontrados perfis.");
+            // enterToContinue();
         }
     }
     salvarPostagens() {
@@ -165,8 +163,6 @@ class App {
             // 2#1#Eu gosto de jogar lolzinho.#300#250#40#1#humor-saude-tbt#200
         }
         catch (err) {
-            console.log(err);
-            (0, ioUtils_1.enterToContinue)();
         }
     }
     // Solicita uma opção ao usuário.
@@ -375,6 +371,18 @@ class App {
         // 3 - Sobreescrever array do repositorio de perfis.
     }
     executar() {
+        // Checar tamanho da janela
+        if ((0, viewUtils_1.obterLarguraTerminal)() < 64) {
+            (0, viewUtils_1.mainBackground)();
+            (0, viewUtils_1.saltarLinhas)(Math.floor((0, viewUtils_1.obterAlturaTerminal)() / 2 - 3));
+            (0, ioUtils_1.exibirTextoPostagem)("Por favor, ajuste o tamanho da janela do terminal antes de executar a aplicação.");
+            (0, ioUtils_1.enterToContinue)();
+            return;
+        }
+        // Tela de início
+        this.wakeUpScreen();
+        (0, ioUtils_1.enterToContinue)();
+        // Menu:
         let opcao = -1;
         while (opcao != 0) {
             (0, viewUtils_1.limparTerminal)();

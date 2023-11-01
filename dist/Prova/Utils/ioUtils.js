@@ -20,7 +20,7 @@ function exibirTexto(texto) {
 }
 exports.exibirTexto = exibirTexto;
 function exibirTextoPostagem(texto) {
-    let _tamanho = (0, viewUtils_1.obterLarguraTerminal)() - 3;
+    let _tamanho = (0, viewUtils_1.obterLarguraTerminal)() - 4;
     for (let i = 0; i < texto.length; i += _tamanho) {
         var _pedaco = texto.substring(i, i + _tamanho);
         readline.cursorTo(process.stdout, 2);

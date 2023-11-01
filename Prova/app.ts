@@ -17,6 +17,7 @@ import { readFileSync, writeFile, writeFileSync } from 'fs';
 import chalk from 'chalk';
 import { obterNumero } from '../utils';
 import { type } from 'os';
+import { exit } from 'process';
 
 class App {
     private _redeSocial: RedeSocial;
@@ -37,21 +38,15 @@ class App {
     constructor() {
         this._redeSocial = new RedeSocial;
 
-        // Inicializar App
-        // Ler arquivo:
         try {
             // Carregar Arquivos caso hajam.
             this.carregarPerfis();
             this.carregarPostagens();
-
-            // Tela de início
-            this.wakeUpScreen();
-            enterToContinue();
         } catch (erro) {
             // Iniciando pela primeira vez.
             mainBackground();
-            exibirTextoCentroCentro("Iniciando pela primeira vez.");
-            writeFileSync("savePerfis.txt", "oi");
+            exibirTextoCentralizado("Iniciando pela primeira vez.");
+            enterToContinue();
         }
     }
 
@@ -59,8 +54,8 @@ class App {
         mainBackground();
         saltarLinhas(Math.floor(obterAlturaTerminal()/2) - 3);
         showBlogLogo();
-        exibirTextoCentralizado(`${this._qntPerfisCriados} perfis carregados`);
-        exibirTextoCentralizado(`${this._qntPostagensCriadas} postagens carregadas`);
+        if (this._qntPerfisCriados > 0)     exibirTextoCentralizado(`${this._qntPerfisCriados} perfis carregados`);
+        if (this._qntPostagensCriadas > 0)  exibirTextoCentralizado(`${this._qntPostagensCriadas} postagens carregadas`);
     }
 
     salvarPerfis(): void {
@@ -108,9 +103,10 @@ class App {
             this.salvarPerfis();
         }
         catch (err) {
-            console.log("###");
-            console.log("ERRO AO CARREGAR PERFIS#");
-            console.log("###"); 
+            // mainBackground();
+            // saltarLinhas(obterLarguraTerminal()/2);
+            // exibirTextoCentralizado("Não foram encontrados perfis.");
+            // enterToContinue();
         }
     }
 
@@ -196,8 +192,7 @@ class App {
             // 1#0#Eu gosto de jogar lolzinho.#300#250#40#1
             // 2#1#Eu gosto de jogar lolzinho.#300#250#40#1#humor-saude-tbt#200
         } catch (err) {
-            console.log(err);
-            enterToContinue();
+            
         }
     }
 
@@ -321,7 +316,13 @@ class App {
         // Condição impossível, mas necessária para evitar erros.
         if (perfil != null) {
             prepararTelaPostagem(perfil);
-            let texto: string = question("Texto: ");
+            let texto: string = question("Texto: ").replace("#", "_");
+
+            // Perguntar se é postagem simples ou avançada.
+            var rsync = require('readline-sync');
+            // https://www.npmjs.com/package/readline-sync         
+            
+
             var _postagem = new Postagem(id, texto, curtidas, descurtidas, data, perfil);
             this._redeSocial.incluirPostagem(_postagem);
             this._qntPostagensCriadas++;1
@@ -443,6 +444,20 @@ class App {
     }
 
     executar(): void {
+        // Checar tamanho da janela
+        if (obterLarguraTerminal() < 64) {
+            mainBackground();
+            saltarLinhas(Math.floor(obterAlturaTerminal()/2 - 3));
+            exibirTextoPostagem("Por favor, ajuste o tamanho da janela do terminal antes de executar a aplicação.");
+            enterToContinue();
+            return
+        }
+
+        // Tela de início
+        this.wakeUpScreen();
+        enterToContinue();
+
+        // Menu:
         let opcao: number = -1;
         while (opcao != 0) {
             limparTerminal();

@@ -1,0 +1,16 @@
+1#0#Eu gosto de jogar lolzinho.#300#250#40#1##
+2#1#Eu gosto de jogar dotinha.#300#250#40#1#humor#300
+3#1#Eu sou louco e maluco beleza#0#0#40#2#paz#NaN
+0#0#Eu sou fiel.#0#0#40#3##
+5#0#Eu sou fiel ate demais.#0#0#40#1##
+6#0#Estou assistindo aula do Professor Ricardo, de Sistemas Operacionais.#0#0#40#1##
+7#0#Sou aluno do segundo periodo do curso Tecnologo em Analise e Desenvolvimento de Sistemas.#0#0#40#2##
+8#0#Estou ouricado por essa atividade mano caraca vei.#0#0#40#4##
+9#0#TOUDOIDO MANOOOO#0#0#40#4##
+10#0#Cansei de tudo oh#0#0#40#1##
+11#0#Testando testando.#0#0#40#1##
+12#0#Lalalallala#0#0#40#2##
+13#0#Fale.#0#0#40#4##
+14#0#Lalala#0#0#40#4##
+15#0#aaaa#0#0#40#1##
+16#0#aaa#0#0#40#3##

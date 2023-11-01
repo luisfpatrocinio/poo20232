@@ -6,7 +6,8 @@ OK - Listar perfis,
 [] - Editar perfil
 
 Gerenciar postagens:
-- Criar postagem (simples e avançada) --- lembrar de usar data atual do sistema
+OK - Criar postagem simples
+- Criar postagem avançada
 - Listar postagens,
 - Consultar postagem,
 - Excluir postagem,
@@ -50,3 +51,7 @@ OK Leitura e gravação de arquivos (ao iniciar e encerrar o programa)
 - A hora da postagem deve ser no nosso timezone.
 
 import { keyIn } from "readline-sync";
+
+Impedir que crie usuarios com mesmos atributos
+Impedir que digite-se hashtag
+// http://patorjk.com/software/taag/

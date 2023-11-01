@@ -18,7 +18,7 @@ export function exibirTexto(texto: string): void {
 }
 
 export function exibirTextoPostagem(texto: string): void {
-    let _tamanho = obterLarguraTerminal() - 3;
+    let _tamanho = obterLarguraTerminal() - 4;
     for (let i = 0; i < texto.length; i += _tamanho) {
         var _pedaco = texto.substring(i, i + _tamanho);
         readline.cursorTo(process.stdout, 2);
