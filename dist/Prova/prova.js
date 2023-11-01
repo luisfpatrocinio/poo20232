@@ -24,22 +24,25 @@ class App {
             ["Editar Perfis", this.editarPerfis, () => this._qntPerfisCriados > 0],
         ];
         this._redeSocial = new redeSocial_1.RedeSocial;
+        // Inicializar App
         // Ler arquivo:
         try {
-            const file = (0, fs_1.readFileSync)('savePerfis.txt', 'utf-8');
             this.carregarPerfis();
+            this.carregarPostagens();
+            // Tela de início
             (0, viewUtils_1.mainBackground)();
-            for (let i = 0; i < Math.floor((0, viewUtils_1.obterAlturaTerminal)() / 2); i++) {
+            for (let i = 0; i < Math.floor((0, viewUtils_1.obterAlturaTerminal)() / 2) - 2; i++) {
                 console.log();
             }
             (0, ioUtils_1.exibirTextoCentralizado)(`CARREGANDO PATROBLOG`);
             (0, ioUtils_1.exibirTextoCentralizado)(`${this._qntPerfisCriados} perfis carregados`);
+            (0, ioUtils_1.exibirTextoCentralizado)(`${this._qntPostagensCriadas} postagens carregadas`);
             (0, ioUtils_1.enterToContinue)();
         }
         catch (erro) {
             // Iniciando pela primeira vez.
-            (0, viewUtils_1.exibirTextoCentroCentro)("Iniciando pela primeira vez.");
             (0, viewUtils_1.mainBackground)();
+            (0, viewUtils_1.exibirTextoCentroCentro)("Iniciando pela primeira vez.");
             (0, fs_1.writeFileSync)("savePerfis.txt", "oi");
         }
     }
@@ -59,7 +62,7 @@ class App {
         let perfis = new Array;
         let perfisString = new Array;
         try {
-            // Ler arquivo de montadoras "montadoras.txt"
+            // Ler arquivo de perfis "savePerfis.txt"
             let _conteudo = (0, fs_1.readFileSync)("savePerfis.txt", "utf-8").split("\n");
             // Percorrer conteudo e adicionar aos perfis
             for (let i = 0; i < _conteudo.length; i++) {
@@ -87,6 +90,81 @@ class App {
             console.log("###");
             console.log("ERRO AO CARREGAR PERFIS#");
             console.log("###");
+        }
+    }
+    salvarPostagens() {
+        let saveString = "";
+        var _postagens = this._redeSocial.obterPostagens();
+        for (let i = 0; i < _postagens.length; i++) {
+            var p = _postagens[i];
+            var _isAdvanced = p instanceof postagem_1.PostagemAvancada;
+            var _adv = String(Number(_isAdvanced));
+            // Tratamentos em caso de postagem avançada:
+            var _hashtagsString = "";
+            var _views = "";
+            if (p instanceof postagem_1.PostagemAvancada) {
+                // @TODO: Adicionar um get para obter as hashtags
+                for (let h = 0; h < p.hashtags.length; h++) {
+                    _hashtagsString += p.hashtags[h];
+                    if (h + 1 < p.hashtags.length) {
+                        _hashtagsString += "#";
+                    }
+                }
+                _views = String(p.visualizacoesRestantes);
+            }
+            saveString += `${p.id}#${_adv}#${p.texto}#${p.curtidas}#${p.descurtidas}#40#${p.perfil.id}#${_hashtagsString}#${_views}\n}`;
+        }
+        const file = (0, fs_1.writeFileSync)("savePostagens.txt", saveString);
+    }
+    carregarPostagens() {
+        let postagens = new Array;
+        let postagensString = new Array;
+        try {
+            // Ler arquivo de postagens
+            let _conteudo = (0, fs_1.readFileSync)("savePostagens.txt", "utf-8").split("\n");
+            // Percorrer conteudo e adicionar as postagens
+            _conteudo.forEach((post) => {
+                if (post != "")
+                    postagensString.push(post);
+            });
+            // Para cada postagem em string:
+            postagensString.forEach((post) => {
+                if (post != "") { // @TODO: Checar se essa checagem é necessária.
+                    // Separar elementos:
+                    let _fichaPostagem = post.split("#");
+                    // Conferir se é uma postagem avançada:
+                    let _advanced = (_fichaPostagem[1] === "1") ? true : false;
+                    // Criar um registro com id e nome:
+                    let _cadastroPostagem;
+                    let _perfilID = Number(_fichaPostagem[6]);
+                    let _perfil = this._redeSocial.consultarPerfil(_perfilID, undefined, undefined);
+                    let _curtidas = Number(_fichaPostagem[3]);
+                    let _descurtidas = Number(_fichaPostagem[4]);
+                    let _data = new Date(); // @TODO: Pegar a data correta a partir do arquivo.
+                    if (_perfil != null) {
+                        if (_advanced) {
+                            var _hashtags = _fichaPostagem[7].split("-");
+                            var _visualizacoes = Number(_fichaPostagem[8]);
+                            _cadastroPostagem = new postagem_1.PostagemAvancada(Number(_fichaPostagem[0]), _fichaPostagem[2], _curtidas, _descurtidas, _data, _perfil, _hashtags, _visualizacoes);
+                        }
+                        else {
+                            _cadastroPostagem = new postagem_1.Postagem(Number(_fichaPostagem[0]), _fichaPostagem[2], _curtidas, _descurtidas, _data, _perfil);
+                        }
+                        // Adicionar ao array de postagens.
+                        postagens.push(_cadastroPostagem);
+                        this._qntPostagensCriadas++;
+                    }
+                }
+            });
+            // Postagens carregadas
+            this._redeSocial.atribuirPostagensCarregadas(postagens);
+            // BACKUP:
+            // 1#0#Eu gosto de jogar lolzinho.#300#250#40#1
+            // 2#1#Eu gosto de jogar lolzinho.#300#250#40#1#humor-saude-tbt#200
+        }
+        catch (err) {
+            console.log(err);
+            (0, ioUtils_1.enterToContinue)();
         }
     }
     // Solicita uma opção ao usuário.
@@ -186,12 +264,13 @@ class App {
             1;
             (0, viewUtils_1.exibirTextoNoCentro)(`Postagem No ${id} criada com sucesso.`);
         }
+        this.salvarPostagens();
     }
     listarPerfisCurto() {
         let perfis = this._redeSocial.obterPerfis();
         for (let i = 0; i < perfis.length; i++) {
             var _perfil = perfis[i];
-            (0, ioUtils_1.exibirTexto)(`Perfil ${_perfil.id} - ${_perfil.nome}`);
+            (0, ioUtils_1.exibirTexto)(`${_perfil.id} - ${_perfil.nome}`);
         }
         if (perfis.length == 0) {
             (0, ioUtils_1.exibirTexto)("Nenhum perfil encontrado.");
@@ -233,7 +312,6 @@ class App {
             }
             (0, viewUtils_1.exibirTextoNoCentro)(`Página ${_pagina + 1}/${_totalPaginas}`);
             _pagina++;
-            (0, ioUtils_1.enterToContinue)();
         }
     }
     editarPerfis() {

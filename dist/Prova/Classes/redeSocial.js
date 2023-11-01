@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RedeSocial = void 0;
 const postagem_1 = require("./postagem");
 const perfisRep_1 = require("./perfisRep");
-const postagensRep_1 = require("../postagensRep");
+const postagensRep_1 = require("./postagensRep");
 class RedeSocial {
     constructor() {
         this._repPostagens = new postagensRep_1.RepositorioDePostagens;
@@ -99,6 +99,9 @@ class RedeSocial {
     }
     atribuirPerfisCarregados(novosPerfis) {
         this._repPerfis.perfis = novosPerfis;
+    }
+    atribuirPostagensCarregadas(novasPostagens) {
+        this._repPostagens.postagens = novasPostagens;
     }
 }
 exports.RedeSocial = RedeSocial;

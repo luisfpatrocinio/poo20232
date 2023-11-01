@@ -89,4 +89,8 @@ export class PostagemAvancada extends Postagem {
     decrementarVisualizacoes(): void {
         this._visualizacoesRestantes--;
     }
+
+    get hashtags() {
+        return this._hashtags;
+    }
 }

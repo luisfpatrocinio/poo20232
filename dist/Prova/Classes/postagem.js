@@ -67,5 +67,8 @@ class PostagemAvancada extends Postagem {
     decrementarVisualizacoes() {
         this._visualizacoesRestantes--;
     }
+    get hashtags() {
+        return this._hashtags;
+    }
 }
 exports.PostagemAvancada = PostagemAvancada;

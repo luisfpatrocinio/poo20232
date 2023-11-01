@@ -65,7 +65,11 @@ function cabecalhoPrincipal(texto) {
 exports.cabecalhoPrincipal = cabecalhoPrincipal;
 function prepararTelaPostagem(perfil) {
     cabecalhoPrincipal("Criar Postagem");
-    exibirTextoEsquerda(`Perfil: ${perfil.nome} (${perfil.email})`);
+    var _header = `Perfil: ${perfil.nome} (${perfil.email})`;
+    if (_header.length > obterLarguraTerminal() - 4) {
+        _header = `Perfil: ${perfil.nome}`;
+    }
+    exibirTextoEsquerda(_header);
     readline.cursorTo(process.stdout, 2);
 }
 exports.prepararTelaPostagem = prepararTelaPostagem;

@@ -1,7 +1,7 @@
 import { Perfil } from "./perfil";
 import { Postagem, PostagemAvancada } from "./postagem";
 import { RepositorioDePerfis } from "./perfisRep";
-import { RepositorioDePostagens } from "../postagensRep";
+import { RepositorioDePostagens } from "./postagensRep";
 import { exibirTexto } from "../Utils/ioUtils";
 
 export class RedeSocial {
@@ -116,5 +116,9 @@ export class RedeSocial {
 
     atribuirPerfisCarregados(novosPerfis: Array<Perfil>): void {
         this._repPerfis.perfis = novosPerfis;
+    }
+
+    atribuirPostagensCarregadas(novasPostagens: Array<Postagem | PostagemAvancada>): void {
+        this._repPostagens.postagens = novasPostagens;
     }
 }

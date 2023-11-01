@@ -35,22 +35,25 @@ class App {
     constructor() {
         this._redeSocial = new RedeSocial;
 
+        // Inicializar App
         // Ler arquivo:
         try {
-            const file = readFileSync('savePerfis.txt', 'utf-8');
             this.carregarPerfis();
+            this.carregarPostagens();
 
+            // Tela de início
             mainBackground();
-            for (let i = 0; i < Math.floor(obterAlturaTerminal()/2); i++) {
+            for (let i = 0; i < Math.floor(obterAlturaTerminal()/2) - 2; i++) {
                 console.log();
             }
             exibirTextoCentralizado(`CARREGANDO PATROBLOG`);
             exibirTextoCentralizado(`${this._qntPerfisCriados} perfis carregados`);
+            exibirTextoCentralizado(`${this._qntPostagensCriadas} postagens carregadas`);
             enterToContinue();
         } catch (erro) {
             // Iniciando pela primeira vez.
-            exibirTextoCentroCentro("Iniciando pela primeira vez.");
             mainBackground();
+            exibirTextoCentroCentro("Iniciando pela primeira vez.");
             writeFileSync("savePerfis.txt", "oi");
         }
     }
@@ -72,7 +75,7 @@ class App {
         let perfis = new Array<Perfil>;
         let perfisString = new Array<String>;
         try {
-            // Ler arquivo de montadoras "montadoras.txt"
+            // Ler arquivo de perfis "savePerfis.txt"
             let _conteudo = readFileSync("savePerfis.txt", "utf-8").split("\n");
 
             // Percorrer conteudo e adicionar aos perfis
@@ -105,6 +108,94 @@ class App {
             console.log("###"); 
         }
     }
+
+    salvarPostagens() {
+        let saveString = "";
+        var _postagens = this._redeSocial.obterPostagens();
+        for (let i = 0; i < _postagens.length; i++) {
+            var p: Postagem | PostagemAvancada = _postagens[i];
+            var _isAdvanced = p instanceof PostagemAvancada;
+            var _adv = String(Number(_isAdvanced));
+
+            // Tratamentos em caso de postagem avançada:
+            var _hashtagsString = "";
+            var _views = "";
+            if (p instanceof PostagemAvancada) {
+                // @TODO: Adicionar um get para obter as hashtags
+                for (let h = 0; h < p.hashtags.length; h++) {
+                    _hashtagsString += p.hashtags[h];
+                    if (h + 1 < p.hashtags.length) {
+                        _hashtagsString += "#";
+                    }
+                }
+                _views = String(p.visualizacoesRestantes);
+            }
+            
+            saveString += `${p.id}#${_adv}#${p.texto}#${p.curtidas}#${p.descurtidas}#40#${p.perfil.id}#${_hashtagsString}#${_views}\n}`
+        }
+
+        const file = writeFileSync("savePostagens.txt", saveString)
+    }
+
+    carregarPostagens() {
+        let postagens = new Array<Postagem | PostagemAvancada>;
+        let postagensString = new Array<String>;
+        try {
+            // Ler arquivo de postagens
+            let _conteudo = readFileSync("savePostagens.txt", "utf-8").split("\n");
+
+            // Percorrer conteudo e adicionar as postagens
+            _conteudo.forEach((post) => {
+                if (post != "") postagensString.push(post); 
+            })
+
+            // Para cada postagem em string:
+            postagensString.forEach((post) => {
+                if (post != "") {   // @TODO: Checar se essa checagem é necessária.
+                    // Separar elementos:
+                    let _fichaPostagem: Array<string> = post.split("#");
+
+                    // Conferir se é uma postagem avançada:
+                    let _advanced = (_fichaPostagem[1] === "1") ? true : false;
+
+                    // Criar um registro com id e nome:
+                    let _cadastroPostagem: Postagem | PostagemAvancada;
+                    
+                    let _perfilID = Number(_fichaPostagem[6]);
+                    let _perfil: Perfil | null = this._redeSocial.consultarPerfil(_perfilID, undefined, undefined);
+            
+                    let _curtidas = Number(_fichaPostagem[3]);
+                    let _descurtidas = Number(_fichaPostagem[4]);
+                    let _data = new Date(); // @TODO: Pegar a data correta a partir do arquivo.
+                    
+                    if (_perfil != null) {
+                        if (_advanced) {
+                            var _hashtags = _fichaPostagem[7].split("-");
+                            var _visualizacoes = Number(_fichaPostagem[8]);
+                            _cadastroPostagem = new PostagemAvancada(Number(_fichaPostagem[0]), _fichaPostagem[2], _curtidas, _descurtidas, _data, _perfil, _hashtags, _visualizacoes);
+                        } else {
+                            _cadastroPostagem = new Postagem(Number(_fichaPostagem[0]), _fichaPostagem[2], _curtidas, _descurtidas, _data, _perfil);
+                        }
+
+                        // Adicionar ao array de postagens.
+                        postagens.push(_cadastroPostagem);
+                        this._qntPostagensCriadas++;
+                    }
+                }
+            });
+            
+            // Postagens carregadas
+            this._redeSocial.atribuirPostagensCarregadas(postagens);
+
+            // BACKUP:
+            // 1#0#Eu gosto de jogar lolzinho.#300#250#40#1
+            // 2#1#Eu gosto de jogar lolzinho.#300#250#40#1#humor-saude-tbt#200
+        } catch (err) {
+            console.log(err);
+            enterToContinue();
+        }
+    }
+
 
     // Solicita uma opção ao usuário.
     obterOpcao(): number {
@@ -219,13 +310,14 @@ class App {
             exibirTextoNoCentro(`Postagem No ${id} criada com sucesso.`)
         }
 
+        this.salvarPostagens();
     }
 
     listarPerfisCurto(): void {
         let perfis = this._redeSocial.obterPerfis();
         for (let i = 0; i < perfis.length; i++) {
             var _perfil: Perfil = perfis[i];
-            exibirTexto(`Perfil ${_perfil.id} - ${_perfil.nome}`);
+            exibirTexto(`${_perfil.id} - ${_perfil.nome}`);
         }
 
         if (perfis.length == 0) {
@@ -277,8 +369,6 @@ class App {
             exibirTextoNoCentro(`Página ${_pagina + 1}/${_totalPaginas}`)
             
             _pagina++;
-
-            enterToContinue();
         }
     }
 

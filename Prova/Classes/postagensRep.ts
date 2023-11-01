@@ -1,5 +1,5 @@
-import { Postagem, PostagemAvancada } from "./Classes/postagem";
-import { Perfil } from "./Classes/perfil";
+import { Postagem, PostagemAvancada } from "./postagem";
+import { Perfil } from "./perfil";
 
 export class RepositorioDePostagens {
     private _postagens = new Array<Postagem>;
@@ -71,8 +71,11 @@ export class RepositorioDePostagens {
         return postagensFiltradas
     }
 
-    // Criei para ser usada na classe RedeSocial
-    obterQuantidadeDePostagens(): number {
-        return this._postagens.length;
+    get postagens(): Array<Postagem> {
+        return this.postagens;
+    }
+
+    set postagens(novasPostagens: Array<Postagem>) {
+        this._postagens = novasPostagens;
     }
 }

@@ -70,9 +70,11 @@ class RepositorioDePostagens {
         // Retornar array de postagens que se adequem aos filtros especificados, ainda que seja um array vazio.
         return postagensFiltradas;
     }
-    // Criei para ser usada na classe RedeSocial
-    obterQuantidadeDePostagens() {
-        return this._postagens.length;
+    get postagens() {
+        return this.postagens;
+    }
+    set postagens(novasPostagens) {
+        this._postagens = novasPostagens;
     }
 }
 exports.RepositorioDePostagens = RepositorioDePostagens;
