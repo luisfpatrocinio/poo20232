@@ -21,12 +21,20 @@ class App {
             ["Criar Postagem", this.criarPostagem, () => this._qntPerfisCriados > 0],
             ["Listar Perfis", this.listarPerfis, () => this._qntPerfisCriados > 0],
             ["Ver Feed", this.verFeed, () => this._qntPostagensCriadas > 0],
-            ["Editar Perfis", this.editarPerfis, () => this._qntPerfisCriados > 0]
+            ["Editar Perfis", this.editarPerfis, () => this._qntPerfisCriados > 0],
         ];
         this._redeSocial = new redeSocial_1.RedeSocial;
         // Ler arquivo:
         try {
             const file = (0, fs_1.readFileSync)('savePerfis.txt', 'utf-8');
+            this.carregarPerfis();
+            (0, viewUtils_1.mainBackground)();
+            for (let i = 0; i < Math.floor((0, viewUtils_1.obterAlturaTerminal)() / 2); i++) {
+                console.log();
+            }
+            (0, ioUtils_1.exibirTextoCentralizado)(`CARREGANDO PATROBLOG`);
+            (0, ioUtils_1.exibirTextoCentralizado)(`${this._qntPerfisCriados} perfis carregados`);
+            (0, ioUtils_1.enterToContinue)();
         }
         catch (erro) {
             // Iniciando pela primeira vez.
@@ -34,7 +42,52 @@ class App {
             (0, viewUtils_1.mainBackground)();
             (0, fs_1.writeFileSync)("savePerfis.txt", "oi");
         }
-        console.log((0, readline_sync_1.question)('aaa'));
+    }
+    salvarPerfis() {
+        let saveString = "";
+        var _perfis = this._redeSocial.obterPerfis();
+        for (let i = 0; i < _perfis.length; i++) {
+            var _perfil = _perfis[i];
+            if (_perfil != null) {
+                saveString += `${_perfil.id}#${_perfil.nome}#${_perfil.email}\n`;
+            }
+        }
+        const file = (0, fs_1.writeFileSync)("savePerfis.txt", saveString);
+    }
+    carregarPerfis() {
+        // Ler Arquivos
+        let perfis = new Array;
+        let perfisString = new Array;
+        try {
+            // Ler arquivo de montadoras "montadoras.txt"
+            let _conteudo = (0, fs_1.readFileSync)("savePerfis.txt", "utf-8").split("\n");
+            // Percorrer conteudo e adicionar aos perfis
+            for (let i = 0; i < _conteudo.length; i++) {
+                if (_conteudo[i] != "") {
+                    perfisString.push(_conteudo[i]);
+                }
+            }
+            // Para cada linha do arquivo
+            for (let i = 0; i < perfisString.length; i++) {
+                if (perfisString[i] != "") {
+                    // Separar o id e o nome
+                    let _perfil = perfisString[i].split("#");
+                    // Criar um registro com id e nome
+                    let _cadastroPerfil = new perfil_1.Perfil(Number(_perfil[0]), _perfil[1], _perfil[2]);
+                    // Adicionar o objeto no vetor de perfis
+                    perfis[i] = _cadastroPerfil;
+                }
+            }
+            // @TODO: Deve-se aqui atribuir as postagens a cada perfil, talvez?
+            this._redeSocial.atribuirPerfisCarregados(perfis);
+            this._qntPerfisCriados = perfis.length;
+            this.salvarPerfis();
+        }
+        catch (err) {
+            console.log("###");
+            console.log("ERRO AO CARREGAR PERFIS#");
+            console.log("###");
+        }
     }
     // Solicita uma opção ao usuário.
     obterOpcao() {
@@ -87,6 +140,7 @@ class App {
         this._redeSocial.incluirPerfil(perfil);
         (0, viewUtils_1.exibirTextoNoCentro)(`Perfil ${nome} criado com sucesso.`);
         (0, viewUtils_1.exibirTextoNoCentro)(`ID: ${id}`);
+        this.salvarPerfis();
     }
     criarPostagem() {
         (0, viewUtils_1.cabecalhoPrincipal)("Criar Postagem");
@@ -206,14 +260,16 @@ class App {
             }
         }
         // Encontramos o perfil:
-        if (perfilParaEditar != null) {
-            console.log(`Vamos então editar o perfil: ${perfilParaEditar.nome}`);
-        }
-        else {
+        if (perfilParaEditar == null) {
             // Perfil não encontrado.
-            console.log(`Não encontramos um perfil com esse atributo.`);
+            (0, ioUtils_1.exibirTexto)(`Não encontramos um perfil com esse atributo.`);
+            return;
         }
-        (0, ioUtils_1.enterToContinue)();
+        (0, ioUtils_1.exibirTexto)(`Vamos então editar o perfil: ${perfilParaEditar.nome}`);
+        // @TODO: Completar
+        // 1 - Encontrar indice do perfil no array this._redeSocial.obterPerfis() --- lembrando que os perfis ficam em Repositorio de Perfis
+        // 2 - Pedir novo nome e email
+        // 3 - Sobreescrever array do repositorio de perfis.
     }
     executar() {
         let opcao = -1;

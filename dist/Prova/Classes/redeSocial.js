@@ -97,5 +97,8 @@ class RedeSocial {
         // Retorna todas as postagens.
         return this._repPostagens.consultar();
     }
+    atribuirPerfisCarregados(novosPerfis) {
+        this._repPerfis.perfis = novosPerfis;
+    }
 }
 exports.RedeSocial = RedeSocial;

@@ -20,8 +20,8 @@ function exibirTexto(texto) {
 }
 exports.exibirTexto = exibirTexto;
 function exibirTextoCentralizado(texto) {
-    var larguraTerminal = (0, viewUtils_1.obterLarguraTerminal)();
-    var espacos = (larguraTerminal - texto.length) / 2;
+    var larguraTerminal = (0, viewUtils_1.obterLarguraTerminal)() - 2;
+    var espacos = Math.floor((larguraTerminal - texto.length) / 2);
     exibirTexto(" ".repeat(espacos) + texto);
 }
 exports.exibirTextoCentralizado = exibirTextoCentralizado;

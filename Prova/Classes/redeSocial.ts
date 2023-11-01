@@ -113,4 +113,8 @@ export class RedeSocial {
         // Retorna todas as postagens.
         return this._repPostagens.consultar();
     }
+
+    atribuirPerfisCarregados(novosPerfis: Array<Perfil>): void {
+        this._repPerfis.perfis = novosPerfis;
+    }
 }

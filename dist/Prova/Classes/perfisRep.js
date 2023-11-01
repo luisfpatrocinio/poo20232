@@ -32,5 +32,8 @@ class RepositorioDePerfis {
     get perfis() {
         return this._perfis;
     }
+    set perfis(novosPerfis) {
+        this._perfis = novosPerfis;
+    }
 }
 exports.RepositorioDePerfis = RepositorioDePerfis;

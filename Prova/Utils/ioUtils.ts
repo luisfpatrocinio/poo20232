@@ -18,8 +18,8 @@ export function exibirTexto(texto: string): void {
 }
 
 export function exibirTextoCentralizado(texto: string): void {
-    var larguraTerminal: number = obterLarguraTerminal();
-    var espacos: number = (larguraTerminal - texto.length) / 2;
+    var larguraTerminal: number = obterLarguraTerminal() - 2;
+    var espacos: number = Math.floor((larguraTerminal - texto.length) / 2);
     exibirTexto(" ".repeat(espacos) + texto);
 }
 

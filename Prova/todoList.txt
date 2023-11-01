@@ -3,7 +3,7 @@ OK - Criar perfil,
 OK - Listar perfis,
 - Consultar perfil,
 - Excluir perfil,
-- Editar perfil
+[] - Editar perfil
 
 Gerenciar postagens:
 - Criar postagem (simples e avançada) --- lembrar de usar data atual do sistema

@@ -32,4 +32,8 @@ export class RepositorioDePerfis {
     get perfis(): Array<Perfil> {
         return this._perfis;
     }
+
+    set perfis(novosPerfis: Array<Perfil>) {
+        this._perfis = novosPerfis;
+    }
 }
