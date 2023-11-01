@@ -12,9 +12,9 @@ const viewUtils_1 = require("./Utils/viewUtils");
 const fs_1 = require("fs");
 class App {
     constructor() {
+        // Atributos necessários para gerenciar os IDs dos perfis e postagens.
         this._qntPerfisCriados = 0;
         this._qntPostagensCriadas = 0;
-        // @TODO: Essa quantidade deve ser salva em arquivo, para que não seja perdida ao reiniciar o programa.
         this.menuOpcoes = [
             // Nome da opção, função a ser executada, condição para habilitar a opção
             ["Criar Perfil", this.criarPerfil, () => true],
@@ -27,16 +27,11 @@ class App {
         // Inicializar App
         // Ler arquivo:
         try {
+            // Carregar Arquivos caso hajam.
             this.carregarPerfis();
             this.carregarPostagens();
             // Tela de início
-            (0, viewUtils_1.mainBackground)();
-            for (let i = 0; i < Math.floor((0, viewUtils_1.obterAlturaTerminal)() / 2) - 2; i++) {
-                console.log();
-            }
-            (0, ioUtils_1.exibirTextoCentralizado)(`CARREGANDO PATROBLOG`);
-            (0, ioUtils_1.exibirTextoCentralizado)(`${this._qntPerfisCriados} perfis carregados`);
-            (0, ioUtils_1.exibirTextoCentralizado)(`${this._qntPostagensCriadas} postagens carregadas`);
+            this.wakeUpScreen();
             (0, ioUtils_1.enterToContinue)();
         }
         catch (erro) {
@@ -45,6 +40,13 @@ class App {
             (0, viewUtils_1.exibirTextoCentroCentro)("Iniciando pela primeira vez.");
             (0, fs_1.writeFileSync)("savePerfis.txt", "oi");
         }
+    }
+    wakeUpScreen() {
+        (0, viewUtils_1.mainBackground)();
+        (0, viewUtils_1.saltarLinhas)(Math.floor((0, viewUtils_1.obterAlturaTerminal)() / 2) - 3);
+        (0, viewUtils_1.showBlogLogo)();
+        (0, ioUtils_1.exibirTextoCentralizado)(`${this._qntPerfisCriados} perfis carregados`);
+        (0, ioUtils_1.exibirTextoCentralizado)(`${this._qntPostagensCriadas} postagens carregadas`);
     }
     salvarPerfis() {
         let saveString = "";
@@ -169,8 +171,9 @@ class App {
     }
     // Solicita uma opção ao usuário.
     obterOpcao() {
+        var opcoes = this.obterMenuParaExibir();
         let opcao = (0, ioUtils_1.obterNumeroInteiro)("Opcao: ");
-        while (opcao < 0 || opcao > this.menuOpcoes.length) {
+        while (opcao < 0 || opcao > opcoes.length) {
             (0, ioUtils_1.exibirTexto)("Opcao inválida. Tente novamente.");
             opcao = this.obterOpcao();
         }
@@ -199,11 +202,20 @@ class App {
         (0, viewUtils_1.exibirTextoEsquerda)("0 - Sair");
     }
     executarOpcao(opcao) {
-        if (opcao == 0)
+        if (opcao == 0) {
+            // Opcção de sair.
+            this.despedida();
             return;
+        }
         const opcoesValidas = this.obterMenuParaExibir();
         let funcao = opcoesValidas[opcao - 1][1];
         funcao.call(this);
+    }
+    despedida() {
+        (0, viewUtils_1.limparTerminal)();
+        (0, viewUtils_1.mainBackground)();
+        (0, viewUtils_1.saltarLinhas)(Math.floor((0, viewUtils_1.obterAlturaTerminal)() / 2) - 1);
+        (0, ioUtils_1.exibirTextoCentralizado)("Obrigado e volte sempre!");
     }
     criarPerfil() {
         (0, viewUtils_1.cabecalhoPrincipal)("Criar Perfil");
@@ -312,6 +324,8 @@ class App {
             }
             (0, viewUtils_1.exibirTextoNoCentro)(`Página ${_pagina + 1}/${_totalPaginas}`);
             _pagina++;
+            if (_pagina < _totalPaginas)
+                (0, ioUtils_1.enterToContinue)();
         }
     }
     editarPerfis() {
@@ -358,6 +372,7 @@ class App {
             this.executarOpcao(opcao);
             (0, ioUtils_1.enterToContinue)();
         }
+        (0, viewUtils_1.limparTerminal)();
         (0, ioUtils_1.exibirTextoCentralizado)("=== FIM ===");
     }
 }

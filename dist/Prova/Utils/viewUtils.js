@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.feedView = exports.prepararTelaPostagem = exports.cabecalhoPrincipal = exports.showBlogLogo = exports.exibirTextoCentroCentro = exports.mainBackground = exports.exibirTextoEsquerda = exports.exibirTextoNoCentro = exports.limparTerminal = exports.obterAlturaTerminal = exports.obterLarguraTerminal = void 0;
+exports.saltarLinhas = exports.feedView = exports.prepararTelaPostagem = exports.cabecalhoPrincipal = exports.showBlogLogo = exports.exibirTextoCentroCentro = exports.mainBackground = exports.exibirTextoEsquerda = exports.exibirTextoNoCentro = exports.limparTerminal = exports.obterAlturaTerminal = exports.obterLarguraTerminal = void 0;
 var readline = require('readline');
 function obterLarguraTerminal() {
     return process.stdout.columns;
@@ -77,6 +77,12 @@ function feedView() {
     cabecalhoPrincipal("PatroFeed");
 }
 exports.feedView = feedView;
+function saltarLinhas(quantidade) {
+    for (let i = 0; i < quantidade; i++) {
+        console.log();
+    }
+}
+exports.saltarLinhas = saltarLinhas;
 // @TODO: Rodapé com informações:
 // Quantidade de perfis criados
 // Quantidade de postagens criadas

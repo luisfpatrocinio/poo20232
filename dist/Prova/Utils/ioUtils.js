@@ -36,3 +36,4 @@ function obterTexto(texto) {
     return (0, readline_sync_1.question)(texto);
 }
 exports.obterTexto = obterTexto;
+// Transformar funções em classes estáticas

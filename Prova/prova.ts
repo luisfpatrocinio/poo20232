@@ -1,12 +1,13 @@
 // Importar bibliotecas principais:
 import {question} from 'readline-sync';
+
 import {Perfil} from './Classes/perfil';
 import {Postagem, PostagemAvancada} from './Classes/postagem';
 import {RedeSocial} from './Classes/redeSocial';
 
 // Importar Utils
 import {obterNumeroInteiro, exibirTexto, exibirTextoCentralizado, obterTexto, enterToContinue} from './Utils/ioUtils';
-import { mainBackground, exibirTextoEsquerda, showBlogLogo, exibirTextoNoCentro, prepararTelaPostagem, limparTerminal, cabecalhoPrincipal, feedView, obterAlturaTerminal, exibirTextoCentroCentro } from './Utils/viewUtils';
+import { mainBackground, exibirTextoEsquerda, showBlogLogo, exibirTextoNoCentro, prepararTelaPostagem, limparTerminal, cabecalhoPrincipal, feedView, obterAlturaTerminal, exibirTextoCentroCentro, saltarLinhas, obterLarguraTerminal } from './Utils/viewUtils';
 
 // Leitura e Gravação de Arquivos
 import { readFileSync, writeFile, writeFileSync } from 'fs';
@@ -18,18 +19,18 @@ import { type } from 'os';
 
 class App {
     private _redeSocial: RedeSocial;
+
+    // Atributos necessários para gerenciar os IDs dos perfis e postagens.
     private _qntPerfisCriados: number = 0;
     private _qntPostagensCriadas: number = 0;
-    // @TODO: Essa quantidade deve ser salva em arquivo, para que não seja perdida ao reiniciar o programa.
+    
     private menuOpcoes: Array<[string, () => void, () => boolean]> = [
         // Nome da opção, função a ser executada, condição para habilitar a opção
-        ["Criar Perfil", this.criarPerfil, () => true],
-        ["Criar Postagem", this.criarPostagem, () => this._qntPerfisCriados > 0],
-        ["Listar Perfis", this.listarPerfis, () => this._qntPerfisCriados > 0],
-        ["Ver Feed", this.verFeed, () => this._qntPostagensCriadas > 0],
-        ["Editar Perfis", this.editarPerfis, () => this._qntPerfisCriados > 0],
-
-
+        ["Criar Perfil",    this.criarPerfil,   () => true],
+        ["Criar Postagem",  this.criarPostagem, () => this._qntPerfisCriados > 0],
+        ["Listar Perfis",   this.listarPerfis,  () => this._qntPerfisCriados > 0],
+        ["Ver Feed",        this.verFeed,       () => this._qntPostagensCriadas > 0],
+        ["Editar Perfis",   this.editarPerfis,  () => this._qntPerfisCriados > 0],
     ]
 
     constructor() {
@@ -38,17 +39,12 @@ class App {
         // Inicializar App
         // Ler arquivo:
         try {
+            // Carregar Arquivos caso hajam.
             this.carregarPerfis();
             this.carregarPostagens();
 
             // Tela de início
-            mainBackground();
-            for (let i = 0; i < Math.floor(obterAlturaTerminal()/2) - 2; i++) {
-                console.log();
-            }
-            exibirTextoCentralizado(`CARREGANDO PATROBLOG`);
-            exibirTextoCentralizado(`${this._qntPerfisCriados} perfis carregados`);
-            exibirTextoCentralizado(`${this._qntPostagensCriadas} postagens carregadas`);
+            this.wakeUpScreen();
             enterToContinue();
         } catch (erro) {
             // Iniciando pela primeira vez.
@@ -56,6 +52,14 @@ class App {
             exibirTextoCentroCentro("Iniciando pela primeira vez.");
             writeFileSync("savePerfis.txt", "oi");
         }
+    }
+
+    wakeUpScreen(): void {
+        mainBackground();
+        saltarLinhas(Math.floor(obterAlturaTerminal()/2) - 3);
+        showBlogLogo();
+        exibirTextoCentralizado(`${this._qntPerfisCriados} perfis carregados`);
+        exibirTextoCentralizado(`${this._qntPostagensCriadas} postagens carregadas`);
     }
 
     salvarPerfis(): void {
@@ -199,8 +203,10 @@ class App {
 
     // Solicita uma opção ao usuário.
     obterOpcao(): number {
+        var opcoes = this.obterMenuParaExibir();
+
         let opcao: number = obterNumeroInteiro("Opcao: ");
-        while (opcao < 0 || opcao > this.menuOpcoes.length) {
+        while (opcao < 0 || opcao > opcoes.length) {
             exibirTexto("Opcao inválida. Tente novamente.");
             opcao = this.obterOpcao();
         }
@@ -235,10 +241,22 @@ class App {
     }
 
     executarOpcao(opcao: number): void {
-        if (opcao == 0) return;
+        if (opcao == 0) {
+            // Opcção de sair.
+            this.despedida();
+            return;
+        }
+
         const opcoesValidas = this.obterMenuParaExibir();
         let funcao = opcoesValidas[opcao-1][1];
         funcao.call(this);
+    }
+
+    despedida(): void {
+        limparTerminal();
+        mainBackground();
+        saltarLinhas(Math.floor(obterAlturaTerminal()/2) - 1);
+        exibirTextoCentralizado("Obrigado e volte sempre!");
     }
 
     criarPerfil(): void {
@@ -369,6 +387,7 @@ class App {
             exibirTextoNoCentro(`Página ${_pagina + 1}/${_totalPaginas}`)
             
             _pagina++;
+            if (_pagina < _totalPaginas) enterToContinue();
         }
     }
 
@@ -422,7 +441,8 @@ class App {
             this.executarOpcao(opcao);
             enterToContinue();
         }
-        exibirTextoCentralizado("=== FIM ===")
+        limparTerminal();
+        exibirTextoCentralizado("=== FIM ===");
     }
 }
 

@@ -77,6 +77,12 @@ export function feedView() : void {
     cabecalhoPrincipal("PatroFeed");
 }
 
+export function saltarLinhas(quantidade: number): void {
+    for (let i = 0; i < quantidade; i++) {
+        console.log();
+    }
+}
+
 // @TODO: Rodapé com informações:
 // Quantidade de perfis criados
 // Quantidade de postagens criadas

@@ -33,3 +33,5 @@ export function obterTexto(texto: string): string {
     readline.cursorTo(process.stdout, 2);
     return question(texto)
 }
+
+// Transformar funções em classes estáticas
