@@ -1,6 +1,6 @@
 Gerenciar Perfis:
-- Criar perfil,
-- Listar perfis,
+OK - Criar perfil,
+OK - Listar perfis,
 - Consultar perfil,
 - Excluir perfil,
 - Editar perfil
@@ -45,3 +45,6 @@ Ver Feed:
 - Tela de encerramento animada
 - Menu interativo (com setas e teclas de atalho)
 - Ver feed por data de postagem     
+
+# Fixes:
+- A hora da postagem deve ser no nosso timezone.

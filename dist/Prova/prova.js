@@ -8,6 +8,8 @@ const redeSocial_1 = require("./Classes/redeSocial");
 // Importar Utils
 const ioUtils_1 = require("./Utils/ioUtils");
 const viewUtils_1 = require("./Utils/viewUtils");
+// Leitura e Gravação de Arquivos
+const fs_1 = require("fs");
 class App {
     constructor() {
         this._qntPerfisCriados = 0;
@@ -22,7 +24,19 @@ class App {
             ["Editar Perfis", this.editarPerfis, () => this._qntPerfisCriados > 0]
         ];
         this._redeSocial = new redeSocial_1.RedeSocial;
+        // Ler arquivo:
+        try {
+            const file = (0, fs_1.readFileSync)('savePerfis.txt', 'utf-8');
+        }
+        catch (erro) {
+            // Iniciando pela primeira vez.
+            (0, viewUtils_1.exibirTextoCentroCentro)("Iniciando pela primeira vez.");
+            (0, viewUtils_1.mainBackground)();
+            (0, fs_1.writeFileSync)("savePerfis.txt", "oi");
+        }
+        console.log((0, readline_sync_1.question)('aaa'));
     }
+    // Solicita uma opção ao usuário.
     obterOpcao() {
         let opcao = (0, ioUtils_1.obterNumeroInteiro)("Opcao: ");
         while (opcao < 0 || opcao > this.menuOpcoes.length) {
@@ -56,7 +70,8 @@ class App {
     executarOpcao(opcao) {
         if (opcao == 0)
             return;
-        let funcao = this.menuOpcoes[opcao - 1][1];
+        const opcoesValidas = this.obterMenuParaExibir();
+        let funcao = opcoesValidas[opcao - 1][1];
         funcao.call(this);
     }
     criarPerfil() {
@@ -168,6 +183,37 @@ class App {
         }
     }
     editarPerfis() {
+        (0, viewUtils_1.cabecalhoPrincipal)("Editar Perfis");
+        // Exibir de forma sintetizada os perfis disponíveis.
+        this.listarPerfisCurto();
+        // Inicializar variável que vai guardar o perfil.
+        let perfilParaEditar = null;
+        // Receber atributo desejado do usuário
+        (0, ioUtils_1.exibirTexto)("Qual perfil deseja editar? (ID/Nome/Email)");
+        let atributoDesejado = (0, ioUtils_1.obterTexto)("");
+        // O valor inserido é um número? Se sim, deve ser tratado como ID.
+        if (!isNaN(Number(atributoDesejado))) {
+            perfilParaEditar = this._redeSocial.consultarPerfil(Number(atributoDesejado), undefined, undefined);
+        }
+        else if (typeof (atributoDesejado) == "string") {
+            // Verificar se é email:
+            if (atributoDesejado.includes("@") && atributoDesejado.includes(".")) {
+                perfilParaEditar = this._redeSocial.consultarPerfil(undefined, undefined, atributoDesejado);
+            }
+            else {
+                // Atributo desejado é nome:
+                perfilParaEditar = this._redeSocial.consultarPerfil(undefined, atributoDesejado, undefined);
+            }
+        }
+        // Encontramos o perfil:
+        if (perfilParaEditar != null) {
+            console.log(`Vamos então editar o perfil: ${perfilParaEditar.nome}`);
+        }
+        else {
+            // Perfil não encontrado.
+            console.log(`Não encontramos um perfil com esse atributo.`);
+        }
+        (0, ioUtils_1.enterToContinue)();
     }
     executar() {
         let opcao = -1;

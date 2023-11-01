@@ -6,9 +6,15 @@ import {RedeSocial} from './Classes/redeSocial';
 
 // Importar Utils
 import {obterNumeroInteiro, exibirTexto, exibirTextoCentralizado, obterTexto, enterToContinue} from './Utils/ioUtils';
-import { mainBackground, exibirTextoEsquerda, showBlogLogo, exibirTextoNoCentro, prepararTelaPostagem, limparTerminal, cabecalhoPrincipal, feedView, obterAlturaTerminal } from './Utils/viewUtils';
+import { mainBackground, exibirTextoEsquerda, showBlogLogo, exibirTextoNoCentro, prepararTelaPostagem, limparTerminal, cabecalhoPrincipal, feedView, obterAlturaTerminal, exibirTextoCentroCentro } from './Utils/viewUtils';
+
+// Leitura e Gravação de Arquivos
+import { readFileSync, writeFileSync } from 'fs';
+
 
 import chalk from 'chalk';
+import { obterNumero } from '../utils';
+import { type } from 'os';
 
 class App {
     private _redeSocial: RedeSocial;
@@ -27,8 +33,22 @@ class App {
 
     constructor() {
         this._redeSocial = new RedeSocial;
+
+        // Ler arquivo:
+        try {
+            const file = readFileSync('savePerfis.txt', 'utf-8');
+        } catch (erro) {
+            // Iniciando pela primeira vez.
+            exibirTextoCentroCentro("Iniciando pela primeira vez.");
+            mainBackground();
+            writeFileSync("savePerfis.txt", "oi");
+        }
+
+        console.log(question('aaa'));
+
     }
 
+    // Solicita uma opção ao usuário.
     obterOpcao(): number {
         let opcao: number = obterNumeroInteiro("Opcao: ");
         while (opcao < 0 || opcao > this.menuOpcoes.length) {
@@ -67,7 +87,8 @@ class App {
 
     executarOpcao(opcao: number): void {
         if (opcao == 0) return;
-        let funcao = this.menuOpcoes[opcao-1][1];
+        const opcoesValidas = this.obterMenuParaExibir();
+        let funcao = opcoesValidas[opcao-1][1];
         funcao.call(this);
     }
 
@@ -189,7 +210,7 @@ class App {
 
                 var _curtidasStr = `${_post.curtidas} curtidas, ${_post.descurtidas} descurtidas.`;
                 exibirTexto(_curtidasStr);
-
+                
                 exibirTextoNoCentro("x");
                 console.log();
             }
@@ -203,6 +224,40 @@ class App {
     }
 
     editarPerfis(): void {
+        cabecalhoPrincipal("Editar Perfis");
+
+        // Exibir de forma sintetizada os perfis disponíveis.
+        this.listarPerfisCurto();
+
+        // Inicializar variável que vai guardar o perfil.
+        let perfilParaEditar: Perfil | null = null;    
+        
+        // Receber atributo desejado do usuário
+        exibirTexto("Qual perfil deseja editar? (ID/Nome/Email)")
+        let atributoDesejado: string | number = obterTexto("");
+
+        // O valor inserido é um número? Se sim, deve ser tratado como ID.
+        if (!isNaN(Number(atributoDesejado))) {
+            perfilParaEditar = this._redeSocial.consultarPerfil(Number(atributoDesejado), undefined, undefined);
+        } else if (typeof(atributoDesejado) == "string") {
+            // Verificar se é email:
+            if (atributoDesejado.includes("@") && atributoDesejado.includes(".")) {
+                perfilParaEditar = this._redeSocial.consultarPerfil(undefined, undefined, atributoDesejado);
+            } else {
+                // Atributo desejado é nome:
+                perfilParaEditar = this._redeSocial.consultarPerfil(undefined, atributoDesejado, undefined);
+            }
+        }
+        
+        // Encontramos o perfil:
+        if (perfilParaEditar != null) {
+            console.log(`Vamos então editar o perfil: ${perfilParaEditar.nome}`);
+        } else {
+            // Perfil não encontrado.
+            console.log(`Não encontramos um perfil com esse atributo.`)
+        }
+        
+        enterToContinue();
 
     }
 

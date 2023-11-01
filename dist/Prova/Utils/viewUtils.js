@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.feedView = exports.prepararTelaPostagem = exports.cabecalhoPrincipal = exports.showBlogLogo = exports.mainBackground = exports.exibirTextoEsquerda = exports.exibirTextoNoCentro = exports.limparTerminal = exports.obterAlturaTerminal = exports.obterLarguraTerminal = void 0;
+exports.feedView = exports.prepararTelaPostagem = exports.cabecalhoPrincipal = exports.showBlogLogo = exports.exibirTextoCentroCentro = exports.mainBackground = exports.exibirTextoEsquerda = exports.exibirTextoNoCentro = exports.limparTerminal = exports.obterAlturaTerminal = exports.obterLarguraTerminal = void 0;
 var readline = require('readline');
 function obterLarguraTerminal() {
     return process.stdout.columns;
@@ -44,6 +44,12 @@ function mainBackground() {
     readline.cursorTo(process.stdout, 1, 1);
 }
 exports.mainBackground = mainBackground;
+function exibirTextoCentroCentro(texto) {
+    var _x = Math.floor(obterLarguraTerminal() / 2 - texto.length / 2);
+    var _y = Math.floor(obterAlturaTerminal() / 2);
+    readline.cursorTo(process.stdout, _x, _y);
+}
+exports.exibirTextoCentroCentro = exibirTextoCentroCentro;
 function showBlogLogo() {
     exibirTextoNoCentro("__                 __            ");
     exibirTextoNoCentro("|__)  _  |_  _  _  |__) |  _   _  ");

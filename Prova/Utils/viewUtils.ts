@@ -40,8 +40,13 @@ export function mainBackground(): void{
 
 
     // Mover cursor para o início da tela:
-    readline.cursorTo(process.stdout, 1, 1);
-    
+    readline.cursorTo(process.stdout, 1, 1);   
+}
+
+export function exibirTextoCentroCentro(texto: string): void {
+    var _x = Math.floor(obterLarguraTerminal()/2 - texto.length/2)
+    var _y = Math.floor(obterAlturaTerminal()/2);
+    readline.cursorTo(process.stdout, _x, _y);
 }
 
 export function showBlogLogo(): void {
