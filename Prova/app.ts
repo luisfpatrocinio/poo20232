@@ -309,39 +309,13 @@ class App {
         let descurtidas: number = 0;
         
         // Tentar obter perfil:
-        let idPerfil = -1;
-        let perfil: Perfil | null = this._redeSocial.consultarPerfil(idPerfil, undefined, undefined);
-        let tentativasDeEncontrarPerfil = 0;
-        while (idPerfil < 0) {
-            // Listar perfis.
-            this.listarPerfisCurto();
-            exibirTexto("0 - Cancelar");
-
-            // Obter ID do perfil:
-            idPerfil = obterNumeroInteiro("ID do perfil: "); 
-            
-            // Optou por sair:
-            if (idPerfil == 0) {
-                exibirTexto("Cancelando...");
-                return;
-            }
-
-            perfil = this._redeSocial.consultarPerfil(idPerfil, undefined, undefined);
-            if (perfil === null) {
-                exibirTexto("Perfil não encontrado.");
-                idPerfil = -1; // Voltando a -1, faz permanecer no ciclo.
-                tentativasDeEncontrarPerfil++;
-            }
-
-            // Porém, se esgotar 3 tentativas, é melhor abortar a criação de postagem.
-            if (tentativasDeEncontrarPerfil > 3) {
-                exibirTexto("Tente novamente mais tarde.")
-                return;
-            }
+        let perfil: void | Perfil | null = this.selecionarPerfil();
+        
+        if (perfil === null) {
+            exibirTexto("Perfil não encontrado.");
+            return;
         }
 
-        // Perfil encontrado, continuar a criação da postagem.
-        // Condição impossível, mas necessária para evitar erros.
         if (perfil != null) {
             prepararTelaPostagem(perfil);
             let texto: string = obterTexto("Texto: ");
@@ -349,10 +323,7 @@ class App {
             // A data é obtida após escrever a postagem.
             let data: Date = new Date;  
 
-            // Perguntar se é postagem simples ou avançada.
-            var rsync = require('readline-sync');
-            // https://www.npmjs.com/package/readline-sync         
-            
+            // Identificar se é uma postagem avançada.            
 
             var _postagem = new Postagem(id, texto, curtidas, descurtidas, data, perfil);
             this._redeSocial.incluirPostagem(_postagem);
@@ -446,7 +417,7 @@ class App {
         let perfilParaEditar: Perfil | null = null;    
         
         // Receber atributo desejado do usuário
-        exibirTexto("Qual perfil deseja editar? (ID/Nome/Email)")
+        exibirTexto("Qual perfil? (ID/Nome/Email)")
         let atributoDesejado: string | number = obterTexto("");
 
         if (String(atributoDesejado) === '0' || String(atributoDesejado) === '') {
@@ -497,6 +468,7 @@ class App {
     }
 
     exibirPostagensPorPerfil() {
+        cabecalhoPrincipal("Exibir Postagens por Perfil");
         let perfil: void | Perfil | null = this.selecionarPerfil();
 
         // Cancelando:
@@ -519,6 +491,12 @@ class App {
             }
             return false
         });
+
+        // Se não houver postagens:
+        if (postagensDoPerfil.length <= 0) {
+            exibirTextoCentralizado(`Não há postagens do perfil ${perfil.nome}.`);
+            return
+        }
 
         // Com as postagens do perfil específico:
         this.exibirPostagens(postagensDoPerfil);
