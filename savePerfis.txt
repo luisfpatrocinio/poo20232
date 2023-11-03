@@ -1,8 +1,2 @@
-1#Luis Felipe#patrocinioluisf@gmail.com
-2##aa@aa.a
-3#Luis#aaa@aa.a
-4#aa#aalaa@aa.aa
-5#awdas#aa@aaa.a
-6#Lala#papa@aa.a
-7#Mauricio#mauboa@gmail.com
-8#Mau#aaappp@aaa.c
+1#Luis#luis@gmail.com
+2#Guilherme#gui@gmail.co

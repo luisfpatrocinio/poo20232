@@ -51,6 +51,8 @@ function exibirTextoCentroCentro(texto) {
 }
 exports.exibirTextoCentroCentro = exibirTextoCentroCentro;
 function showBlogLogo() {
+    // Fonte: Straight
+    // http://patorjk.com/software/taag/#p=display&h=0&v=0&f=Straight&t=Patrobook
     exibirTextoNoCentro("__                 __            ");
     exibirTextoNoCentro("|__)  _  |_  _  _  |__) |  _   _  ");
     exibirTextoNoCentro("|    (_| |_ |  (_) |__) | (_) (_) ");

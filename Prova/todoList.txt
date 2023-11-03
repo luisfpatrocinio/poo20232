@@ -22,9 +22,9 @@ Ver Feed:
 - Exibir postagens por hashtag
 
 # Funções do Menu:
-- Exibir opções
-- Obter opção
-- Executar Opção
+OK - Exibir opções
+OK - Obter opção
+OK - Executar Opção
 
 # Extras X1:
 OK Leitura e gravação de arquivos (ao iniciar e encerrar o programa)
@@ -55,3 +55,17 @@ import { keyIn } from "readline-sync";
 Impedir que crie usuarios com mesmos atributos
 Impedir que digite-se hashtag
 // http://patorjk.com/software/taag/
+Impedir que exiba mais que N perfis na lista
+Hashtags do texto da postagem tem que entrar na lista de hashtags (tornando-a postagem avançada)
+
+7. (1,0) Adicione persistência em arquivos para perfis e postagens e permita a carga e
+salvamento ao inicializar e finalizar a aplicação.
+8. (1,5) Implemente as funcionalidades:
+a. Exibir as postagens populares que ainda podem ser exibidas;
+b. Exibir as hashtags mais populares, ou seja, as que estão presentes em mais
+postagens;
+Uma possibilidade é refatorar toda a aplicação a classe para ter um array
+de classes Hashtag na classe PostagemAvançada, onde ao cadastrar uma
+postagem pela rede social, as hashtags sejam cadastradas e um contador
+de cada uma seja atualizado.
+c. 4 funcionalidades na classe App além das solicitadas. 

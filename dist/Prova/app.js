@@ -20,6 +20,7 @@ class App {
             ["Listar Perfis", this.listarPerfis, () => this._qntPerfisCriados > 0],
             ["Ver Feed", this.verFeed, () => this._qntPostagensCriadas > 0],
             ["Editar Perfis", this.editarPerfis, () => this._qntPerfisCriados > 0],
+            ["Exibir Postagens por Perfil", this.exibirPostagensPorPerfil, () => this._qntPostagensCriadas > 0 && this._qntPerfisCriados > 1]
         ];
         this._opcaoSelecionada = 0;
         this._redeSocial = new redeSocial_1.RedeSocial;
@@ -324,8 +325,7 @@ class App {
             console.log();
         }
     }
-    verFeed() {
-        let postagens = this._redeSocial.obterPostagens();
+    exibirPostagens(postagens) {
         var _pagina = 0;
         var _postsPorPagina = Math.floor(((0, viewUtils_1.obterAlturaTerminal)() - 10) / 4);
         _postsPorPagina = 4;
@@ -359,8 +359,11 @@ class App {
                 (0, ioUtils_1.enterToContinue)();
         }
     }
-    editarPerfis() {
-        (0, viewUtils_1.cabecalhoPrincipal)("Editar Perfis");
+    verFeed() {
+        let postagens = this._redeSocial.obterPostagens();
+        this.exibirPostagens(postagens);
+    }
+    selecionarPerfil() {
         // Exibir de forma sintetizada os perfis disponíveis.
         this.listarPerfisCurto();
         (0, ioUtils_1.exibirTexto)(`${0} - Cancelar`);
@@ -387,6 +390,16 @@ class App {
                 perfilParaEditar = this._redeSocial.consultarPerfil(undefined, atributoDesejado, undefined);
             }
         }
+        return perfilParaEditar;
+    }
+    editarPerfis() {
+        (0, viewUtils_1.cabecalhoPrincipal)("Editar Perfis");
+        // Qual perfil será editado:
+        let perfilParaEditar = this.selecionarPerfil();
+        // Cancelando:
+        if (perfilParaEditar == undefined) {
+            return;
+        }
         // Encontramos o perfil:
         if (perfilParaEditar == null) {
             // Perfil não encontrado.
@@ -398,6 +411,28 @@ class App {
         // 1 - Encontrar indice do perfil no array this._redeSocial.obterPerfis() --- lembrando que os perfis ficam em Repositorio de Perfis
         // 2 - Pedir novo nome e email
         // 3 - Sobreescrever array do repositorio de perfis.
+    }
+    exibirPostagensPorPerfil() {
+        let perfil = this.selecionarPerfil();
+        // Cancelando:
+        if (perfil == undefined) {
+            return;
+        }
+        // Encontramos o perfil:
+        if (perfil == null) {
+            // Perfil não encontrado.
+            (0, ioUtils_1.exibirTexto)(`Não encontramos um perfil com esse atributo.`);
+            return;
+        }
+        (0, ioUtils_1.exibirTexto)(`Exibindo postagens de ${perfil.nome}`);
+        let postagensDoPerfil = this._redeSocial.obterPostagens().filter((p) => {
+            if (perfil != null) {
+                return p.perfil.id == perfil.id;
+            }
+            return false;
+        });
+        // Com as postagens do perfil específico:
+        this.exibirPostagens(postagensDoPerfil);
     }
     executar() {
         // Checar tamanho da janela

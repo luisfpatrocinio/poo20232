@@ -18,6 +18,7 @@ import chalk from 'chalk';
 import { obterNumero } from '../utils';
 import { type } from 'os';
 import { exit } from 'process';
+import { isUndefined } from 'util';
 
 class App {
     private _redeSocial: RedeSocial;
@@ -33,6 +34,7 @@ class App {
         ["Listar Perfis",   this.listarPerfis,  () => this._qntPerfisCriados > 0],
         ["Ver Feed",        this.verFeed,       () => this._qntPostagensCriadas > 0],
         ["Editar Perfis",   this.editarPerfis,  () => this._qntPerfisCriados > 0],
+        ["Exibir Postagens por Perfil", this.exibirPostagensPorPerfil,  () => this._qntPostagensCriadas > 0 && this._qntPerfisCriados > 1]
     ]
 
     private _opcaoSelecionada : number = 0;
@@ -388,8 +390,7 @@ class App {
         }
     }
 
-    verFeed(): void {
-        let postagens = this._redeSocial.obterPostagens();
+    exibirPostagens(postagens: Array<Postagem>): void {
         var _pagina = 0;
         var _postsPorPagina = Math.floor((obterAlturaTerminal() - 10) / 4);
         _postsPorPagina = 4;
@@ -431,9 +432,12 @@ class App {
         }
     }
 
-    editarPerfis(): void {
-        cabecalhoPrincipal("Editar Perfis");
+    verFeed(): void {
+        let postagens = this._redeSocial.obterPostagens();
+        this.exibirPostagens(postagens);
+    }
 
+    selecionarPerfil(): void | null | Perfil {
         // Exibir de forma sintetizada os perfis disponíveis.
         this.listarPerfisCurto();
         exibirTexto(`${0} - Cancelar`);
@@ -462,7 +466,21 @@ class App {
                 perfilParaEditar = this._redeSocial.consultarPerfil(undefined, atributoDesejado, undefined);
             }
         }
+
+        return perfilParaEditar;
+    }
+
+    editarPerfis(): void {
+        cabecalhoPrincipal("Editar Perfis");
+
+        // Qual perfil será editado:
+        let perfilParaEditar: void | Perfil | null = this.selecionarPerfil();    
         
+        // Cancelando:
+        if (perfilParaEditar == undefined) {
+            return
+        }
+
         // Encontramos o perfil:
         if (perfilParaEditar == null) {
             // Perfil não encontrado.
@@ -476,6 +494,35 @@ class App {
         // 1 - Encontrar indice do perfil no array this._redeSocial.obterPerfis() --- lembrando que os perfis ficam em Repositorio de Perfis
         // 2 - Pedir novo nome e email
         // 3 - Sobreescrever array do repositorio de perfis.
+    }
+
+    exibirPostagensPorPerfil() {
+        let perfil: void | Perfil | null = this.selecionarPerfil();
+
+        // Cancelando:
+        if (perfil == undefined) {
+            return
+        }
+
+        // Encontramos o perfil:
+        if (perfil == null) {
+            // Perfil não encontrado.
+            exibirTexto(`Não encontramos um perfil com esse atributo.`);
+            return
+        }
+
+        exibirTexto(`Exibindo postagens de ${perfil.nome}`);
+
+        let postagensDoPerfil = this._redeSocial.obterPostagens().filter((p) => {
+            if (perfil != null) {
+                return p.perfil.id == perfil.id
+            }
+            return false
+        });
+
+        // Com as postagens do perfil específico:
+        this.exibirPostagens(postagensDoPerfil);
+        
     }
 
     executar(): void {
