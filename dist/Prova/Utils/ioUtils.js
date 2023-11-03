@@ -4,6 +4,7 @@ exports.obterTexto = exports.enterToContinue = exports.exibirTextoCentralizado =
 const readline_sync_1 = require("readline-sync");
 const viewUtils_1 = require("./viewUtils");
 var readline = require('readline');
+const readline_sync_2 = require("readline-sync");
 function obterNumeroInteiro(mensagem) {
     readline.cursorTo(process.stdout, 2);
     let numero = Number((0, readline_sync_1.question)(mensagem));
@@ -35,14 +36,18 @@ function exibirTextoCentralizado(texto) {
 }
 exports.exibirTextoCentralizado = exibirTextoCentralizado;
 function enterToContinue() {
-    var _x = Math.floor((0, viewUtils_1.obterLarguraTerminal)() / 2 - "[ENTER]".length / 2);
+    var _text = "[C/Espaço - Continuar]";
+    var _x = Math.floor((0, viewUtils_1.obterLarguraTerminal)() / 2 - _text.length / 2);
     readline.cursorTo(process.stdout, _x);
-    (0, readline_sync_1.question)("[ENTER]", { hideEchoBack: true, mask: 'x' });
+    console.log(_text);
+    // question('', {keepWhitespace: false, hideEchoBack: true, mask: ''});
+    (0, readline_sync_2.keyInPause)('', { mask: '', limit: 'c ' });
+    // question("[ENTER]", {mask: 'x'});
 }
 exports.enterToContinue = enterToContinue;
 function obterTexto(texto) {
     readline.cursorTo(process.stdout, 2);
-    return (0, readline_sync_1.question)(texto);
+    return (0, readline_sync_1.question)(texto).replace("#", "_");
 }
 exports.obterTexto = obterTexto;
 // Transformar funções em classes estáticas

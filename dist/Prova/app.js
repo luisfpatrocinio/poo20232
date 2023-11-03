@@ -1,7 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-// Importar bibliotecas principais:
-const readline_sync_1 = require("readline-sync");
 const perfil_1 = require("./Classes/perfil");
 const postagem_1 = require("./Classes/postagem");
 const redeSocial_1 = require("./Classes/redeSocial");
@@ -23,6 +21,7 @@ class App {
             ["Ver Feed", this.verFeed, () => this._qntPostagensCriadas > 0],
             ["Editar Perfis", this.editarPerfis, () => this._qntPerfisCriados > 0],
         ];
+        this._opcaoSelecionada = 0;
         this._redeSocial = new redeSocial_1.RedeSocial;
         try {
             // Carregar Arquivos caso hajam.
@@ -45,6 +44,7 @@ class App {
         if (this._qntPostagensCriadas > 0)
             (0, ioUtils_1.exibirTextoCentralizado)(`${this._qntPostagensCriadas} postagens carregadas`);
     }
+    // Funções de Salvar e Carregar
     salvarPerfis() {
         let saveString = "";
         var _perfis = this._redeSocial.obterPerfis();
@@ -168,12 +168,28 @@ class App {
     // Solicita uma opção ao usuário.
     obterOpcao() {
         var opcoes = this.obterMenuParaExibir();
-        let opcao = (0, ioUtils_1.obterNumeroInteiro)("Opcao: ");
-        while (opcao < 0 || opcao > opcoes.length) {
-            (0, ioUtils_1.exibirTexto)("Opcao inválida. Tente novamente.");
-            opcao = this.obterOpcao();
+        var min = 0;
+        var max = opcoes.length; // A opção máxima é 1 a mais, porque ainda tem a opção SAIR.
+        var rsync = require('readline-sync');
+        var key = rsync.keyIn('', { hideEchoBack: true, mask: '', limit: 'zxc ' });
+        if (key == 'z')
+            this._opcaoSelecionada--;
+        else if (key == 'x')
+            this._opcaoSelecionada++;
+        else {
+            if (this._opcaoSelecionada == max)
+                return 0;
+            return this._opcaoSelecionada + 1;
         }
-        return opcao;
+        this._opcaoSelecionada = Math.min(this._opcaoSelecionada, max);
+        this._opcaoSelecionada = Math.max(this._opcaoSelecionada, min);
+        return -1;
+        // let opcao: number = obterNumeroInteiro("Opcao: ");
+        // while (opcao < 0 || opcao > opcoes.length) {
+        //     exibirTexto("Opcao inválida. Tente novamente.");
+        //     opcao = this.obterOpcao();
+        // }
+        // return opcao;
     }
     obterMenuParaExibir() {
         var menu = new Array;
@@ -190,12 +206,15 @@ class App {
         (0, viewUtils_1.mainBackground)();
         (0, viewUtils_1.showBlogLogo)();
         (0, viewUtils_1.exibirTextoNoCentro)("~ Menu Principal ~");
+        (0, viewUtils_1.exibirTextoNoCentro)("[Z-X] - movimentar, [C-Espaço] - confirmar");
         // O menu exibido será o menu 
         const menuParaExibir = this.obterMenuParaExibir();
         for (let i = 0; i < menuParaExibir.length; i++) {
-            (0, viewUtils_1.exibirTextoEsquerda)(`${i + 1} - ${menuParaExibir[i][0]}`);
+            let selectedStr = (i === this._opcaoSelecionada) ? ">" : "";
+            (0, viewUtils_1.exibirTextoEsquerda)(`${selectedStr}${i + 1} - ${menuParaExibir[i][0]}`);
         }
-        (0, viewUtils_1.exibirTextoEsquerda)("0 - Sair");
+        let selectedStr = (this._opcaoSelecionada === menuParaExibir.length) ? ">" : "";
+        (0, viewUtils_1.exibirTextoEsquerda)(`${selectedStr}0 - Sair`);
     }
     executarOpcao(opcao) {
         if (opcao == 0) {
@@ -206,12 +225,15 @@ class App {
         const opcoesValidas = this.obterMenuParaExibir();
         let funcao = opcoesValidas[opcao - 1][1];
         funcao.call(this);
+        (0, ioUtils_1.enterToContinue)();
+        this._opcaoSelecionada = 0;
     }
     despedida() {
         (0, viewUtils_1.limparTerminal)();
         (0, viewUtils_1.mainBackground)();
         (0, viewUtils_1.saltarLinhas)(Math.floor((0, viewUtils_1.obterAlturaTerminal)() / 2) - 1);
         (0, ioUtils_1.exibirTextoCentralizado)("Obrigado e volte sempre!");
+        (0, ioUtils_1.enterToContinue)();
     }
     criarPerfil() {
         (0, viewUtils_1.cabecalhoPrincipal)("Criar Perfil");
@@ -220,6 +242,7 @@ class App {
         let email;
         do {
             // @TODO: Apagar a última linha caso nao tenha sido inserido email válido.
+            // @TODO: Criar uma outra função para obter o input do usuario, limitando a não inserir caracteres especiais. (basicOptions)
             email = (0, ioUtils_1.obterTexto)("Email: ");
         } while (!email.includes("@") || !email.includes("."));
         let perfil = new perfil_1.Perfil(id, nome, email);
@@ -233,7 +256,6 @@ class App {
         let id = this._qntPostagensCriadas + 1;
         let curtidas = 0;
         let descurtidas = 0;
-        let data = new Date; // Obter data atual do sistema
         // Tentar obter perfil:
         let idPerfil = -1;
         let perfil = this._redeSocial.consultarPerfil(idPerfil, undefined, undefined);
@@ -265,7 +287,9 @@ class App {
         // Condição impossível, mas necessária para evitar erros.
         if (perfil != null) {
             (0, viewUtils_1.prepararTelaPostagem)(perfil);
-            let texto = (0, readline_sync_1.question)("Texto: ").replace("#", "_");
+            let texto = (0, ioUtils_1.obterTexto)("Texto: ");
+            // A data é obtida após escrever a postagem.
+            let data = new Date;
             // Perguntar se é postagem simples ou avançada.
             var rsync = require('readline-sync');
             // https://www.npmjs.com/package/readline-sync         
@@ -339,11 +363,16 @@ class App {
         (0, viewUtils_1.cabecalhoPrincipal)("Editar Perfis");
         // Exibir de forma sintetizada os perfis disponíveis.
         this.listarPerfisCurto();
+        (0, ioUtils_1.exibirTexto)(`${0} - Cancelar`);
         // Inicializar variável que vai guardar o perfil.
         let perfilParaEditar = null;
         // Receber atributo desejado do usuário
         (0, ioUtils_1.exibirTexto)("Qual perfil deseja editar? (ID/Nome/Email)");
         let atributoDesejado = (0, ioUtils_1.obterTexto)("");
+        if (String(atributoDesejado) === '0' || String(atributoDesejado) === '') {
+            (0, ioUtils_1.exibirTexto)("Cancelando...");
+            return;
+        }
         // O valor inserido é um número? Se sim, deve ser tratado como ID.
         if (!isNaN(Number(atributoDesejado))) {
             perfilParaEditar = this._redeSocial.consultarPerfil(Number(atributoDesejado), undefined, undefined);
@@ -388,8 +417,10 @@ class App {
             (0, viewUtils_1.limparTerminal)();
             this.exibirMenu();
             opcao = this.obterOpcao();
-            this.executarOpcao(opcao);
-            (0, ioUtils_1.enterToContinue)();
+            // console.log("opção: " + String(opcao)); enterToContinue();
+            if (opcao >= 0) {
+                this.executarOpcao(opcao);
+            }
         }
         (0, viewUtils_1.limparTerminal)();
         (0, ioUtils_1.exibirTextoCentralizado)("=== FIM ===");

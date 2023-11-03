@@ -1,6 +1,7 @@
 import { question } from "readline-sync"; 
 import { obterLarguraTerminal } from "./viewUtils";
 var readline = require('readline');
+import { keyInPause } from 'readline-sync'
 
 export function obterNumeroInteiro(mensagem: string): number {
     readline.cursorTo(process.stdout, 2);
@@ -33,14 +34,18 @@ export function exibirTextoCentralizado(texto: string): void {
 }
 
 export function enterToContinue(): void {
-    var _x = Math.floor(obterLarguraTerminal()/2 - "[ENTER]".length/2);
+    var _text = "[C/Espaço - Continuar]";
+    var _x = Math.floor(obterLarguraTerminal()/2 - _text.length/2);
     readline.cursorTo(process.stdout, _x);
-    question("[ENTER]", {hideEchoBack: true, mask: 'x'});
+    console.log(_text);
+    // question('', {keepWhitespace: false, hideEchoBack: true, mask: ''});
+    keyInPause('', {mask: '', limit: 'c '})
+    // question("[ENTER]", {mask: 'x'});
 }
 
 export function obterTexto(texto: string): string {
     readline.cursorTo(process.stdout, 2);
-    return question(texto)
+    return question(texto).replace("#", "_");
 }
 
 // Transformar funções em classes estáticas
