@@ -1,2 +1,2 @@
-1#Luis#luis@gmail.com
-2#Guilherme#gui@gmail.co
+1|Chico Vaz|chicovaz@gmail.com
+2|Luis Felipe|patrocinioluisf@gmail.com

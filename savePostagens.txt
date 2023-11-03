@@ -1,3 +1,1 @@
-1#0#Eu gosto de suco de tamarindo.#0#0#40#1##
-2#0#Estou na aula de Analise e Desenvolvimento de Sistemas.#0#0#40#1##
-3#0#Estou testando.#0#0#40#2##
+1|1|Testando hashtags. #paz|0|0|40|1|paz|492

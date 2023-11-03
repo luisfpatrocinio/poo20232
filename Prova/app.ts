@@ -8,7 +8,7 @@ import {RedeSocial} from './Classes/redeSocial';
 // Importar Utils
 import {obterNumeroInteiro, exibirTexto, exibirTextoPostagem, exibirTextoCentralizado, obterTexto, enterToContinue} from './Utils/ioUtils';
 import { mainBackground, exibirTextoEsquerda, showBlogLogo, exibirTextoNoCentro, prepararTelaPostagem, limparTerminal, cabecalhoPrincipal, feedView, obterAlturaTerminal, exibirTextoCentroCentro, saltarLinhas, obterLarguraTerminal } from './Utils/viewUtils';
-import { sleep } from './Utils/generalUtils';
+import { extrairHashtags, sleep } from './Utils/generalUtils';
 
 // Leitura e Gravação de Arquivos
 import { readFileSync, writeFile, writeFileSync } from 'fs';
@@ -69,7 +69,7 @@ class App {
         for (let i = 0; i < _perfis.length; i++) {
             var _perfil: Perfil | null = _perfis[i];
             if (_perfil != null) {
-                saveString += `${_perfil.id}#${_perfil.nome}#${_perfil.email}\n`;
+                saveString += `${_perfil.id}|${_perfil.nome}|${_perfil.email}\n`;
             }
         }
         const file = writeFileSync("savePerfis.txt", saveString)
@@ -94,7 +94,7 @@ class App {
             for (let i = 0; i < perfisString.length; i++) {
                 if (perfisString[i] != "") {
                     // Separar o id e o nome
-                    let _perfil: Array<string> = perfisString[i].split("#");
+                    let _perfil: Array<string> = perfisString[i].split("|");
                     // Criar um registro com id e nome
                     let _cadastroPerfil = new Perfil(Number(_perfil[0]), _perfil[1], _perfil[2])
                     // Adicionar o objeto no vetor de perfis
@@ -137,7 +137,8 @@ class App {
                 _views = String(p.visualizacoesRestantes);
             }
             
-            saveString += `${p.id}#${_adv}#${p.texto}#${p.curtidas}#${p.descurtidas}#40#${p.perfil.id}#${_hashtagsString}#${_views}\n`
+            // @TODO: Colocar a data da postagem de maneira correta.
+            saveString += `${p.id}|${_adv}|${p.texto}|${p.curtidas}|${p.descurtidas}|40|${p.perfil.id}|${_hashtagsString}|${_views}\n`
         }
 
         const file = writeFileSync("savePostagens.txt", saveString)
@@ -159,7 +160,7 @@ class App {
             postagensString.forEach((post) => {
                 if (post != "") {   // @TODO: Checar se essa checagem é necessária.
                     // Separar elementos:
-                    let _fichaPostagem: Array<string> = post.split("#");
+                    let _fichaPostagem: Array<string> = post.split("|");
 
                     // Conferir se é uma postagem avançada:
                     let _advanced = (_fichaPostagem[1] === "1") ? true : false;
@@ -209,7 +210,12 @@ class App {
         var max = opcoes.length;    // A opção máxima é 1 a mais, porque ainda tem a opção SAIR.
         var rsync = require('readline-sync');
 
-        var key = rsync.keyIn('', {hideEchoBack: true, mask: '', limit: 'zxc '});
+        var key = rsync.keyIn('', {
+            hideEchoBack: true, 
+            mask: '', 
+            limit: 'zxc ',
+            hideCursor: true,
+        });
         if (key == 'z') this._opcaoSelecionada--;
         else if (key == 'x') this._opcaoSelecionada++;
         else {  
@@ -288,6 +294,12 @@ class App {
 
         let id: number = ++this._qntPerfisCriados;
         let nome: string = obterTexto("Nome: ");
+
+        if (nome.length <= 0) {
+            exibirTexto("Cancelando...");
+            return;
+        }
+
         let email: string;
         do {
             // @TODO: Apagar a última linha caso nao tenha sido inserido email válido.
@@ -323,13 +335,25 @@ class App {
             // A data é obtida após escrever a postagem.
             let data: Date = new Date;  
 
-            // Identificar se é uma postagem avançada.            
+            // Identificar se é uma postagem avançada.
+            var advanced = texto.includes("#");
 
-            var _postagem = new Postagem(id, texto, curtidas, descurtidas, data, perfil);
+            var _postagem: Postagem;
+            if (advanced) {
+                // Encontrar hashtags:
+                var _hashtags = extrairHashtags(texto);
+
+                // Remover hashtags do texto.
+                _postagem = new PostagemAvancada(id, texto, curtidas, descurtidas, data, perfil, _hashtags, 500);
+            } else {
+                _postagem = new Postagem(id, texto, curtidas, descurtidas, data, perfil);
+            }
             this._redeSocial.incluirPostagem(_postagem);
-            this._qntPostagensCriadas++;1
+            this._qntPostagensCriadas++;
             
-            exibirTextoNoCentro(`Postagem No ${id} criada com sucesso.`)
+            exibirTextoNoCentro(`Postagem No ${id} criada com sucesso.`);
+            console.log(_postagem);
+            enterToContinue();
         }
 
         this.salvarPostagens();
@@ -380,16 +404,15 @@ class App {
                 exibirTexto(`${_post.perfil.nome}:`)
                 exibirTextoPostagem(`${_post.texto}`);
 
-                // Mostrar hashtags:
-                if (_post instanceof PostagemAvancada) {
-                    let hashtagsString = "";
-                    _post.hashtags.forEach((h) => {
-                        hashtagsString += "#" + h + " ";
-                    });
-                    exibirTexto(hashtagsString);
-                }
-
                 var _curtidasStr = `${_post.curtidas} curtidas, ${_post.descurtidas} descurtidas.`;
+                if (_post instanceof PostagemAvancada) {
+                    // Reduzir views
+                    _post.decrementarVisualizacoes();
+
+                    var _viewsStr = `(${_post.visualizacoesRestantes})`;
+                    var _n = obterLarguraTerminal() - 2 - _curtidasStr.length - 2 - _viewsStr.length;
+                    _curtidasStr += `${' '.repeat(_n)}${_viewsStr}`;
+                }
                 exibirTexto(_curtidasStr);
                 
                 exibirTextoNoCentro("-=-");
@@ -399,6 +422,7 @@ class App {
             exibirTextoNoCentro(`Página ${_pagina + 1}/${_totalPaginas}`)
             
             _pagina++;
+            this.salvarPostagens();
             if (_pagina < _totalPaginas) enterToContinue();
         }
     }

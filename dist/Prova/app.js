@@ -6,6 +6,7 @@ const redeSocial_1 = require("./Classes/redeSocial");
 // Importar Utils
 const ioUtils_1 = require("./Utils/ioUtils");
 const viewUtils_1 = require("./Utils/viewUtils");
+const generalUtils_1 = require("./Utils/generalUtils");
 // Leitura e Gravação de Arquivos
 const fs_1 = require("fs");
 class App {
@@ -52,7 +53,7 @@ class App {
         for (let i = 0; i < _perfis.length; i++) {
             var _perfil = _perfis[i];
             if (_perfil != null) {
-                saveString += `${_perfil.id}#${_perfil.nome}#${_perfil.email}\n`;
+                saveString += `${_perfil.id}|${_perfil.nome}|${_perfil.email}\n`;
             }
         }
         const file = (0, fs_1.writeFileSync)("savePerfis.txt", saveString);
@@ -74,7 +75,7 @@ class App {
             for (let i = 0; i < perfisString.length; i++) {
                 if (perfisString[i] != "") {
                     // Separar o id e o nome
-                    let _perfil = perfisString[i].split("#");
+                    let _perfil = perfisString[i].split("|");
                     // Criar um registro com id e nome
                     let _cadastroPerfil = new perfil_1.Perfil(Number(_perfil[0]), _perfil[1], _perfil[2]);
                     // Adicionar o objeto no vetor de perfis
@@ -113,7 +114,8 @@ class App {
                 }
                 _views = String(p.visualizacoesRestantes);
             }
-            saveString += `${p.id}#${_adv}#${p.texto}#${p.curtidas}#${p.descurtidas}#40#${p.perfil.id}#${_hashtagsString}#${_views}\n`;
+            // @TODO: Colocar a data da postagem de maneira correta.
+            saveString += `${p.id}|${_adv}|${p.texto}|${p.curtidas}|${p.descurtidas}|40|${p.perfil.id}|${_hashtagsString}|${_views}\n`;
         }
         const file = (0, fs_1.writeFileSync)("savePostagens.txt", saveString);
     }
@@ -132,7 +134,7 @@ class App {
             postagensString.forEach((post) => {
                 if (post != "") { // @TODO: Checar se essa checagem é necessária.
                     // Separar elementos:
-                    let _fichaPostagem = post.split("#");
+                    let _fichaPostagem = post.split("|");
                     // Conferir se é uma postagem avançada:
                     let _advanced = (_fichaPostagem[1] === "1") ? true : false;
                     // Criar um registro com id e nome:
@@ -172,7 +174,12 @@ class App {
         var min = 0;
         var max = opcoes.length; // A opção máxima é 1 a mais, porque ainda tem a opção SAIR.
         var rsync = require('readline-sync');
-        var key = rsync.keyIn('', { hideEchoBack: true, mask: '', limit: 'zxc ' });
+        var key = rsync.keyIn('', {
+            hideEchoBack: true,
+            mask: '',
+            limit: 'zxc ',
+            hideCursor: true,
+        });
         if (key == 'z')
             this._opcaoSelecionada--;
         else if (key == 'x')
@@ -240,6 +247,10 @@ class App {
         (0, viewUtils_1.cabecalhoPrincipal)("Criar Perfil");
         let id = ++this._qntPerfisCriados;
         let nome = (0, ioUtils_1.obterTexto)("Nome: ");
+        if (nome.length <= 0) {
+            (0, ioUtils_1.exibirTexto)("Cancelando...");
+            return;
+        }
         let email;
         do {
             // @TODO: Apagar a última linha caso nao tenha sido inserido email válido.
@@ -268,12 +279,23 @@ class App {
             let texto = (0, ioUtils_1.obterTexto)("Texto: ");
             // A data é obtida após escrever a postagem.
             let data = new Date;
-            // Identificar se é uma postagem avançada.            
-            var _postagem = new postagem_1.Postagem(id, texto, curtidas, descurtidas, data, perfil);
+            // Identificar se é uma postagem avançada.
+            var advanced = texto.includes("#");
+            var _postagem;
+            if (advanced) {
+                // Encontrar hashtags:
+                var _hashtags = (0, generalUtils_1.extrairHashtags)(texto);
+                // Remover hashtags do texto.
+                _postagem = new postagem_1.PostagemAvancada(id, texto, curtidas, descurtidas, data, perfil, _hashtags, 500);
+            }
+            else {
+                _postagem = new postagem_1.Postagem(id, texto, curtidas, descurtidas, data, perfil);
+            }
             this._redeSocial.incluirPostagem(_postagem);
             this._qntPostagensCriadas++;
-            1;
             (0, viewUtils_1.exibirTextoNoCentro)(`Postagem No ${id} criada com sucesso.`);
+            console.log(_postagem);
+            (0, ioUtils_1.enterToContinue)();
         }
         this.salvarPostagens();
     }
@@ -315,21 +337,21 @@ class App {
                 (0, ioUtils_1.exibirTexto)(`${_post.data.toUTCString()}`);
                 (0, ioUtils_1.exibirTexto)(`${_post.perfil.nome}:`);
                 (0, ioUtils_1.exibirTextoPostagem)(`${_post.texto}`);
-                // Mostrar hashtags:
-                if (_post instanceof postagem_1.PostagemAvancada) {
-                    let hashtagsString = "";
-                    _post.hashtags.forEach((h) => {
-                        hashtagsString += "#" + h + " ";
-                    });
-                    (0, ioUtils_1.exibirTexto)(hashtagsString);
-                }
                 var _curtidasStr = `${_post.curtidas} curtidas, ${_post.descurtidas} descurtidas.`;
+                if (_post instanceof postagem_1.PostagemAvancada) {
+                    // Reduzir views
+                    _post.decrementarVisualizacoes();
+                    var _viewsStr = `(${_post.visualizacoesRestantes})`;
+                    var _n = (0, viewUtils_1.obterLarguraTerminal)() - 2 - _curtidasStr.length - 2 - _viewsStr.length;
+                    _curtidasStr += `${' '.repeat(_n)}${_viewsStr}`;
+                }
                 (0, ioUtils_1.exibirTexto)(_curtidasStr);
                 (0, viewUtils_1.exibirTextoNoCentro)("-=-");
                 console.log();
             }
             (0, viewUtils_1.exibirTextoNoCentro)(`Página ${_pagina + 1}/${_totalPaginas}`);
             _pagina++;
+            this.salvarPostagens();
             if (_pagina < _totalPaginas)
                 (0, ioUtils_1.enterToContinue)();
         }

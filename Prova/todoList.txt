@@ -44,7 +44,7 @@ OK Leitura e gravação de arquivos (ao iniciar e encerrar o programa)
 # Extras X4:
 - Tela de início animada
 - Tela de encerramento animada
-- Menu interativo (com setas e teclas de atalho)
+OK - Menu interativo (com setas e teclas de atalho)
 - Ver feed por data de postagem     
 
 # Fixes:
@@ -52,6 +52,7 @@ OK Leitura e gravação de arquivos (ao iniciar e encerrar o programa)
 
 import { keyIn } from "readline-sync";
 
+String vazia no nome de usuario deve cancelar a criação de perfil.
 Impedir que crie usuarios com mesmos atributos
 Impedir que digite-se hashtag
 // http://patorjk.com/software/taag/

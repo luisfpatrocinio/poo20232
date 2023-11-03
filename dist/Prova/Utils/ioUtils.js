@@ -47,7 +47,7 @@ function enterToContinue() {
 exports.enterToContinue = enterToContinue;
 function obterTexto(texto) {
     readline.cursorTo(process.stdout, 2);
-    return (0, readline_sync_1.question)(texto).replace("#", "_");
+    return (0, readline_sync_1.question)(texto).replace("|", "_");
 }
 exports.obterTexto = obterTexto;
 // Transformar funções em classes estáticas
