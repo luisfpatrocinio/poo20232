@@ -11,13 +11,10 @@ import { mainBackground, exibirTextoEsquerda, showBlogLogo, exibirTextoNoCentro,
 import { extrairHashtags, sleep } from './Utils/generalUtils';
 
 // Leitura e Gravação de Arquivos
-import { readFileSync, writeFile, writeFileSync } from 'fs';
+import { readFileSync, writeFileSync } from 'fs';
 
-
-import chalk from 'chalk';
-import { obterNumero } from '../utils';
-import { type } from 'os';
-import { exit } from 'process';
+// Visual
+const chalk = require('chalk');
 
 class App {
     private _redeSocial: RedeSocial;
@@ -50,7 +47,7 @@ class App {
         } catch (erro) {
             // Iniciando pela primeira vez.
             mainBackground();
-            exibirTextoCentralizado("Iniciando pela primeira vez.");
+            exibirTextoNoCentro("Iniciando pela primeira vez.");
             enterToContinue();
         }
     }
@@ -60,9 +57,9 @@ class App {
         saltarLinhas(Math.floor(obterAlturaTerminal()/2) - 3);
         showBlogLogo();
         var _qntPerfis = this._redeSocial.obterPerfis().length;
-        if (_qntPerfis > 0)     exibirTextoCentralizado(`${_qntPerfis} perfis carregados`);
+        if (_qntPerfis > 0)     exibirTextoNoCentro(`${_qntPerfis} perfis carregados`);
         var _qntPostagens = this._redeSocial.obterPostagens().length;
-        if (_qntPostagens > 0)  exibirTextoCentralizado(`${_qntPostagens} postagens carregadas`);
+        if (_qntPostagens > 0)  exibirTextoNoCentro(`${_qntPostagens} postagens carregadas`);
     }
 
     // Funções de Salvar e Carregar
@@ -222,11 +219,11 @@ class App {
         var key = rsync.keyIn('', {
             hideEchoBack: true, 
             mask: '', 
-            limit: 'zxc ',
+            limit: 'ZXCzxc ',
             hideCursor: true,
         });
-        if (key == 'z') this._opcaoSelecionada--;
-        else if (key == 'x') this._opcaoSelecionada++;
+        if (key.toString().toLowerCase() == 'z') this._opcaoSelecionada--;
+        else if (key.toString().toLowerCase() == 'x') this._opcaoSelecionada++;
         else {  
             if (this._opcaoSelecionada == max) return 0
             return this._opcaoSelecionada + 1;
@@ -270,7 +267,11 @@ class App {
 
         for (let i = 0; i < menuParaExibir.length; i++) {
             let selectedStr = (i === this._opcaoSelecionada) ? ">" : "";
-            exibirTextoEsquerda(`${selectedStr}${i+1} - ${menuParaExibir[i][0]}`);
+            if (i === this._opcaoSelecionada) {
+                exibirTextoEsquerda(chalk.bold(`${selectedStr} ${i+1} - ${menuParaExibir[i][0]}`));
+            } else {
+                exibirTextoEsquerda(`${selectedStr}${i+1} - ${menuParaExibir[i][0]}`);
+            }
         }
         let selectedStr = (this._opcaoSelecionada === menuParaExibir.length) ? ">" : "";
         exibirTextoEsquerda(`${selectedStr}0 - Sair`);
@@ -287,7 +288,6 @@ class App {
         let funcao = opcoesValidas[opcao-1][1];
         funcao.call(this);
         enterToContinue();
-        this._opcaoSelecionada = 0;
     }
 
     despedida(): void {
@@ -302,18 +302,44 @@ class App {
         cabecalhoPrincipal("Criar Perfil");
 
         let id: number = ++this._qntPerfisCriados;
-        let nome: string = obterTexto("Nome: ");
 
+        let nome: string = obterTexto("Nome: ");
+        let tentativas = 0;
+        while (this._redeSocial.consultarPerfil(undefined, nome, undefined)) {
+            if (tentativas >= 3) {
+                exibirTexto("Tente novamente mais tarde.");
+                return;
+            }
+            exibirTexto("Já existe um usuário com esse nome.")
+            // Existe perfil com esse nome
+            nome = obterTexto("Nome: ");
+            tentativas++;
+        }
         if (nome.length <= 0) {
             exibirTexto("Cancelando...");
             return;
         }
 
+        tentativas = 0;
         let email: string;
         do {
             // @TODO: Apagar a última linha caso nao tenha sido inserido email válido.
             // @TODO: Criar uma outra função para obter o input do usuario, limitando a não inserir caracteres especiais. (basicOptions)
             email = obterTexto("Email: ");
+
+            tentativas = 0;
+            while (this._redeSocial.consultarPerfil(undefined, undefined, email)) {
+                if (tentativas >= 3) {
+                    exibirTexto("Tente novamente mais tarde.");
+                    return;
+                }
+                exibirTexto("Já existe um usuário com esse email.")
+            }
+
+            if (email.length <= 0) {
+                exibirTexto("Cancelando...");
+                return;
+            }
         } while (!email.includes("@") || !email.includes("."));
         let perfil: Perfil = new Perfil(id, nome, email);
         this._redeSocial.incluirPerfil(perfil);
@@ -353,7 +379,7 @@ class App {
                 var _hashtags = extrairHashtags(texto);
 
                 // Remover hashtags do texto.
-                _postagem = new PostagemAvancada(id, texto, curtidas, descurtidas, data, perfil, _hashtags, 500);
+                _postagem = new PostagemAvancada(id, texto, curtidas, descurtidas, data, perfil, _hashtags, 10);
             } else {
                 _postagem = new Postagem(id, texto, curtidas, descurtidas, data, perfil);
             }
@@ -361,7 +387,6 @@ class App {
             this._qntPostagensCriadas++;
             
             exibirTextoNoCentro(`Postagem No ${id} criada com sucesso.`);
-            console.log(_postagem);
             enterToContinue();
         }
 
@@ -482,12 +507,12 @@ class App {
         let perfilParaEditar: void | Perfil | null = this.selecionarPerfil();    
         
         // Cancelando:
-        if (perfilParaEditar == undefined) {
+        if (perfilParaEditar === undefined) {
             return
         }
 
         // Não encontramos o perfil:
-        if (perfilParaEditar == null) {
+        if (perfilParaEditar === null) {
             // Perfil não encontrado.
             exibirTexto(`Não encontramos um perfil com esse atributo.`);
             return
@@ -497,8 +522,45 @@ class App {
 
         // @TODO: Completar
         // 1 - Encontrar indice do perfil no array this._redeSocial.obterPerfis() --- lembrando que os perfis ficam em Repositorio de Perfis
-        // 2 - Pedir novo nome e email
-        // 3 - Sobreescrever array do repositorio de perfis.
+        var novoNome = obterTexto("Novo nome: ");
+        if (novoNome.length <= 0) novoNome = perfilParaEditar.nome;
+
+        var novoEmail = obterTexto("Novo email: ");
+        if (novoEmail.length <= 0) novoEmail = perfilParaEditar.email;
+
+        var _sucess = 0;
+        if (novoNome != perfilParaEditar.nome) _sucess += 1;
+        if (novoEmail != perfilParaEditar.email) _sucess += 2;
+
+        var _successString = ``;
+        switch (_sucess) {
+            case 0:
+                _successString = `Cancelando...`;
+                break;
+            case 1:
+                _successString = `Nome alterado com sucesso.`;
+                break;
+            case 1:
+                _successString = `Email alterado com sucesso.`;
+                break;
+            case 1:
+                _successString = `Nome e email alterados com sucesso.`;
+                break;
+        }
+
+        // Cria um novo array de perfis sem o perfil editado.
+        var perfis = this._redeSocial.obterPerfis().filter((p) => {
+            if (perfilParaEditar) return (p.id != perfilParaEditar.id);
+            return false
+        });
+
+        var novoPerfil = new Perfil(perfilParaEditar.id, novoNome, novoEmail);
+        perfis.push(novoPerfil);
+
+        this._redeSocial.atribuirPerfisCarregados(perfis);
+        this.salvarPerfis();
+
+        exibirTexto(_successString);
     }
 
     exibirPostagensPorPerfil() {
@@ -527,7 +589,7 @@ class App {
 
         // Se não houver postagens:
         if (postagensDoPerfil.length <= 0) {
-            exibirTextoCentralizado(`Não há postagens do perfil ${perfil.nome}.`);
+            exibirTextoNoCentro(`Não há postagens do perfil ${perfil.nome}.`);
             return
         }
 

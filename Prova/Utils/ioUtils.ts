@@ -1,7 +1,10 @@
 import { question } from "readline-sync"; 
-import { obterLarguraTerminal } from "./viewUtils";
+import { obterCorDoFundo, obterLarguraTerminal } from "./viewUtils";
 var readline = require('readline');
 import { keyInPause } from 'readline-sync'
+const chalk = require('chalk');
+
+
 
 export function obterNumeroInteiro(mensagem: string): number {
     readline.cursorTo(process.stdout, 2);
@@ -15,7 +18,8 @@ export function obterNumeroInteiro(mensagem: string): number {
 
 export function exibirTexto(texto: string): void {
     readline.cursorTo(process.stdout, 2);
-    console.log(texto);
+    var _bgHex = obterCorDoFundo();
+    console.log(chalk.bgHex(_bgHex)(texto));
 }
 
 export function exibirTextoPostagem(texto: string): void {

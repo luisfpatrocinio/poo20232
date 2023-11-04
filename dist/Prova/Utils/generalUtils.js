@@ -16,8 +16,6 @@ function extrairHashtags(texto) {
     if (hashtags) {
         // Remova o caractere '#' de cada hashtag
         const hashtagsLimpa = hashtags.map(tag => tag.slice(1));
-        console.log("Hashtags");
-        console.log(hashtagsLimpa);
         return hashtagsLimpa;
     }
     else {

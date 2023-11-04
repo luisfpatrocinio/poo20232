@@ -5,6 +5,7 @@ const readline_sync_1 = require("readline-sync");
 const viewUtils_1 = require("./viewUtils");
 var readline = require('readline');
 const readline_sync_2 = require("readline-sync");
+const chalk = require('chalk');
 function obterNumeroInteiro(mensagem) {
     readline.cursorTo(process.stdout, 2);
     let numero = Number((0, readline_sync_1.question)(mensagem));
@@ -17,7 +18,8 @@ function obterNumeroInteiro(mensagem) {
 exports.obterNumeroInteiro = obterNumeroInteiro;
 function exibirTexto(texto) {
     readline.cursorTo(process.stdout, 2);
-    console.log(texto);
+    var _bgHex = (0, viewUtils_1.obterCorDoFundo)();
+    console.log(chalk.bgHex(_bgHex)(texto));
 }
 exports.exibirTexto = exibirTexto;
 function exibirTextoPostagem(texto) {

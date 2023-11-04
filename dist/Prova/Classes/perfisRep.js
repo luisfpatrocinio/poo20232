@@ -18,12 +18,12 @@ class RepositorioDePerfis {
                 return perfilPorId;
         }
         if (nome != undefined) {
-            const perfilPorNome = this._perfis.find((p) => p.nome === nome);
+            const perfilPorNome = this._perfis.find((p) => p.nome.toLowerCase() === nome.toLowerCase());
             if (perfilPorNome)
                 return perfilPorNome;
         }
         if (email != undefined) {
-            const perfilPorEmail = this._perfis.find((p) => p.email === email);
+            const perfilPorEmail = this._perfis.find((p) => p.email.toLowerCase() === email.toLowerCase());
             if (perfilPorEmail)
                 return perfilPorEmail;
         }

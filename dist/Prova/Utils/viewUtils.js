@@ -1,7 +1,44 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.saltarLinhas = exports.feedView = exports.prepararTelaPostagem = exports.cabecalhoPrincipal = exports.showBlogLogo = exports.exibirTextoCentroCentro = exports.mainBackground = exports.exibirTextoEsquerda = exports.exibirTextoNoCentro = exports.limparTerminal = exports.obterAlturaTerminal = exports.obterLarguraTerminal = void 0;
+exports.saltarLinhas = exports.feedView = exports.prepararTelaPostagem = exports.cabecalhoPrincipal = exports.showBlogLogo = exports.exibirTextoCentroCentro = exports.mainBackground = exports.exibirTextoEsquerda = exports.exibirTextoNoCentro = exports.limparTerminal = exports.obterAlturaTerminal = exports.obterLarguraTerminal = exports.obterCorDoFundo = exports.textCol = void 0;
 var readline = require('readline');
+const chalk = require('chalk');
+function textCol(texto, color = "#FFFFFF", bgColor = "000000") {
+    if (bgColor === undefined) {
+        bgColor = obterCorDoFundo();
+    }
+    return chalk.bgHex(bgColor).hex(color)(texto);
+}
+exports.textCol = textCol;
+function obterCorDoFundo() {
+    var _bgHex;
+    var _bgHeight = Math.floor(obterAlturaTerminal() / 5);
+    // var _y = readline.getCursorPos().rows;
+    var _y = 0;
+    var _nv = Math.floor(_y / _bgHeight);
+    switch (_nv) {
+        case 0:
+            _bgHex = '#172038';
+            break;
+        case 1:
+            _bgHex = '#253a5e';
+            break;
+        case 2:
+            _bgHex = '#3c5e8b';
+            break;
+        case 3:
+            _bgHex = '#4f8fba';
+            break;
+        case 4:
+            _bgHex = '#73bed3';
+            break;
+        default:
+            _bgHex = '#ebede9';
+            break;
+    }
+    return _bgHex;
+}
+exports.obterCorDoFundo = obterCorDoFundo;
 function obterLarguraTerminal() {
     return process.stdout.columns;
 }
@@ -28,18 +65,21 @@ exports.exibirTextoEsquerda = exibirTextoEsquerda;
 function mainBackground() {
     limparTerminal();
     for (let i = 0; i < obterAlturaTerminal(); i++) {
+        const h = (texto) => {
+            return textCol(texto, '#a23e8c', '#1e1d39');
+        };
         if (i == 0)
-            console.log(`${"=".repeat(obterLarguraTerminal())}`);
+            console.log(h(`${"=".repeat(obterLarguraTerminal())}`));
         if (i > 1 && i < obterAlturaTerminal() - 2)
-            console.log(`|${" ".repeat(obterLarguraTerminal() - 2)}|`);
+            console.log(`${h("|")}${h(" ".repeat(obterLarguraTerminal() - 2))}${h("|")}`);
         if (i == obterAlturaTerminal() - 1)
-            console.log(`${"=".repeat(obterLarguraTerminal())}`);
+            console.log(`${h("=".repeat(obterLarguraTerminal()))}`);
     }
     // Rodapé
     readline.cursorTo(process.stdout, 1, obterAlturaTerminal() - 4);
     var _data = new Date;
     var _dataStr = `${_data.toUTCString()}`;
-    exibirTextoEsquerda(`${_dataStr}`);
+    exibirTextoNoCentro(`${_dataStr}`);
     // Mover cursor para o início da tela:
     readline.cursorTo(process.stdout, 1, 1);
 }
@@ -53,10 +93,20 @@ exports.exibirTextoCentroCentro = exibirTextoCentroCentro;
 function showBlogLogo() {
     // Fonte: Straight
     // http://patorjk.com/software/taag/#p=display&h=0&v=0&f=Straight&t=Patrobook
-    exibirTextoNoCentro("__                 __            ");
-    exibirTextoNoCentro("|__)  _  |_  _  _  |__) |  _   _  ");
-    exibirTextoNoCentro("|    (_| |_ |  (_) |__) | (_) (_) ");
-    exibirTextoNoCentro("                              _/  ");
+    const c = (texto) => {
+        // return textCol(texto, '#e98537', obterCorDoFundo())
+        return texto;
+    };
+    const title = [
+        "__                 __            ",
+        "|__)  _  |_  _  _  |__) |  _   _  ",
+        "|    (_| |_ |  (_) |__) | (_) (_) ",
+        "                              _/  "
+    ];
+    exibirTextoNoCentro(c(title[0]));
+    exibirTextoNoCentro(c(title[1]));
+    exibirTextoNoCentro(c(title[2]));
+    exibirTextoNoCentro(c(title[3]));
 }
 exports.showBlogLogo = showBlogLogo;
 function cabecalhoPrincipal(texto) {
@@ -76,7 +126,6 @@ function prepararTelaPostagem(perfil) {
 }
 exports.prepararTelaPostagem = prepararTelaPostagem;
 function feedView() {
-    cabecalhoPrincipal("PatroFeed");
 }
 exports.feedView = feedView;
 function saltarLinhas(quantidade) {
