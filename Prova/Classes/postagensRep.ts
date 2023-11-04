@@ -9,9 +9,15 @@ export class RepositorioDePostagens {
     }
 
     consultar(id?: number, texto?: string, hashtag?: string, perfil?: Perfil): Array<Postagem>{      
-        // Retornar todas as postagens caso não hajam argumentos
-        // @TODO: Isso não funciona qunado usamos 4 argumentos undefineds, por exemplo. Precisamos rever.
-        if (arguments.length == 0) return this._postagens
+        // Retornar todas as postagens caso não hajam argumentos (que podem ser exibidas)
+        if (arguments.length == 0) {
+            return this._postagens.filter((p) => {
+                if (p instanceof PostagemAvancada) {
+                    return (p.visualizacoesRestantes > 0);
+                }
+                return true
+            })
+        }
         
         const postagensEncontradas = new Array<Postagem>;
 
@@ -68,7 +74,13 @@ export class RepositorioDePostagens {
         })
         
         // Retornar array de postagens que se adequem aos filtros especificados, ainda que seja um array vazio.
-        return postagensFiltradas
+        // Porém, apenas as que ainda podem ser exibidas.
+        return postagensFiltradas.filter((p) => {
+            if (p instanceof PostagemAvancada) {
+                return (p.visualizacoesRestantes > 0);
+            }
+            return true
+        });
     }
 
     get postagens(): Array<Postagem> {

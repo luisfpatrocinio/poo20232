@@ -10,10 +10,15 @@ class RepositorioDePostagens {
         this._postagens.push(postagem);
     }
     consultar(id, texto, hashtag, perfil) {
-        // Retornar todas as postagens caso não hajam argumentos
-        // @TODO: Isso não funciona qunado usamos 4 argumentos undefineds, por exemplo. Precisamos rever.
-        if (arguments.length == 0)
-            return this._postagens;
+        // Retornar todas as postagens caso não hajam argumentos (que podem ser exibidas)
+        if (arguments.length == 0) {
+            return this._postagens.filter((p) => {
+                if (p instanceof postagem_1.PostagemAvancada) {
+                    return (p.visualizacoesRestantes > 0);
+                }
+                return true;
+            });
+        }
         const postagensEncontradas = new Array;
         if (id != undefined) {
             const postagemPorId = this._postagens.find((p) => p.id === id);
@@ -68,7 +73,13 @@ class RepositorioDePostagens {
             return _podeEntrar;
         });
         // Retornar array de postagens que se adequem aos filtros especificados, ainda que seja um array vazio.
-        return postagensFiltradas;
+        // Porém, apenas as que ainda podem ser exibidas.
+        return postagensFiltradas.filter((p) => {
+            if (p instanceof postagem_1.PostagemAvancada) {
+                return (p.visualizacoesRestantes > 0);
+            }
+            return true;
+        });
     }
     get postagens() {
         return this.postagens;
