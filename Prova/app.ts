@@ -18,7 +18,6 @@ import chalk from 'chalk';
 import { obterNumero } from '../utils';
 import { type } from 'os';
 import { exit } from 'process';
-import { isUndefined } from 'util';
 
 class App {
     private _redeSocial: RedeSocial;
@@ -30,12 +29,13 @@ class App {
     private menuOpcoes: Array<[string, () => void, () => boolean]> = [
         // Nome da opção, função a ser executada, condição para habilitar a opção
         ["Criar Perfil",    this.criarPerfil,   () => true],
-        ["Criar Postagem",  this.criarPostagem, () => this._qntPerfisCriados > 0],
-        ["Listar Perfis",   this.listarPerfis,  () => this._qntPerfisCriados > 0],
-        ["Ver Feed",        this.verFeed,       () => this._qntPostagensCriadas > 0],
-        ["Editar Perfis",   this.editarPerfis,  () => this._qntPerfisCriados > 0],
-        ["Exibir Postagens por Perfil", this.exibirPostagensPorPerfil,  () => this._qntPostagensCriadas > 0 && this._qntPerfisCriados > 1],
-        ["Exibir Postagens por Hashtag", this.exibirPostagensPorHashtag,    () => this._qntPostagensCriadas > 0]
+        ["Listar Perfis",   this.listarPerfis,  () => this._redeSocial.obterPerfis().length > 0],
+        ["Editar Perfis",   this.editarPerfis,  () => this._redeSocial.obterPerfis().length > 0],
+        ["Excluir Perfil",  this.excluirPerfil, () => this._redeSocial.obterPerfis().length > 0],
+        ["Criar Postagem",  this.criarPostagem, () => this._redeSocial.obterPerfis().length > 0],
+        ["Ver Feed",        this.verFeed,       () => this._redeSocial.obterPostagens().length > 0],
+        ["Exibir Postagens por Perfil", this.exibirPostagensPorPerfil,  () => this._redeSocial.obterPostagens().length > 0 && this._redeSocial.obterPerfis().length > 0],
+        ["Exibir Postagens por Hashtag", this.exibirPostagensPorHashtag,    () => this._redeSocial.obterPostagens().length > 0]
     ]
 
     private _opcaoSelecionada : number = 0;
@@ -59,14 +59,17 @@ class App {
         mainBackground();
         saltarLinhas(Math.floor(obterAlturaTerminal()/2) - 3);
         showBlogLogo();
-        if (this._qntPerfisCriados > 0)     exibirTextoCentralizado(`${this._qntPerfisCriados} perfis carregados`);
-        if (this._qntPostagensCriadas > 0)  exibirTextoCentralizado(`${this._qntPostagensCriadas} postagens carregadas`);
+        var _qntPerfis = this._redeSocial.obterPerfis().length;
+        if (_qntPerfis > 0)     exibirTextoCentralizado(`${_qntPerfis} perfis carregados`);
+        var _qntPostagens = this._redeSocial.obterPostagens().length;
+        if (_qntPostagens > 0)  exibirTextoCentralizado(`${_qntPostagens} postagens carregadas`);
     }
 
     // Funções de Salvar e Carregar
     salvarPerfis(): void {
         let saveString = "";
         var _perfis = this._redeSocial.obterPerfis();
+        saveString += `perfisCriados:${this._qntPerfisCriados}\n`;
         for (let i = 0; i < _perfis.length; i++) {
             var _perfil: Perfil | null = _perfis[i];
             if (_perfil != null) {
@@ -85,7 +88,9 @@ class App {
             let _conteudo = readFileSync("savePerfis.txt", "utf-8").split("\n");
 
             // Percorrer conteudo e adicionar aos perfis
-            for (let i = 0; i < _conteudo.length; i++) {
+            if (_conteudo.length > 0) this._qntPerfisCriados = Number(_conteudo[0].split(":")[1]);
+
+            for (let i = 1; i < _conteudo.length; i++) {
                 if (_conteudo[i] != "") {
                     perfisString.push(_conteudo[i]);
                 }
@@ -105,7 +110,6 @@ class App {
 
             // @TODO: Deve-se aqui atribuir as postagens a cada perfil, talvez?
             this._redeSocial.atribuirPerfisCarregados(perfis);
-            this._qntPerfisCriados = perfis.length;
             this.salvarPerfis();
         }
         catch (err) {
@@ -118,6 +122,7 @@ class App {
 
     salvarPostagens() {
         let saveString = "";
+        saveString += `postagensCriadas:${this._qntPostagensCriadas}\n`;
         var _postagens = this._redeSocial.obterPostagens();
         for (let i = 0; i < _postagens.length; i++) {
             var p: Postagem | PostagemAvancada = _postagens[i];
@@ -151,11 +156,14 @@ class App {
         try {
             // Ler arquivo de postagens
             let _conteudo = readFileSync("savePostagens.txt", "utf-8").split("\n");
+            if (_conteudo.length > 0) this._qntPostagensCriadas = Number(_conteudo[0].split(":")[1]);
 
             // Percorrer conteudo e adicionar as postagens
-            _conteudo.forEach((post) => {
-                if (post != "") postagensString.push(post); 
-            })
+            for (let i = 1; i < _conteudo.length; i++) {
+                if (_conteudo[i] != "") {
+                    postagensString.push(_conteudo[i]);
+                }
+            }
 
             // Para cada postagem em string:
             postagensString.forEach((post) => {
@@ -478,7 +486,7 @@ class App {
             return
         }
 
-        // Encontramos o perfil:
+        // Não encontramos o perfil:
         if (perfilParaEditar == null) {
             // Perfil não encontrado.
             exibirTexto(`Não encontramos um perfil com esse atributo.`);
@@ -501,10 +509,9 @@ class App {
         if (perfil == undefined) {
             return
         }
-
-        // Encontramos o perfil:
+        
+        // Perfil não encontrado.
         if (perfil == null) {
-            // Perfil não encontrado.
             exibirTexto(`Não encontramos um perfil com esse atributo.`);
             return
         }
@@ -555,6 +562,30 @@ class App {
 
         cabecalhoPrincipal(`Postagens com Hashtag "#${hashtag}":`);
         this.exibirPostagens(postagensFiltradas);
+    }
+
+    excluirPerfil() {
+        cabecalhoPrincipal("Excluir Perfil");
+        let perfil: void | Perfil | null = this.selecionarPerfil();
+
+        // Cancelando:
+        if (perfil == undefined) {
+            return
+        }
+
+        // Perfil não encontrado.
+        if (perfil == null) {
+            exibirTexto(`Não encontramos um perfil com esse atributo.`);
+            return
+        }
+
+        // Gerar um novo array de perfis que não contém o perfil escolhido.
+        let novosPerfis = this._redeSocial.obterPerfis().filter((p) => {
+            return (p != perfil);
+        })
+
+        this._redeSocial.atribuirPerfisCarregados(novosPerfis);
+        this.salvarPerfis();
     }
 
     executar(): void {

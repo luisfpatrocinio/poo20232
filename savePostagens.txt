@@ -1,6 +1,1 @@
-1|1|Testando hashtags. #paz|0|0|40|1|paz¨vida|485
-2|1|Meu nome eh luis. #vida #saude #dinheiro|0|0|40|2|vida¨saude¨dinheiro|495
-3|1|Testando o teste. #teste #amor|0|0|40|2|teste¨amor|493
-4|1|Era uma vez um #teste .|0|0|40|1|teste|493
-5|1|Outro teste. #teste.|0|0|40|1|teste|493
-6|0|Teste sem hashtag.|0|0|40|1||
+postagensCriadas:20

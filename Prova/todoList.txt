@@ -1,8 +1,8 @@
 Gerenciar Perfis:
 OK - Criar perfil,
 OK - Listar perfis,
-- Consultar perfil,
-- Excluir perfil,
+[] - Consultar perfil,
+OK - Excluir perfil,
 [] - Editar perfil
 
 Gerenciar postagens:
@@ -18,7 +18,7 @@ OK - Criar postagem simples
 - Postagem Avançada: Visualizações restantes
 
 Ver Feed:
-- Exibir postagens por perfil,
+OK - Exibir postagens por perfil,
 - Exibir postagens por hashtag
 
 # Funções do Menu:
