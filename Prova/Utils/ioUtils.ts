@@ -45,7 +45,7 @@ export function enterToContinue(): void {
 
 export function obterTexto(texto: string): string {
     readline.cursorTo(process.stdout, 2);
-    return question(texto).replace("|", "_");
+    return question(texto).replace("|", "_").replace("¨", "_");
 }
 
 // Transformar funções em classes estáticas

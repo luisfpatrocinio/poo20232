@@ -21,7 +21,8 @@ class App {
             ["Listar Perfis", this.listarPerfis, () => this._qntPerfisCriados > 0],
             ["Ver Feed", this.verFeed, () => this._qntPostagensCriadas > 0],
             ["Editar Perfis", this.editarPerfis, () => this._qntPerfisCriados > 0],
-            ["Exibir Postagens por Perfil", this.exibirPostagensPorPerfil, () => this._qntPostagensCriadas > 0 && this._qntPerfisCriados > 1]
+            ["Exibir Postagens por Perfil", this.exibirPostagensPorPerfil, () => this._qntPostagensCriadas > 0 && this._qntPerfisCriados > 1],
+            ["Exibir Postagens por Hashtag", this.exibirPostagensPorHashtag, () => this._qntPostagensCriadas > 0]
         ];
         this._opcaoSelecionada = 0;
         this._redeSocial = new redeSocial_1.RedeSocial;
@@ -109,7 +110,7 @@ class App {
                 for (let h = 0; h < p.hashtags.length; h++) {
                     _hashtagsString += p.hashtags[h];
                     if (h + 1 < p.hashtags.length) {
-                        _hashtagsString += "#";
+                        _hashtagsString += "¨";
                     }
                 }
                 _views = String(p.visualizacoesRestantes);
@@ -146,7 +147,7 @@ class App {
                     let _data = new Date(); // @TODO: Pegar a data correta a partir do arquivo.
                     if (_perfil != null) {
                         if (_advanced) {
-                            var _hashtags = _fichaPostagem[7].split("-");
+                            var _hashtags = _fichaPostagem[7].split("¨");
                             var _visualizacoes = Number(_fichaPostagem[8]);
                             _cadastroPostagem = new postagem_1.PostagemAvancada(Number(_fichaPostagem[0]), _fichaPostagem[2], _curtidas, _descurtidas, _data, _perfil, _hashtags, _visualizacoes);
                         }
@@ -328,7 +329,6 @@ class App {
         _postsPorPagina = 4;
         var _totalPaginas = Math.ceil(postagens.length / _postsPorPagina);
         while (_pagina < _totalPaginas) {
-            (0, viewUtils_1.feedView)();
             for (let i = 0; i < _postsPorPagina; i++) {
                 var n = _pagina * _postsPorPagina + i;
                 if (n >= postagens.length)
@@ -358,6 +358,7 @@ class App {
     }
     verFeed() {
         let postagens = this._redeSocial.obterPostagens();
+        (0, viewUtils_1.cabecalhoPrincipal)("PatroFeed");
         this.exibirPostagens(postagens);
     }
     selecionarPerfil() {
@@ -436,6 +437,29 @@ class App {
         }
         // Com as postagens do perfil específico:
         this.exibirPostagens(postagensDoPerfil);
+    }
+    exibirPostagensPorHashtag() {
+        (0, viewUtils_1.cabecalhoPrincipal)("Exibir Postagens por Hashtag");
+        let hashtag = (0, ioUtils_1.obterTexto)("Hashtag: ");
+        // Cancelando:
+        if (hashtag.length <= 0) {
+            (0, ioUtils_1.exibirTexto)("Cancelando...");
+            return;
+        }
+        // Procurar por todas as postagens.
+        let postagens = this._redeSocial.obterPostagens();
+        // Ver quais possuem a hashtag desejada
+        let postagensFiltradas = postagens.filter((p) => {
+            if (p instanceof postagem_1.PostagemAvancada) {
+                return p.existeHashtag(hashtag);
+            }
+        });
+        if (postagensFiltradas.length <= 0) {
+            (0, ioUtils_1.exibirTexto)("Não há postagens com essa hashtag.");
+            return;
+        }
+        (0, viewUtils_1.cabecalhoPrincipal)(`Postagens com Hashtag "#${hashtag}":`);
+        this.exibirPostagens(postagensFiltradas);
     }
     executar() {
         // Checar tamanho da janela
