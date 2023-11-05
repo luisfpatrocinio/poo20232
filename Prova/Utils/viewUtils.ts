@@ -1,6 +1,8 @@
 var readline = require('readline');
 const chalk = require('chalk');
 
+const BG_COLOR = '#172038'
+
 import { Perfil } from "../Classes/perfil";
 
 export function textCol(texto: string, color: string = "#FFFFFF", bgColor: string = "000000") {
@@ -54,12 +56,12 @@ export function limparTerminal(): void {
 export function exibirTextoNoCentro(texto: string): void {
     var _x = Math.floor((obterLarguraTerminal() - texto.length) / 2);
     readline.cursorTo(process.stdout, _x);
-    console.log(texto);
+    console.log(chalk.bgHex(BG_COLOR)(texto));
 }
 
 export function exibirTextoEsquerda(texto: string): void {
     readline.cursorTo(process.stdout, 2);
-    console.log(texto);
+    console.log(chalk.bgHex(BG_COLOR)(texto));
 }
 
 export function mainBackground(): void{
@@ -95,8 +97,8 @@ export function showBlogLogo(): void {
     // http://patorjk.com/software/taag/#p=display&h=0&v=0&f=Straight&t=Patrobook
     
     const c = (texto) => {
-        // return textCol(texto, '#e98537', obterCorDoFundo())
-        return texto
+        return textCol(texto, '#e98537', obterCorDoFundo())
+        // return texto
     };
     
     const title = [
@@ -105,10 +107,10 @@ export function showBlogLogo(): void {
         "|    (_| |_ |  (_) |__) | (_) (_) ",
         "                              _/  "
     ];
-    exibirTextoNoCentro(c(title[0]));
-    exibirTextoNoCentro(c(title[1]));
-    exibirTextoNoCentro(c(title[2]));
-    exibirTextoNoCentro(c(title[3]));
+    exibirTextoNoCentro(title[0]);
+    exibirTextoNoCentro(title[1]);
+    exibirTextoNoCentro(title[2]);
+    exibirTextoNoCentro(title[3]);
 }
 
 export function cabecalhoPrincipal(texto: string): void {

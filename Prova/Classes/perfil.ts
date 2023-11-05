@@ -1,3 +1,5 @@
+import { obterTexto } from "../../utils";
+
 export class Perfil {
     private _id: number;
     private _nome: string;

@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.saltarLinhas = exports.feedView = exports.prepararTelaPostagem = exports.cabecalhoPrincipal = exports.showBlogLogo = exports.exibirTextoCentroCentro = exports.mainBackground = exports.exibirTextoEsquerda = exports.exibirTextoNoCentro = exports.limparTerminal = exports.obterAlturaTerminal = exports.obterLarguraTerminal = exports.obterCorDoFundo = exports.textCol = void 0;
 var readline = require('readline');
 const chalk = require('chalk');
+const BG_COLOR = '#172038';
 function textCol(texto, color = "#FFFFFF", bgColor = "000000") {
     if (bgColor === undefined) {
         bgColor = obterCorDoFundo();
@@ -54,12 +55,12 @@ exports.limparTerminal = limparTerminal;
 function exibirTextoNoCentro(texto) {
     var _x = Math.floor((obterLarguraTerminal() - texto.length) / 2);
     readline.cursorTo(process.stdout, _x);
-    console.log(texto);
+    console.log(chalk.bgHex(BG_COLOR)(texto));
 }
 exports.exibirTextoNoCentro = exibirTextoNoCentro;
 function exibirTextoEsquerda(texto) {
     readline.cursorTo(process.stdout, 2);
-    console.log(texto);
+    console.log(chalk.bgHex(BG_COLOR)(texto));
 }
 exports.exibirTextoEsquerda = exibirTextoEsquerda;
 function mainBackground() {
@@ -94,8 +95,8 @@ function showBlogLogo() {
     // Fonte: Straight
     // http://patorjk.com/software/taag/#p=display&h=0&v=0&f=Straight&t=Patrobook
     const c = (texto) => {
-        // return textCol(texto, '#e98537', obterCorDoFundo())
-        return texto;
+        return textCol(texto, '#e98537', obterCorDoFundo());
+        // return texto
     };
     const title = [
         "__                 __            ",
@@ -103,10 +104,10 @@ function showBlogLogo() {
         "|    (_| |_ |  (_) |__) | (_) (_) ",
         "                              _/  "
     ];
-    exibirTextoNoCentro(c(title[0]));
-    exibirTextoNoCentro(c(title[1]));
-    exibirTextoNoCentro(c(title[2]));
-    exibirTextoNoCentro(c(title[3]));
+    exibirTextoNoCentro(title[0]);
+    exibirTextoNoCentro(title[1]);
+    exibirTextoNoCentro(title[2]);
+    exibirTextoNoCentro(title[3]);
 }
 exports.showBlogLogo = showBlogLogo;
 function cabecalhoPrincipal(texto) {
