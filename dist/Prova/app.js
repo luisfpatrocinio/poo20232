@@ -334,7 +334,6 @@ class App {
             this._redeSocial.incluirPostagem(_postagem);
             this._qntPostagensCriadas++;
             (0, viewUtils_1.exibirTextoNoCentro)(`Postagem No ${id} criada com sucesso.`);
-            (0, ioUtils_1.enterToContinue)();
         }
         this.salvarPostagens();
     }
@@ -361,12 +360,13 @@ class App {
             console.log();
         }
     }
-    exibirPostagens(postagens) {
+    exibirPostagens(postagens, header = "") {
         var _pagina = 0;
         var _postsPorPagina = Math.floor(((0, viewUtils_1.obterAlturaTerminal)() - 10) / 4);
         _postsPorPagina = 4;
         var _totalPaginas = Math.ceil(postagens.length / _postsPorPagina);
         while (_pagina < _totalPaginas) {
+            (0, viewUtils_1.cabecalhoPrincipal)(header);
             for (let i = 0; i < _postsPorPagina; i++) {
                 var n = _pagina * _postsPorPagina + i;
                 if (n >= postagens.length)
@@ -390,14 +390,15 @@ class App {
             (0, viewUtils_1.exibirTextoNoCentro)(`Página ${_pagina + 1}/${_totalPaginas}`);
             _pagina++;
             this.salvarPostagens();
-            if (_pagina < _totalPaginas)
+            if (_pagina < _totalPaginas) {
                 (0, ioUtils_1.enterToContinue)();
+            }
         }
     }
     verFeed() {
         let postagens = this._redeSocial.obterPostagens();
         (0, viewUtils_1.cabecalhoPrincipal)("PatroFeed");
-        this.exibirPostagens(postagens);
+        this.exibirPostagens(postagens, "PatroFeed");
     }
     selecionarPerfil() {
         // Exibir de forma sintetizada os perfis disponíveis.
@@ -508,7 +509,7 @@ class App {
             return;
         }
         // Com as postagens do perfil específico:
-        this.exibirPostagens(postagensDoPerfil);
+        this.exibirPostagens(postagensDoPerfil, `Postagens de ${perfil.nome}:`);
     }
     exibirPostagensPorHashtag() {
         (0, viewUtils_1.cabecalhoPrincipal)("Exibir Postagens por Hashtag");
@@ -530,8 +531,7 @@ class App {
             (0, ioUtils_1.exibirTexto)("Não há postagens com essa hashtag.");
             return;
         }
-        (0, viewUtils_1.cabecalhoPrincipal)(`Postagens com Hashtag "#${hashtag}":`);
-        this.exibirPostagens(postagensFiltradas);
+        this.exibirPostagens(postagensFiltradas, `Postagens com Hashtag "#${hashtag}":`);
     }
     excluirPerfil() {
         (0, viewUtils_1.cabecalhoPrincipal)("Excluir Perfil");

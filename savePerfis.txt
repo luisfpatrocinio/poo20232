@@ -1,4 +1,5 @@
-perfisCriados:26
+perfisCriados:27
 1|Silva|Patro@gmail.com
 24|Luis|patro@gmail.com
 25|Fred|patrocinioluisf@gmail.coim
+27|Paulo|paulinho@gmail.com

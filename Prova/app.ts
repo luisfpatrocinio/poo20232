@@ -387,7 +387,6 @@ class App {
             this._qntPostagensCriadas++;
             
             exibirTextoNoCentro(`Postagem No ${id} criada com sucesso.`);
-            enterToContinue();
         }
 
         this.salvarPostagens();
@@ -419,14 +418,14 @@ class App {
         }
     }
 
-    exibirPostagens(postagens: Array<Postagem>): void {
+    exibirPostagens(postagens: Array<Postagem>, header: string = ""): void {
         var _pagina = 0;
         var _postsPorPagina = Math.floor((obterAlturaTerminal() - 10) / 4);
         _postsPorPagina = 4;
         var _totalPaginas = Math.ceil(postagens.length/_postsPorPagina);
 
         while (_pagina < _totalPaginas) {
-            
+            cabecalhoPrincipal(header); 
             for (let i = 0; i < _postsPorPagina; i++) {
                 var n = _pagina * _postsPorPagina + i;
 
@@ -457,14 +456,16 @@ class App {
             
             _pagina++;
             this.salvarPostagens();
-            if (_pagina < _totalPaginas) enterToContinue();
+            if (_pagina < _totalPaginas) {
+                enterToContinue();
+            }
         }
     }
 
     verFeed(): void {
         let postagens = this._redeSocial.obterPostagens();
         cabecalhoPrincipal("PatroFeed");
-        this.exibirPostagens(postagens);
+        this.exibirPostagens(postagens, "PatroFeed");
     }
 
     selecionarPerfil(): void | null | Perfil {
@@ -594,7 +595,7 @@ class App {
         }
 
         // Com as postagens do perfil específico:
-        this.exibirPostagens(postagensDoPerfil);
+        this.exibirPostagens(postagensDoPerfil, `Postagens de ${perfil.nome}:`);
     }
 
     exibirPostagensPorHashtag() {
@@ -622,8 +623,7 @@ class App {
             return;
         } 
 
-        cabecalhoPrincipal(`Postagens com Hashtag "#${hashtag}":`);
-        this.exibirPostagens(postagensFiltradas);
+        this.exibirPostagens(postagensFiltradas, `Postagens com Hashtag "#${hashtag}":`);
     }
 
     excluirPerfil() {

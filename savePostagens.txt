@@ -1,5 +1,6 @@
-postagensCriadas:35
+postagensCriadas:100
 21|0|Essa postagem � um teste.|0|0|40|25||
 22|0|Meu numero eh 24.|0|0|40|24||
-30|1|Postagem #teste. Essa eh uma postagem avancada.|0|0|40|25|teste|6
 31|0|Essa eh uma postagem gigante pra testar se ta tudo certinho. Essa atividade eh muito legal oh.|0|0|40|1||
+40|0|zxz|0|0|40|1||
+41|0|Testando teste|0|0|40|27||
