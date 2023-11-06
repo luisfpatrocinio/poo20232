@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+// Importar bibliotecas principais:
 const perfil_1 = require("./Classes/perfil");
 const postagem_1 = require("./Classes/postagem");
 const redeSocial_1 = require("./Classes/redeSocial");
@@ -211,15 +212,15 @@ class App {
             return this._opcaoSelecionada + 1;
         }
         /// @TODO: Wrap
-        this._opcaoSelecionada = Math.min(this._opcaoSelecionada, max);
-        this._opcaoSelecionada = Math.max(this._opcaoSelecionada, min);
+        if (this._opcaoSelecionada < min) {
+            this._opcaoSelecionada = max;
+        }
+        if (this._opcaoSelecionada > max) {
+            this._opcaoSelecionada = min;
+        }
+        // this._opcaoSelecionada = Math.min(this._opcaoSelecionada, max);
+        // this._opcaoSelecionada = Math.max(this._opcaoSelecionada, min);
         return -1;
-        // let opcao: number = obterNumeroInteiro("Opcao: ");
-        // while (opcao < 0 || opcao > opcoes.length) {
-        //     exibirTexto("Opcao inválida. Tente novamente.");
-        //     opcao = this.obterOpcao();
-        // }
-        // return opcao;
     }
     obterMenuParaExibir() {
         var menu = new Array;
@@ -242,19 +243,19 @@ class App {
         for (let i = 0; i < menuParaExibir.length; i++) {
             let selectedStr = (i === this._opcaoSelecionada) ? "> " : "";
             if (i === this._opcaoSelecionada) {
-                (0, viewUtils_1.exibirTextoEsquerda)(chalk.inverse.bold(`${selectedStr}${i + 1} - ${menuParaExibir[i][0]}`));
+                (0, viewUtils_1.exibirTextoEsquerda)(chalk.inverse.bold(`${selectedStr} ${menuParaExibir[i][0]}`));
             }
             else {
-                (0, viewUtils_1.exibirTextoEsquerda)(`${selectedStr}${i + 1} - ${menuParaExibir[i][0]}`);
+                (0, viewUtils_1.exibirTextoEsquerda)(`${selectedStr} - ${menuParaExibir[i][0]}`);
             }
         }
         var onExit = this._opcaoSelecionada === menuParaExibir.length;
         let selectedStr = (onExit) ? "> " : "";
         if (onExit) {
-            (0, viewUtils_1.exibirTextoEsquerda)(chalk.bold.inverse(`${selectedStr} 0 - Sair`));
+            (0, viewUtils_1.exibirTextoEsquerda)(chalk.bold.inverse(`${selectedStr} Sair`));
         }
         else {
-            (0, viewUtils_1.exibirTextoEsquerda)(`${selectedStr}0 - Sair`);
+            (0, viewUtils_1.exibirTextoEsquerda)(`${selectedStr} - Sair`);
         }
     }
     executarOpcao(opcao) {
@@ -435,6 +436,7 @@ class App {
                     _nome = `[P] ` + _nome;
                 }
                 var _spac = (0, viewUtils_1.obterLarguraTerminal)() - 2 - _dataString.length - _nome.length;
+                _spac = Math.max(_spac, 6);
                 var _postHeader = `${_nome}:${" ".repeat(_spac - 5)}${_dataString}  `;
                 var _postHeaderColor, _postHeaderBGColor;
                 if (i == indPost) {
@@ -449,8 +451,10 @@ class App {
                 (0, ioUtils_1.exibirTextoPostagem)(`${_post.texto}`);
                 var _curtidasStr = `${_post.curtidas} curtidas, ${_post.descurtidas} descurtidas.`;
                 if (i == indPost) {
-                    var _newText = "[A] - Curtir, [S] - Descurtir";
-                    _curtidasStr += ' '.repeat((0, viewUtils_1.obterLarguraTerminal)() - 10 - _curtidasStr.length - _newText.length) + _newText;
+                    var _newText = `[F] ${this._postagensFavoritas.includes(_post) ? "Desfav." : "Fav."}, [A] Like, [S] Deslike`;
+                    var _spac = (0, viewUtils_1.obterLarguraTerminal)() - 10 - _curtidasStr.length - _newText.length;
+                    _spac = Math.max(0, _spac);
+                    _curtidasStr += ' '.repeat(_spac) + _newText;
                 }
                 if (_post instanceof postagem_1.PostagemAvancada) {
                     // Reduzir views

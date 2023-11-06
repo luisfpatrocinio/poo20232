@@ -65,7 +65,8 @@ class PostagemAvancada extends Postagem {
         return false;
     }
     decrementarVisualizacoes() {
-        this._visualizacoesRestantes--;
+        if (this._visualizacoesRestantes > 0)
+            this._visualizacoesRestantes--;
     }
     get hashtags() {
         return this._hashtags;

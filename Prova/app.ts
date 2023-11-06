@@ -1,14 +1,12 @@
 // Importar bibliotecas principais:
-import {question} from 'readline-sync';
-
 import {Perfil} from './Classes/perfil';
 import {Postagem, PostagemAvancada} from './Classes/postagem';
 import {RedeSocial} from './Classes/redeSocial';
 
 // Importar Utils
-import {obterNumeroInteiro, exibirTexto, exibirTextoPostagem, exibirTextoCentralizado, obterTexto, enterToContinue} from './Utils/ioUtils';
-import { mainBackground, exibirTextoEsquerda, showBlogLogo, exibirTextoNoCentro, prepararTelaPostagem, limparTerminal, cabecalhoPrincipal, feedView, obterAlturaTerminal, exibirTextoCentroCentro, saltarLinhas, obterLarguraTerminal, obterCorDoFundo } from './Utils/viewUtils';
-import { extrairHashtags, sleep } from './Utils/generalUtils';
+import { exibirTexto, exibirTextoPostagem, exibirTextoCentralizado, obterTexto, enterToContinue} from './Utils/ioUtils';
+import { mainBackground, exibirTextoEsquerda, showBlogLogo, exibirTextoNoCentro, prepararTelaPostagem, limparTerminal, cabecalhoPrincipal, obterAlturaTerminal, saltarLinhas, obterLarguraTerminal, obterCorDoFundo } from './Utils/viewUtils';
+import { extrairHashtags } from './Utils/generalUtils';
 
 // Leitura e Gravação de Arquivos
 import { readFileSync, writeFileSync } from 'fs';
@@ -242,18 +240,17 @@ class App {
         }
 
         /// @TODO: Wrap
-        this._opcaoSelecionada = Math.min(this._opcaoSelecionada, max);
-        this._opcaoSelecionada = Math.max(this._opcaoSelecionada, min);
+        if (this._opcaoSelecionada < min) {
+            this._opcaoSelecionada = max;
+        }
+        if (this._opcaoSelecionada > max) {
+            this._opcaoSelecionada = min;
+        }
+        // this._opcaoSelecionada = Math.min(this._opcaoSelecionada, max);
+        // this._opcaoSelecionada = Math.max(this._opcaoSelecionada, min);
 
         return -1;
 
-
-        // let opcao: number = obterNumeroInteiro("Opcao: ");
-        // while (opcao < 0 || opcao > opcoes.length) {
-        //     exibirTexto("Opcao inválida. Tente novamente.");
-        //     opcao = this.obterOpcao();
-        // }
-        // return opcao;
     }
 
     obterMenuParaExibir(): Array<[string, () => void, () => boolean]> {
@@ -281,17 +278,17 @@ class App {
         for (let i = 0; i < menuParaExibir.length; i++) {
             let selectedStr = (i === this._opcaoSelecionada) ? "> " : "";
             if (i === this._opcaoSelecionada) {
-                exibirTextoEsquerda(chalk.inverse.bold(`${selectedStr}${i+1} - ${menuParaExibir[i][0]}`));
+                exibirTextoEsquerda(chalk.inverse.bold(`${selectedStr} ${menuParaExibir[i][0]}`));
             } else {
-                exibirTextoEsquerda(`${selectedStr}${i+1} - ${menuParaExibir[i][0]}`);
+                exibirTextoEsquerda(`${selectedStr} - ${menuParaExibir[i][0]}`);
             }
         }
         var onExit = this._opcaoSelecionada === menuParaExibir.length;
         let selectedStr = (onExit) ? "> " : "";
         if (onExit) {
-            exibirTextoEsquerda(chalk.bold.inverse(`${selectedStr} 0 - Sair`));
+            exibirTextoEsquerda(chalk.bold.inverse(`${selectedStr} Sair`));
         } else {
-            exibirTextoEsquerda(`${selectedStr}0 - Sair`);
+            exibirTextoEsquerda(`${selectedStr} - Sair`);
         }
         
     }
@@ -512,7 +509,7 @@ class App {
                 }
 
                 var _spac = obterLarguraTerminal() - 2 - _dataString.length - _nome.length;
-
+                _spac = Math.max(_spac, 6);
                 var _postHeader = `${_nome}:${" ".repeat(_spac - 5)}${_dataString}  `;
 
                 
@@ -531,8 +528,10 @@ class App {
 
                 var _curtidasStr = `${_post.curtidas} curtidas, ${_post.descurtidas} descurtidas.`;
                 if (i == indPost) {
-                    var _newText = "[A] - Curtir, [S] - Descurtir";
-                    _curtidasStr += ' '.repeat(obterLarguraTerminal() - 10 - _curtidasStr.length - _newText.length) + _newText;
+                    var _newText = `[F] ${this._postagensFavoritas.includes(_post) ? "Desfav." : "Fav."}, [A] Like, [S] Deslike`;
+                    var _spac = obterLarguraTerminal() - 10 - _curtidasStr.length - _newText.length;
+                    _spac = Math.max(0, _spac);
+                    _curtidasStr += ' '.repeat(_spac) + _newText;
                 }
                 if (_post instanceof PostagemAvancada) {
                     // Reduzir views
