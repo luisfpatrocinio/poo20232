@@ -268,15 +268,21 @@ class App {
         const menuParaExibir = this.obterMenuParaExibir();
 
         for (let i = 0; i < menuParaExibir.length; i++) {
-            let selectedStr = (i === this._opcaoSelecionada) ? ">" : "";
+            let selectedStr = (i === this._opcaoSelecionada) ? "> " : "";
             if (i === this._opcaoSelecionada) {
-                exibirTextoEsquerda(chalk.bold(`${selectedStr} ${i+1} - ${menuParaExibir[i][0]}`));
+                exibirTextoEsquerda(chalk.inverse.bold(`${selectedStr}${i+1} - ${menuParaExibir[i][0]}`));
             } else {
                 exibirTextoEsquerda(`${selectedStr}${i+1} - ${menuParaExibir[i][0]}`);
             }
         }
-        let selectedStr = (this._opcaoSelecionada === menuParaExibir.length) ? ">" : "";
-        exibirTextoEsquerda(`${selectedStr}0 - Sair`);
+        var onExit = this._opcaoSelecionada === menuParaExibir.length;
+        let selectedStr = (onExit) ? "> " : "";
+        if (onExit) {
+            exibirTextoEsquerda(chalk.bold.inverse(`${selectedStr} 0 - Sair`));
+        } else {
+            exibirTextoEsquerda(`${selectedStr}0 - Sair`);
+        }
+        
     }
 
     executarOpcao(opcao: number): void {
@@ -600,10 +606,10 @@ class App {
             case 1:
                 _successString = `Nome alterado com sucesso.`;
                 break;
-            case 1:
+            case 2:
                 _successString = `Email alterado com sucesso.`;
                 break;
-            case 1:
+            case 3:
                 _successString = `Nome e email alterados com sucesso.`;
                 break;
         }
@@ -620,7 +626,7 @@ class App {
         this._redeSocial.atribuirPerfisCarregados(perfis);
         this.salvarPerfis();
 
-        exibirTexto(_successString);
+        exibirTextoNoCentro(_successString);
     }
 
     exibirPostagensPorPerfil() {
@@ -697,6 +703,7 @@ class App {
         // Perfil não encontrado.
         if (perfil == null) {
             exibirTexto(`Não encontramos um perfil com esse atributo.`);
+            enterToContinue()
             return
         }
 
@@ -704,6 +711,8 @@ class App {
         let novosPerfis = this._redeSocial.obterPerfis().filter((p) => {
             return (p != perfil);
         })
+
+        exibirTextoNoCentro(`Perfil ${perfil.nome} excluído com sucesso.`);
 
         this._redeSocial.atribuirPerfisCarregados(novosPerfis);
         this.salvarPerfis();

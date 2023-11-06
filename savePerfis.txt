@@ -1,4 +1,2 @@
-perfisCriados:3
-1|Luis Felipe|patrocinioluisf@gmail.com
-2|Herminio|herminio@gmail.com
-3|Ryan|ryofac@gmail.com
+perfisCriados:7
+7|lUIS|aAAa@aa.a

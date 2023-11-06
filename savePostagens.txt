@@ -1,5 +1,2 @@
-postagensCriadas:32
-9|1|Eu gosto de #cafe.|0|0|40|3|cafe|136
-10|0|Eu gosto de criar programinhas em terminal.|18|5|40|1||
-11|1|Eh rajada doidooo eh rajadaa #rajada|0|0|40|2|rajada|486
-12|1|Bora almocar. #fome|0|0|40|2|fome|636
+postagensCriadas:34
+9|1|Eu gosto de #cafe.|0|0|40|3|cafe|132
