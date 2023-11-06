@@ -19,7 +19,8 @@ exports.obterNumeroInteiro = obterNumeroInteiro;
 function exibirTexto(texto) {
     readline.cursorTo(process.stdout, 2);
     var _bgHex = (0, viewUtils_1.obterCorDoFundo)();
-    console.log(chalk.bgHex(_bgHex)(texto));
+    var _col = "#FFFFFF";
+    console.log(chalk.bgHex(_bgHex).hex(_col)(texto));
 }
 exports.exibirTexto = exibirTexto;
 function exibirTextoPostagem(texto) {
@@ -32,7 +33,7 @@ function exibirTextoPostagem(texto) {
             return chalk.hex('#df84a5').bgHex((0, viewUtils_1.obterCorDoFundo)())(`#${hashtag}`);
         });
         readline.cursorTo(process.stdout, 2);
-        console.log(chalk.bgHex((0, viewUtils_1.obterCorDoFundo)())(_pedaco));
+        console.log(chalk.hex("#000000").bgHex((0, viewUtils_1.obterCorDoFundo)())(_pedaco));
     }
 }
 exports.exibirTextoPostagem = exibirTextoPostagem;
@@ -55,4 +56,3 @@ function obterTexto(texto) {
     return (0, readline_sync_1.question)(texto).replace("|", "_").replace("¨", "_").trim();
 }
 exports.obterTexto = obterTexto;
-// Transformar funções em classes estáticas

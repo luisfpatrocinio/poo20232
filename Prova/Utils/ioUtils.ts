@@ -19,7 +19,8 @@ export function obterNumeroInteiro(mensagem: string): number {
 export function exibirTexto(texto: string): void {
     readline.cursorTo(process.stdout, 2);
     var _bgHex = obterCorDoFundo();
-    console.log(chalk.bgHex(_bgHex)(texto));
+    var _col = "#FFFFFF";
+    console.log(chalk.bgHex(_bgHex).hex(_col)(texto));
 }
 
 export function exibirTextoPostagem(texto: string): void {
@@ -34,7 +35,7 @@ export function exibirTextoPostagem(texto: string): void {
         });
 
         readline.cursorTo(process.stdout, 2);
-        console.log(chalk.bgHex(obterCorDoFundo())(_pedaco));
+        console.log(chalk.hex("#000000").bgHex(obterCorDoFundo())(_pedaco));
     }
 }
 
@@ -56,5 +57,3 @@ export function obterTexto(texto: string): string {
     readline.cursorTo(process.stdout, 2);
     return question(texto).replace("|", "_").replace("¨", "_").trim();
 }
-
-// Transformar funções em classes estáticas

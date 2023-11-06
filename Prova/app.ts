@@ -60,7 +60,7 @@ class App {
         saltarLinhas(Math.floor(obterAlturaTerminal()/2) - 6);
         showBlogLogo();
         let col = "#D0DA91";
-        const f = (_texto) => {
+        const f = (_texto: string) => {
             return exibirTextoNoCentro(_texto, false, col);
         }
         f(`Desenvolvido por `);
