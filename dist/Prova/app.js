@@ -26,7 +26,8 @@ class App {
             ["Ver Feed", this.verFeed, () => this._redeSocial.obterPostagens().length > 0],
             ["Exibir Postagens por Perfil", this.exibirPostagensPorPerfil, () => this._redeSocial.obterPostagens().length > 0 && this._redeSocial.obterPerfis().length > 0],
             ["Exibir Postagens por Hashtag", this.exibirPostagensPorHashtag, () => this._redeSocial.obterPostagens().length > 0],
-            ["Exibir Postagens Populares", this.exibirPostagensPopulares, () => this._redeSocial.obterPostagens().length > 0]
+            ["Exibir Postagens Populares", this.exibirPostagensPopulares, () => this._redeSocial.obterPostagens().length > 0],
+            ["Exibir Hashtags Populares", this.exibirHashtagsPopulares, () => this._redeSocial.obterPostagens().length > 0]
         ];
         this._opcaoSelecionada = 0;
         this._redeSocial = new redeSocial_1.RedeSocial;
@@ -355,16 +356,30 @@ class App {
         }
     }
     listarPerfis() {
-        (0, viewUtils_1.cabecalhoPrincipal)("Perfis Cadastrados");
         let perfis = this._redeSocial.obterPerfis();
         // @TODO: Limitar exibições por página, semelhante a função verFeed
-        for (let i = 0; i < perfis.length; i++) {
-            var _p = perfis[i];
-            (0, ioUtils_1.exibirTexto)(`ID ${_p.id}:`);
-            (0, ioUtils_1.exibirTexto)(`Nome: ${_p.nome}`);
-            (0, ioUtils_1.exibirTexto)(`Email: ${_p.email}`);
-            (0, viewUtils_1.exibirTextoNoCentro)(`x`);
-            console.log();
+        var _perfisPorPagina = 4;
+        var _pagina = 0;
+        var _totalPaginas = Math.ceil(perfis.length / _perfisPorPagina);
+        while (_pagina < _totalPaginas) {
+            (0, viewUtils_1.cabecalhoPrincipal)("Perfis Cadastrados");
+            for (let i = 0; i < _perfisPorPagina; i++) {
+                // Obter número do perfil de acordo com a página.
+                var n = _pagina * _perfisPorPagina + i;
+                if (n >= perfis.length)
+                    break;
+                var _p = perfis[n];
+                (0, ioUtils_1.exibirTexto)(`ID ${_p.id}:`);
+                (0, ioUtils_1.exibirTexto)(`Nome: ${_p.nome}`);
+                (0, ioUtils_1.exibirTexto)(`Email: ${_p.email}`);
+                (0, viewUtils_1.exibirTextoNoCentro)(`x`);
+                console.log();
+            }
+            (0, viewUtils_1.exibirTextoNoCentro)(`[AVANÇAR]`);
+            _pagina++;
+            if (_pagina < _totalPaginas) {
+                (0, ioUtils_1.enterToContinue)();
+            }
         }
     }
     exibirPostagens(postagens, header = "") {
@@ -629,6 +644,43 @@ class App {
             return;
         }
         this.exibirPostagens(postagensFiltradas, `Postagens Populares:`);
+    }
+    exibirHashtagsPopulares() {
+        (0, viewUtils_1.cabecalhoPrincipal)("Exibir Hashtags Populares");
+        // Procurar por todas as postagens.
+        let postagens = this._redeSocial.obterPostagens();
+        // Armazenar tags
+        let tags = [];
+        postagens.forEach((p) => {
+            if (p instanceof postagem_1.PostagemAvancada) {
+                p.hashtags.forEach((h) => {
+                    tags.push(h);
+                });
+            }
+        });
+        if (tags.length <= 0) {
+            (0, ioUtils_1.exibirTexto)("Não há postagens com hashtags.");
+            return;
+        }
+        // Crie um mapa (dicionário) para contar as hashtags
+        const contadorHashtags = {};
+        // Percorra todas as hashtags e conte as ocorrências
+        tags.forEach((hashtag) => {
+            // Se existir: soma
+            if (contadorHashtags[hashtag]) {
+                contadorHashtags[hashtag]++;
+            }
+            else {
+                // Se
+                contadorHashtags[hashtag] = 1;
+            }
+        });
+        // Converta o mapa em um array de pares chave-valor e ordene-o
+        const hashtagsMaisComuns = Object.entries(contadorHashtags)
+            .sort((a, b) => b[1] - a[1]).slice(0, 5);
+        for (const [hashtag, contagem] of hashtagsMaisComuns) {
+            (0, viewUtils_1.exibirTextoNoCentro)(`#${hashtag}: ${contagem}`);
+        }
     }
     executar() {
         // Checar tamanho da janela

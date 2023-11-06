@@ -1,2 +1,6 @@
-postagensCriadas:34
-9|1|Eu gosto de #cafe.|0|0|40|3|cafe|132
+postagensCriadas:47
+37|0|Eh rajada doido oh|8|2|40|9||
+39|1|lalala #teste|0|0|40|8|teste|9
+40|1|Celular #teste|0|0|40|8|teste|9
+41|1|garrafa de agua #cafe #teste|0|0|40|9|cafe¨teste|9
+42|1|Saudades do Ely #teste #saudades|0|0|40|8|teste¨saudades|9

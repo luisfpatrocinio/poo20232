@@ -107,15 +107,17 @@ export function showBlogLogo(): void {
     };
     
     const title = [
-        "__                 __            ",
-        "|__)  _  |_  _  _  |__) |  _   _  ",
-        "|    (_| |_ |  (_) |__) | (_) (_) ",
-        "                              _/  "
+        "__                 __              ",
+        "|__)  _  |_  _  _  |__)  _   _  |  ",
+        "|    (_| |_ |  (_) |__) (_) (_) |( ",
+        "                                   "
     ];
-    exibirTextoNoCentro(title[0]);
-    exibirTextoNoCentro(title[1]);
-    exibirTextoNoCentro(title[2]);
-    exibirTextoNoCentro(title[3]);
+    
+    title.forEach((t) => {
+        var _x = Math.floor((obterLarguraTerminal() - t.length) / 2);
+        readline.cursorTo(process.stdout, _x);
+        console.log(chalk.hex('#e8c170').bgHex(BG_COLOR)(t));
+    });
 }
 
 export function cabecalhoPrincipal(texto: string): void {
