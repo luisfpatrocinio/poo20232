@@ -2,6 +2,7 @@ var readline = require('readline');
 const chalk = require('chalk');
 
 const BG_COLOR = '#172038'
+const SEL_COLOR = '#a4dddb'
 
 import { Perfil } from "../Classes/perfil";
 
@@ -53,10 +54,14 @@ export function limparTerminal(): void {
     console.clear();
 }
 
-export function exibirTextoNoCentro(texto: string): void {
+export function exibirTextoNoCentro(texto: string, inverse: boolean = false): void {
     var _x = Math.floor((obterLarguraTerminal() - texto.length) / 2);
     readline.cursorTo(process.stdout, _x);
-    console.log(chalk.bgHex(BG_COLOR)(texto));
+    if (inverse) {
+        console.log(chalk.bgHex(BG_COLOR).inverse(texto));
+    } else {
+        console.log(chalk.bgHex(BG_COLOR)(texto));
+    }
 }
 
 export function exibirTextoEsquerda(texto: string): void {
@@ -67,7 +72,7 @@ export function exibirTextoEsquerda(texto: string): void {
 export function mainBackground(): void{
     limparTerminal();
     for (let i = 0; i < obterAlturaTerminal(); i++) {
-        const h = (texto) => {
+        const h = (texto: string) => {
             return textCol(texto, '#a23e8c', '#1e1d39')
         };
         if (i == 0) console.log(h(`${"=".repeat(obterLarguraTerminal())}`));
@@ -96,7 +101,7 @@ export function showBlogLogo(): void {
     // Fonte: Straight
     // http://patorjk.com/software/taag/#p=display&h=0&v=0&f=Straight&t=Patrobook
     
-    const c = (texto) => {
+    const c = (texto: string) => {
         return textCol(texto, '#e98537', obterCorDoFundo())
         // return texto
     };

@@ -27,7 +27,7 @@ export function exibirTextoPostagem(texto: string): void {
     for (let i = 0; i < texto.length; i += _tamanho) {
         var _pedaco = texto.substring(i, i + _tamanho);
         readline.cursorTo(process.stdout, 2);
-        console.log(_pedaco);
+        console.log(chalk.bgHex(obterCorDoFundo())(_pedaco));
     }
 }
 
@@ -41,15 +41,13 @@ export function enterToContinue(): void {
     var _text = "[C/Espaço - Continuar]";
     var _x = Math.floor(obterLarguraTerminal()/2 - _text.length/2);
     readline.cursorTo(process.stdout, _x);
-    console.log(_text);
-    // question('', {keepWhitespace: false, hideEchoBack: true, mask: ''});
+    console.log(chalk.bgHex(obterCorDoFundo())(_text));
     keyInPause('', {mask: '', limit: 'c '})
-    // question("[ENTER]", {mask: 'x'});
 }
 
 export function obterTexto(texto: string): string {
     readline.cursorTo(process.stdout, 2);
-    return question(texto).replace("|", "_").replace("¨", "_");
+    return question(texto).replace("|", "_").replace("¨", "_").trim();
 }
 
 // Transformar funções em classes estáticas

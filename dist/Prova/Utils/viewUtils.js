@@ -4,6 +4,7 @@ exports.saltarLinhas = exports.feedView = exports.prepararTelaPostagem = exports
 var readline = require('readline');
 const chalk = require('chalk');
 const BG_COLOR = '#172038';
+const SEL_COLOR = '#a4dddb';
 function textCol(texto, color = "#FFFFFF", bgColor = "000000") {
     if (bgColor === undefined) {
         bgColor = obterCorDoFundo();
@@ -52,10 +53,15 @@ function limparTerminal() {
     console.clear();
 }
 exports.limparTerminal = limparTerminal;
-function exibirTextoNoCentro(texto) {
+function exibirTextoNoCentro(texto, inverse = false) {
     var _x = Math.floor((obterLarguraTerminal() - texto.length) / 2);
     readline.cursorTo(process.stdout, _x);
-    console.log(chalk.bgHex(BG_COLOR)(texto));
+    if (inverse) {
+        console.log(chalk.bgHex(BG_COLOR).inverse(texto));
+    }
+    else {
+        console.log(chalk.bgHex(BG_COLOR)(texto));
+    }
 }
 exports.exibirTextoNoCentro = exibirTextoNoCentro;
 function exibirTextoEsquerda(texto) {

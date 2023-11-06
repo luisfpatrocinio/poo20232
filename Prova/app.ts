@@ -7,11 +7,12 @@ import {RedeSocial} from './Classes/redeSocial';
 
 // Importar Utils
 import {obterNumeroInteiro, exibirTexto, exibirTextoPostagem, exibirTextoCentralizado, obterTexto, enterToContinue} from './Utils/ioUtils';
-import { mainBackground, exibirTextoEsquerda, showBlogLogo, exibirTextoNoCentro, prepararTelaPostagem, limparTerminal, cabecalhoPrincipal, feedView, obterAlturaTerminal, exibirTextoCentroCentro, saltarLinhas, obterLarguraTerminal } from './Utils/viewUtils';
+import { mainBackground, exibirTextoEsquerda, showBlogLogo, exibirTextoNoCentro, prepararTelaPostagem, limparTerminal, cabecalhoPrincipal, feedView, obterAlturaTerminal, exibirTextoCentroCentro, saltarLinhas, obterLarguraTerminal, obterCorDoFundo } from './Utils/viewUtils';
 import { extrairHashtags, sleep } from './Utils/generalUtils';
 
 // Leitura e Gravação de Arquivos
 import { readFileSync, writeFileSync } from 'fs';
+import { Readline } from 'readline/promises';
 
 // Visual
 const chalk = require('chalk');
@@ -32,7 +33,8 @@ class App {
         ["Criar Postagem",  this.criarPostagem, () => this._redeSocial.obterPerfis().length > 0],
         ["Ver Feed",        this.verFeed,       () => this._redeSocial.obterPostagens().length > 0],
         ["Exibir Postagens por Perfil", this.exibirPostagensPorPerfil,  () => this._redeSocial.obterPostagens().length > 0 && this._redeSocial.obterPerfis().length > 0],
-        ["Exibir Postagens por Hashtag", this.exibirPostagensPorHashtag,    () => this._redeSocial.obterPostagens().length > 0]
+        ["Exibir Postagens por Hashtag", this.exibirPostagensPorHashtag,    () => this._redeSocial.obterPostagens().length > 0],
+        ["Exibir Postagens Populares", this.exibirPostagensPopulares,    () => this._redeSocial.obterPostagens().length > 0]
     ]
 
     private _opcaoSelecionada : number = 0;
@@ -419,31 +421,63 @@ class App {
     }
 
     exibirPostagens(postagens: Array<Postagem>, header: string = ""): void {
-        var _pagina = 0;
+        var rsync = require('readline-sync');
+
+        var _pagina: number = 0;
         var _postsPorPagina = Math.floor((obterAlturaTerminal() - 10) / 4);
         _postsPorPagina = 4;
         var _totalPaginas = Math.ceil(postagens.length/_postsPorPagina);
 
+        let indPost = 0;    // postagem selecionada
+        var postsDecrementadosDessaVez: Array<PostagemAvancada> = [];
         while (_pagina < _totalPaginas) {
+            // Cabeçalho
             cabecalhoPrincipal(header); 
+
+            var min = 0;
+            var max = 0;
+            // Percorrer postagens
             for (let i = 0; i < _postsPorPagina; i++) {
+
+                // Obter número da postagem de acordo com a página.
                 var n = _pagina * _postsPorPagina + i;
-
                 if (n >= postagens.length) break;
+                max++;
 
+                // Post atual:
                 var _post = postagens[n];
                 
-                exibirTexto(`${_post.data.toUTCString()}`)
-                exibirTexto(`${_post.perfil.nome}:`)
+                // Exibir textos da postagem:
+                var _dataString = _post.data.toUTCString();
+                var _spac = obterLarguraTerminal() - 2 - _dataString.length - _post.perfil.nome.length;
+                var _postHeader = `${_post.perfil.nome}:${" ".repeat(_spac - 5)}${_dataString}`;
+                var _postHeaderColor, _postHeaderBGColor;
+                if (i == indPost) {
+                    _postHeaderColor = '#FFFFFF';
+                    _postHeaderBGColor = '#be772b'
+                } else {
+                    _postHeaderColor = '#394a50';
+                    _postHeaderBGColor = obterCorDoFundo();
+                }
+                exibirTexto(chalk.bgHex(_postHeaderBGColor).hex(_postHeaderColor)(_postHeader));
+            
                 exibirTextoPostagem(`${_post.texto}`);
 
                 var _curtidasStr = `${_post.curtidas} curtidas, ${_post.descurtidas} descurtidas.`;
+                if (i == indPost) {
+                    var _newText = "[A] - Curtir, [S] - Descurtir";
+                    _curtidasStr += ' '.repeat(obterLarguraTerminal() - 10 - _curtidasStr.length - _newText.length) + _newText;
+                }
                 if (_post instanceof PostagemAvancada) {
                     // Reduzir views
-                    _post.decrementarVisualizacoes();
+                    if (!postsDecrementadosDessaVez.includes(_post)) {
+                        _post.decrementarVisualizacoes();
+                        postsDecrementadosDessaVez.push(_post);
+                    }
 
                     var _viewsStr = `(${_post.visualizacoesRestantes})`;
                     var _n = obterLarguraTerminal() - 2 - _curtidasStr.length - 2 - _viewsStr.length;
+                    _n = Math.max(0, _n);
                     _curtidasStr += `${' '.repeat(_n)}${_viewsStr}`;
                 }
                 exibirTexto(_curtidasStr);
@@ -451,13 +485,38 @@ class App {
                 exibirTextoNoCentro("-=-");
                 console.log();
             }
-
-            exibirTextoNoCentro(`Página ${_pagina + 1}/${_totalPaginas}`)
             
-            _pagina++;
+            exibirTextoNoCentro(`Página ${_pagina + 1}/${_totalPaginas}`)
+            if (indPost == max) {
+                exibirTextoNoCentro(`[AVANÇAR]`, true);
+            } else {
+                exibirTextoNoCentro(`[AVANÇAR]`)
+            }
+            
+
+            var key = rsync.keyIn('', {
+                hideEchoBack: true,
+                mask: '',
+                limit: 'AaSsZXCzxc ',
+                hideCursor: true,
+            });
+
+            key = key.toString().toLowerCase();
+            if (key == 'z') indPost--;
+            if (key == 'x') indPost++;
+
+            var _indexPostSelecionado = _pagina * _postsPorPagina + indPost;
+            var _post = postagens[_indexPostSelecionado];
+            if (key == 'a') _post.curtir();
+            if (key == 's') _post.descurtir();
+
+            indPost = Math.min(indPost, max);
+            indPost = Math.max(indPost, min);
+
             this.salvarPostagens();
-            if (_pagina < _totalPaginas) {
-                enterToContinue();
+            if (key == 'c' && _pagina < _totalPaginas) {
+                _pagina++;
+                indPost = 0;
             }
         }
     }
@@ -648,6 +707,24 @@ class App {
 
         this._redeSocial.atribuirPerfisCarregados(novosPerfis);
         this.salvarPerfis();
+    }
+
+    exibirPostagensPopulares(): void {
+        cabecalhoPrincipal("Exibir Postagens Populares");
+        // Procurar por todas as postagens.
+        let postagens = this._redeSocial.obterPostagens();
+
+        // Ver quais são populares
+        let postagensFiltradas = postagens.filter((p) => {
+            return (p.ehPopular());
+        });
+        
+        if (postagensFiltradas.length <= 0) {
+            exibirTexto("Não há postagens populares.");
+            return;
+        } 
+
+        this.exibirPostagens(postagensFiltradas, `Postagens Populares:`);
     }
 
     executar(): void {

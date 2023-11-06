@@ -1,25 +1,25 @@
 Gerenciar Perfis:
 OK - Criar perfil,
 OK - Listar perfis,
-[] - Consultar perfil,
+OK - Consultar perfil,
 OK - Excluir perfil,
-[] - Editar perfil
+OK - Editar perfil
 
 Gerenciar postagens:
 OK - Criar postagem simples
-- Criar postagem avançada
-- Listar postagens,
-- Consultar postagem,
+OK - Criar postagem avançada
+OK - Listar postagens,
+OK - Consultar postagem,
 - Excluir postagem,
 - Editar postagem,
-- Curtir postagem,
-- Descurtir postagem
-- Postagem Avançada: Adicionar hashtag, exibir postagens por hashtag
-- Postagem Avançada: Visualizações restantes
+OK - Curtir postagem,
+OK - Descurtir postagem
+OK - Postagem Avançada: Adicionar hashtag, exibir postagens por hashtag
+OK - Postagem Avançada: Visualizações restantes
 
 Ver Feed:
 OK - Exibir postagens por perfil,
-- Exibir postagens por hashtag
+OK - Exibir postagens por hashtag
 
 # Funções do Menu:
 OK - Exibir opções
@@ -52,7 +52,7 @@ OK - Menu interativo (com setas e teclas de atalho)
 
 import { keyIn } from "readline-sync";
 
-String vazia no nome de usuario deve cancelar a criação de perfil.
+OK - String vazia no nome de usuario deve cancelar a criação de perfil.
 Impedir que crie usuarios com mesmos atributos
 Impedir que digite-se hashtag
 // http://patorjk.com/software/taag/

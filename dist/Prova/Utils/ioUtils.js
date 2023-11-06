@@ -27,7 +27,7 @@ function exibirTextoPostagem(texto) {
     for (let i = 0; i < texto.length; i += _tamanho) {
         var _pedaco = texto.substring(i, i + _tamanho);
         readline.cursorTo(process.stdout, 2);
-        console.log(_pedaco);
+        console.log(chalk.bgHex((0, viewUtils_1.obterCorDoFundo)())(_pedaco));
     }
 }
 exports.exibirTextoPostagem = exibirTextoPostagem;
@@ -41,15 +41,13 @@ function enterToContinue() {
     var _text = "[C/Espaço - Continuar]";
     var _x = Math.floor((0, viewUtils_1.obterLarguraTerminal)() / 2 - _text.length / 2);
     readline.cursorTo(process.stdout, _x);
-    console.log(_text);
-    // question('', {keepWhitespace: false, hideEchoBack: true, mask: ''});
+    console.log(chalk.bgHex((0, viewUtils_1.obterCorDoFundo)())(_text));
     (0, readline_sync_2.keyInPause)('', { mask: '', limit: 'c ' });
-    // question("[ENTER]", {mask: 'x'});
 }
 exports.enterToContinue = enterToContinue;
 function obterTexto(texto) {
     readline.cursorTo(process.stdout, 2);
-    return (0, readline_sync_1.question)(texto).replace("|", "_").replace("¨", "_");
+    return (0, readline_sync_1.question)(texto).replace("|", "_").replace("¨", "_").trim();
 }
 exports.obterTexto = obterTexto;
 // Transformar funções em classes estáticas

@@ -1,6 +1,3 @@
-var readline = require("readline");
-import { limparTerminal, obterAlturaTerminal, obterLarguraTerminal, exibirTextoEsquerda } from "./Prova/Utils/viewUtils";
-
 import { question } from "readline-sync";
 
 export async function sleep(time = 100) {
@@ -46,24 +43,4 @@ export function enterToContinue() {
 
 export function limparTerminal() {
     console.clear();
-}
-export function mainBackground(): void {
-    limparTerminal();
-    const chalk = require('chalk');
-    for (let i = 0; i < obterAlturaTerminal(); i++) {
-        if (i == 0) console.log(`${"=".repeat(obterLarguraTerminal())}`);
-        if (i > 1 && i < obterAlturaTerminal() - 2) console.log(`|${" ".repeat(obterLarguraTerminal() - 2)}|`);
-        if (i == obterAlturaTerminal() - 1) console.log(`${"=".repeat(obterLarguraTerminal())}`);
-        console.log(chalk.red('texto vermelho'));
-    }
-
-    // Rodapé
-    readline.cursorTo(process.stdout, 1, obterAlturaTerminal() - 4);
-    var _data = new Date;
-    var _dataStr = `${_data.toUTCString()}`;
-    exibirTextoEsquerda(`${_dataStr}`);
-
-
-    // Mover cursor para o início da tela:
-    readline.cursorTo(process.stdout, 1, 1);
 }
