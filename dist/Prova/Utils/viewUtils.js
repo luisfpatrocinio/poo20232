@@ -53,14 +53,14 @@ function limparTerminal() {
     console.clear();
 }
 exports.limparTerminal = limparTerminal;
-function exibirTextoNoCentro(texto, inverse = false) {
+function exibirTextoNoCentro(texto, inverse = false, color = "#FFFFFF") {
     var _x = Math.floor((obterLarguraTerminal() - texto.length) / 2);
     readline.cursorTo(process.stdout, _x);
     if (inverse) {
-        console.log(chalk.bgHex(BG_COLOR).inverse(texto));
+        console.log(chalk.bgHex(BG_COLOR).hex(color).inverse(texto));
     }
     else {
-        console.log(chalk.bgHex(BG_COLOR)(texto));
+        console.log(chalk.bgHex(BG_COLOR).hex(color)(texto));
     }
 }
 exports.exibirTextoNoCentro = exibirTextoNoCentro;

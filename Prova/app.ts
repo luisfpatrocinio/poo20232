@@ -59,17 +59,22 @@ class App {
         mainBackground();
         saltarLinhas(Math.floor(obterAlturaTerminal()/2) - 6);
         showBlogLogo();
-        exibirTextoNoCentro(`Desenvolvido por `);
-        exibirTextoNoCentro(`Luis Felipe dos Santos Patrocinio`);
-        exibirTextoNoCentro(`Herminio de Barros e Silva Neto`);
-        exibirTextoNoCentro(``);
-        exibirTextoNoCentro(`Primeira Avaliação de P.O.O.`);
-        exibirTextoNoCentro(`Prof. Ely Miranda`);
-        exibirTextoNoCentro(``);
+        let col = "#D0DA91";
+        const f = (_texto) => {
+            return exibirTextoNoCentro(_texto, false, col);
+        }
+        f(`Desenvolvido por `);
+        f(`Luis Felipe dos Santos Patrocinio`);
+        f(`Herminio de Barros e Silva Neto`);
+        f(``);
+        f(`Primeira Avaliação de P.O.O.`);
+        f(`Prof. Ely Miranda`);
+        f(``);
         var _qntPerfis = this._redeSocial.obterPerfis().length;
         if (_qntPerfis > 0)     exibirTextoNoCentro(`${_qntPerfis} perfis carregados`);
         var _qntPostagens = this._redeSocial.obterPostagens().length;
         if (_qntPostagens > 0)  exibirTextoNoCentro(`${_qntPostagens} postagens carregadas`);
+        exibirTextoNoCentro(``);
     }
 
     // Funções de Salvar e Carregar

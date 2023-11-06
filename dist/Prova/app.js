@@ -50,19 +50,24 @@ class App {
         (0, viewUtils_1.mainBackground)();
         (0, viewUtils_1.saltarLinhas)(Math.floor((0, viewUtils_1.obterAlturaTerminal)() / 2) - 6);
         (0, viewUtils_1.showBlogLogo)();
-        (0, viewUtils_1.exibirTextoNoCentro)(`Desenvolvido por `);
-        (0, viewUtils_1.exibirTextoNoCentro)(`Luis Felipe dos Santos Patrocinio`);
-        (0, viewUtils_1.exibirTextoNoCentro)(`Herminio de Barros e Silva Neto`);
-        (0, viewUtils_1.exibirTextoNoCentro)(``);
-        (0, viewUtils_1.exibirTextoNoCentro)(`Primeira Avaliação de P.O.O.`);
-        (0, viewUtils_1.exibirTextoNoCentro)(`Prof. Ely Miranda`);
-        (0, viewUtils_1.exibirTextoNoCentro)(``);
+        let col = "#D0DA91";
+        const f = (_texto) => {
+            return (0, viewUtils_1.exibirTextoNoCentro)(_texto, false, col);
+        };
+        f(`Desenvolvido por `);
+        f(`Luis Felipe dos Santos Patrocinio`);
+        f(`Herminio de Barros e Silva Neto`);
+        f(``);
+        f(`Primeira Avaliação de P.O.O.`);
+        f(`Prof. Ely Miranda`);
+        f(``);
         var _qntPerfis = this._redeSocial.obterPerfis().length;
         if (_qntPerfis > 0)
             (0, viewUtils_1.exibirTextoNoCentro)(`${_qntPerfis} perfis carregados`);
         var _qntPostagens = this._redeSocial.obterPostagens().length;
         if (_qntPostagens > 0)
             (0, viewUtils_1.exibirTextoNoCentro)(`${_qntPostagens} postagens carregadas`);
+        (0, viewUtils_1.exibirTextoNoCentro)(``);
     }
     // Funções de Salvar e Carregar
     salvarPerfis() {

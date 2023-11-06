@@ -54,13 +54,13 @@ export function limparTerminal(): void {
     console.clear();
 }
 
-export function exibirTextoNoCentro(texto: string, inverse: boolean = false): void {
+export function exibirTextoNoCentro(texto: string, inverse: boolean = false, color: string = "#FFFFFF"): void {
     var _x = Math.floor((obterLarguraTerminal() - texto.length) / 2);
     readline.cursorTo(process.stdout, _x);
     if (inverse) {
-        console.log(chalk.bgHex(BG_COLOR).inverse(texto));
+        console.log(chalk.bgHex(BG_COLOR).hex(color).inverse(texto));
     } else {
-        console.log(chalk.bgHex(BG_COLOR)(texto));
+        console.log(chalk.bgHex(BG_COLOR).hex(color)(texto));
     }
 }
 
