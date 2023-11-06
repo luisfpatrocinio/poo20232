@@ -1,3 +1,0 @@
-perfisCriados:4
-3|Thiago|chicovaz@gmail.com
-4|Diego|diego@gmail.com

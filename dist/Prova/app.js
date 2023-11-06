@@ -48,8 +48,15 @@ class App {
     }
     wakeUpScreen() {
         (0, viewUtils_1.mainBackground)();
-        (0, viewUtils_1.saltarLinhas)(Math.floor((0, viewUtils_1.obterAlturaTerminal)() / 2) - 3);
+        (0, viewUtils_1.saltarLinhas)(Math.floor((0, viewUtils_1.obterAlturaTerminal)() / 2) - 6);
         (0, viewUtils_1.showBlogLogo)();
+        (0, viewUtils_1.exibirTextoNoCentro)(`Desenvolvido por `);
+        (0, viewUtils_1.exibirTextoNoCentro)(`Luis Felipe dos Santos Patrocinio`);
+        (0, viewUtils_1.exibirTextoNoCentro)(`Herminio de Barros e Silva Neto`);
+        (0, viewUtils_1.exibirTextoNoCentro)(``);
+        (0, viewUtils_1.exibirTextoNoCentro)(`Primeira Avaliação de P.O.O.`);
+        (0, viewUtils_1.exibirTextoNoCentro)(`Prof. Ely Miranda`);
+        (0, viewUtils_1.exibirTextoNoCentro)(``);
         var _qntPerfis = this._redeSocial.obterPerfis().length;
         if (_qntPerfis > 0)
             (0, viewUtils_1.exibirTextoNoCentro)(`${_qntPerfis} perfis carregados`);
@@ -451,7 +458,7 @@ class App {
                 (0, ioUtils_1.exibirTextoPostagem)(`${_post.texto}`);
                 var _curtidasStr = `${_post.curtidas} curtidas, ${_post.descurtidas} descurtidas.`;
                 if (i == indPost) {
-                    var _newText = `[F] ${this._postagensFavoritas.includes(_post) ? "Desfav." : "Fav."}, [A] Like, [S] Deslike`;
+                    var _newText = `[F] ${this._postagensFavoritas.includes(_post) ? "Unfav." : "Fav."}, [A] Like, [S] Dislike`;
                     var _spac = (0, viewUtils_1.obterLarguraTerminal)() - 10 - _curtidasStr.length - _newText.length;
                     _spac = Math.max(0, _spac);
                     _curtidasStr += ' '.repeat(_spac) + _newText;
@@ -682,7 +689,12 @@ class App {
     exibirPostagensFavoritas() {
         (0, viewUtils_1.cabecalhoPrincipal)("Exibir Postagens Favoritas");
         // Procurar por todas as postagens.
-        let postagens = this._postagensFavoritas;
+        let postagens = this._postagensFavoritas.filter((p) => {
+            if (p instanceof postagem_1.PostagemAvancada) {
+                return (p.visualizacoesRestantes > 0);
+            }
+            return true;
+        });
         this.exibirPostagens(postagens, `Postagens Favoritas:`);
     }
     exibirHashtagsPopulares() {

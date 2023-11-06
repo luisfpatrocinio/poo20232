@@ -57,8 +57,15 @@ class App {
 
     wakeUpScreen(): void {
         mainBackground();
-        saltarLinhas(Math.floor(obterAlturaTerminal()/2) - 3);
+        saltarLinhas(Math.floor(obterAlturaTerminal()/2) - 6);
         showBlogLogo();
+        exibirTextoNoCentro(`Desenvolvido por `);
+        exibirTextoNoCentro(`Luis Felipe dos Santos Patrocinio`);
+        exibirTextoNoCentro(`Herminio de Barros e Silva Neto`);
+        exibirTextoNoCentro(``);
+        exibirTextoNoCentro(`Primeira Avaliação de P.O.O.`);
+        exibirTextoNoCentro(`Prof. Ely Miranda`);
+        exibirTextoNoCentro(``);
         var _qntPerfis = this._redeSocial.obterPerfis().length;
         if (_qntPerfis > 0)     exibirTextoNoCentro(`${_qntPerfis} perfis carregados`);
         var _qntPostagens = this._redeSocial.obterPostagens().length;
@@ -528,7 +535,7 @@ class App {
 
                 var _curtidasStr = `${_post.curtidas} curtidas, ${_post.descurtidas} descurtidas.`;
                 if (i == indPost) {
-                    var _newText = `[F] ${this._postagensFavoritas.includes(_post) ? "Desfav." : "Fav."}, [A] Like, [S] Deslike`;
+                    var _newText = `[F] ${this._postagensFavoritas.includes(_post) ? "Unfav." : "Fav."}, [A] Like, [S] Dislike`;
                     var _spac = obterLarguraTerminal() - 10 - _curtidasStr.length - _newText.length;
                     _spac = Math.max(0, _spac);
                     _curtidasStr += ' '.repeat(_spac) + _newText;
@@ -799,7 +806,12 @@ class App {
     exibirPostagensFavoritas(): void {
         cabecalhoPrincipal("Exibir Postagens Favoritas");
         // Procurar por todas as postagens.
-        let postagens = this._postagensFavoritas;
+        let postagens = this._postagensFavoritas.filter((p) => {
+            if (p instanceof PostagemAvancada) {
+                return (p.visualizacoesRestantes > 0);
+            }
+            return true;
+        });
         this.exibirPostagens(postagens, `Postagens Favoritas:`);
     }
 
