@@ -1,0 +1,5 @@
+postagensCriadas:41
+8|0|aaaa|1|0|40|1|||0
+11|0|Testando|0|0|40|1|||0
+24|0|Notebook|17|12|40|1|||0
+29|1|Testando #teste|0|0|40|1|teste|4|1

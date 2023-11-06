@@ -3,14 +3,12 @@ import { Perfil } from "./perfil";
 export class RepositorioDePerfis {
     private _perfis: Array<Perfil> = new Array<Perfil>;
     
+    // Cadastra um perfil no array:
     incluir(perfil: Perfil): void {
         this._perfis.push(perfil);
     }
 
     consultar(id?: number, nome?: string, email?: string): Perfil | null {
-        // Encerrar caso não hajam argumentos
-        if (arguments.length == 0) return null;
-
         if (id !== undefined) {
             const perfilPorId = this._perfis.find((p) => p.id === id);
             if (perfilPorId) return perfilPorId;

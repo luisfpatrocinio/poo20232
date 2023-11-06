@@ -5,13 +5,11 @@ class RepositorioDePerfis {
     constructor() {
         this._perfis = new Array;
     }
+    // Cadastra um perfil no array:
     incluir(perfil) {
         this._perfis.push(perfil);
     }
     consultar(id, nome, email) {
-        // Encerrar caso não hajam argumentos
-        if (arguments.length == 0)
-            return null;
         if (id !== undefined) {
             const perfilPorId = this._perfis.find((p) => p.id === id);
             if (perfilPorId)

@@ -1,5 +1,3 @@
-import { obterTexto } from "../../utils";
-
 export class Perfil {
     private _id: number;
     private _nome: string;
@@ -11,6 +9,7 @@ export class Perfil {
         this._email = _email;
     }
 
+    // Métodos Get:
     get id() {
         return this._id;
     }

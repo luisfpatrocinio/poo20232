@@ -7,6 +7,7 @@ class Perfil {
         this._nome = _nome;
         this._email = _email;
     }
+    // Métodos Get:
     get id() {
         return this._id;
     }

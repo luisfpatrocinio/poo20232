@@ -9,9 +9,6 @@ export class RedeSocial {
     private _repPerfis: RepositorioDePerfis = new RepositorioDePerfis;
 
     incluirPerfil(perfil: Perfil): void {
-        // @TODO: Checar se todos os atributos estão preenchidos.
-
-        // Checar se o perfil já existe
         var _existe = this._repPerfis.consultar(perfil.id, perfil.nome, perfil.email);
         if (_existe === null) {
             this._repPerfis.incluir(perfil);
@@ -28,7 +25,6 @@ export class RedeSocial {
     }
 
     // Retorna todas as postagens caso não haja argumentos
-    // @TODO: Na verdade não é bem assim. Conferir.
     consultarPostagens(id?: number, texto?: string, hashtag?: string, perfil?: Perfil): Array<Postagem> {
         return this._repPostagens.consultar(id, texto, hashtag, perfil);
     }

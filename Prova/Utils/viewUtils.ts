@@ -1,7 +1,8 @@
 var readline = require('readline');
 const chalk = require('chalk');
 
-const BG_COLOR = '#172038'
+const BG_COLOR = '#1e1d39'
+const BG_COLOR2 = '#402751'
 const SEL_COLOR = '#a4dddb'
 
 import { Perfil } from "../Classes/perfil";
@@ -66,7 +67,7 @@ export function exibirTextoNoCentro(texto: string, inverse: boolean = false, col
 
 export function exibirTextoEsquerda(texto: string): void {
     readline.cursorTo(process.stdout, 2);
-    console.log(chalk.bgHex(BG_COLOR)(texto));
+    console.log(chalk.bgHex(BG_COLOR).hex("#FFFFFF")(texto));
 }
 
 export function mainBackground(): void{
@@ -116,7 +117,7 @@ export function showBlogLogo(): void {
     title.forEach((t) => {
         var _x = Math.floor((obterLarguraTerminal() - t.length) / 2);
         readline.cursorTo(process.stdout, _x);
-        console.log(chalk.hex('#e8c170').bgHex(BG_COLOR)(t));
+        console.log(chalk.bold.hex('#e8c170').bgHex(BG_COLOR)(t));
     });
 }
 

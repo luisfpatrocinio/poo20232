@@ -19,6 +19,14 @@ class RepositorioDePostagens {
                 return true;
             });
         }
+        if (id === undefined && texto === undefined && perfil === undefined) {
+            return this._postagens.filter((p) => {
+                if (p instanceof postagem_1.PostagemAvancada) {
+                    return (p.visualizacoesRestantes > 0);
+                }
+                return true;
+            });
+        }
         const postagensEncontradas = new Array;
         if (id != undefined) {
             const postagemPorId = this._postagens.find((p) => p.id === id);
@@ -30,7 +38,8 @@ class RepositorioDePostagens {
         if (texto != undefined) {
             this._postagens.forEach((post) => {
                 if (post.texto.includes(texto)) {
-                    postagensEncontradas.push(post);
+                    if (!postagensEncontradas.includes(post))
+                        postagensEncontradas.push(post);
                 }
             });
         }
@@ -38,8 +47,10 @@ class RepositorioDePostagens {
         if (hashtag != undefined) {
             this._postagens.forEach((post) => {
                 if (post instanceof postagem_1.PostagemAvancada) {
-                    if (post.existeHashtag(hashtag))
-                        postagensEncontradas.push(post);
+                    if (!postagensEncontradas.includes(post)) {
+                        if (post.existeHashtag(hashtag))
+                            postagensEncontradas.push(post);
+                    }
                 }
             });
         }
@@ -47,7 +58,8 @@ class RepositorioDePostagens {
         if (perfil != undefined) {
             this._postagens.forEach((post) => {
                 if (post.perfil === perfil) {
-                    postagensEncontradas.push(post);
+                    if (!postagensEncontradas.includes(post))
+                        postagensEncontradas.push(post);
                 }
             });
         }
@@ -55,12 +67,14 @@ class RepositorioDePostagens {
         const postagensFiltradas = postagensEncontradas.filter((post) => {
             // A postagem encontrada pode continuar a menos que conflite com algum outro filtro de pesquisa.
             var _podeEntrar = true;
-            if (id != undefined)
+            if (id != undefined) {
                 if (post.id != id)
                     _podeEntrar = false;
-            if (texto != undefined)
-                if (post.texto.includes(texto))
+            }
+            if (texto != undefined) {
+                if (!post.texto.includes(texto))
                     _podeEntrar = false;
+            }
             if (hashtag != undefined) {
                 if (post instanceof postagem_1.PostagemAvancada) {
                     if (!post.existeHashtag(hashtag))

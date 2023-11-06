@@ -3,7 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.saltarLinhas = exports.feedView = exports.prepararTelaPostagem = exports.cabecalhoPrincipal = exports.showBlogLogo = exports.exibirTextoCentroCentro = exports.mainBackground = exports.exibirTextoEsquerda = exports.exibirTextoNoCentro = exports.limparTerminal = exports.obterAlturaTerminal = exports.obterLarguraTerminal = exports.obterCorDoFundo = exports.textCol = void 0;
 var readline = require('readline');
 const chalk = require('chalk');
-const BG_COLOR = '#172038';
+const BG_COLOR = '#1e1d39';
+const BG_COLOR2 = '#402751';
 const SEL_COLOR = '#a4dddb';
 function textCol(texto, color = "#FFFFFF", bgColor = "000000") {
     if (bgColor === undefined) {
@@ -66,7 +67,7 @@ function exibirTextoNoCentro(texto, inverse = false, color = "#FFFFFF") {
 exports.exibirTextoNoCentro = exibirTextoNoCentro;
 function exibirTextoEsquerda(texto) {
     readline.cursorTo(process.stdout, 2);
-    console.log(chalk.bgHex(BG_COLOR)(texto));
+    console.log(chalk.bgHex(BG_COLOR).hex("#FFFFFF")(texto));
 }
 exports.exibirTextoEsquerda = exibirTextoEsquerda;
 function mainBackground() {
@@ -113,7 +114,7 @@ function showBlogLogo() {
     title.forEach((t) => {
         var _x = Math.floor((obterLarguraTerminal() - t.length) / 2);
         readline.cursorTo(process.stdout, _x);
-        console.log(chalk.hex('#e8c170').bgHex(BG_COLOR)(t));
+        console.log(chalk.bold.hex('#e8c170').bgHex(BG_COLOR)(t));
     });
 }
 exports.showBlogLogo = showBlogLogo;

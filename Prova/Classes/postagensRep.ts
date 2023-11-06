@@ -18,6 +18,15 @@ export class RepositorioDePostagens {
                 return true
             })
         }
+
+        if (id === undefined && texto === undefined && perfil === undefined) {
+            return this._postagens.filter((p) => {
+                if (p instanceof PostagemAvancada) {
+                    return (p.visualizacoesRestantes > 0);
+                }
+                return true
+            })
+        }
         
         const postagensEncontradas = new Array<Postagem>;
 
@@ -32,7 +41,7 @@ export class RepositorioDePostagens {
         if (texto != undefined) {
             this._postagens.forEach((post) => {
                 if (post.texto.includes(texto)) {
-                    postagensEncontradas.push(post);
+                    if (!postagensEncontradas.includes(post)) postagensEncontradas.push(post);
                 }
             })
         }
@@ -41,7 +50,9 @@ export class RepositorioDePostagens {
         if (hashtag != undefined) {
             this._postagens.forEach((post) => {
                 if (post instanceof PostagemAvancada) {
-                    if (post.existeHashtag(hashtag)) postagensEncontradas.push(post);
+                    if (!postagensEncontradas.includes(post)) {
+                        if (post.existeHashtag(hashtag)) postagensEncontradas.push(post);
+                    }
                 }
             });
         }
@@ -50,7 +61,7 @@ export class RepositorioDePostagens {
         if (perfil != undefined) {
             this._postagens.forEach((post) => {
                 if (post.perfil === perfil) {
-                    postagensEncontradas.push(post);
+                    if (!postagensEncontradas.includes(post)) postagensEncontradas.push(post);
                 }
             });
 
@@ -61,8 +72,12 @@ export class RepositorioDePostagens {
         const postagensFiltradas = postagensEncontradas.filter((post) => {
             // A postagem encontrada pode continuar a menos que conflite com algum outro filtro de pesquisa.
             var _podeEntrar = true;
-            if (id != undefined)        if (post.id != id)                  _podeEntrar = false;
-            if (texto != undefined)     if (post.texto.includes(texto))     _podeEntrar = false;
+            if (id != undefined)        {
+                if (post.id != id) _podeEntrar = false;
+            }
+            if (texto != undefined) {
+                if (!post.texto.includes(texto)) _podeEntrar = false;
+            }
             if (hashtag != undefined) {
                 if (post instanceof PostagemAvancada) {
                     if (!post.existeHashtag(hashtag))                       _podeEntrar = false;

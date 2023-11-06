@@ -4,7 +4,7 @@ import {Postagem, PostagemAvancada} from './Classes/postagem';
 import {RedeSocial} from './Classes/redeSocial';
 
 // Importar Utils
-import { exibirTexto, exibirTextoPostagem, exibirTextoCentralizado, obterTexto, enterToContinue} from './Utils/ioUtils';
+import { exibirTexto, exibirTextoPostagem, exibirTextoCentralizado, obterTexto, enterToContinue, obterNumeroInteiro} from './Utils/ioUtils';
 import { mainBackground, exibirTextoEsquerda, showBlogLogo, exibirTextoNoCentro, prepararTelaPostagem, limparTerminal, cabecalhoPrincipal, obterAlturaTerminal, saltarLinhas, obterLarguraTerminal, obterCorDoFundo } from './Utils/viewUtils';
 import { extrairHashtags } from './Utils/generalUtils';
 
@@ -31,6 +31,7 @@ class App {
         ["Excluir Perfil",  this.excluirPerfil, () => this._redeSocial.obterPerfis().length > 0],
         ["Criar Postagem",  this.criarPostagem, () => this._redeSocial.obterPerfis().length > 0],
         ["Ver Feed",        this.verFeed,       () => this._redeSocial.obterPostagens().length > 0],
+        ["Consultar Postagens",         this.consultarPostagens,       () => this._redeSocial.obterPostagens().length > 0],
         ["Exibir Postagens por Perfil", this.exibirPostagensPorPerfil,  () => this._redeSocial.obterPostagens().length > 0 && this._redeSocial.obterPerfis().length > 0],
         ["Exibir Postagens por Hashtag", this.exibirPostagensPorHashtag,    () => this._redeSocial.obterPostagens().length > 0],
         ["Exibir Postagens Populares", this.exibirPostagensPopulares,    () => this._redeSocial.obterPostagens().length > 0],
@@ -222,9 +223,6 @@ class App {
             // Postagens carregadas
             this._redeSocial.atribuirPostagensCarregadas(postagens);
 
-            // BACKUP:
-            // 1#0#Eu gosto de jogar lolzinho.#300#250#40#1
-            // 2#1#Eu gosto de jogar lolzinho.#300#250#40#1#humor-saude-tbt#200
         } catch (err) {
             
         }
@@ -251,18 +249,10 @@ class App {
             return this._opcaoSelecionada + 1;
         }
 
-        /// @TODO: Wrap
-        if (this._opcaoSelecionada < min) {
-            this._opcaoSelecionada = max;
-        }
-        if (this._opcaoSelecionada > max) {
-            this._opcaoSelecionada = min;
-        }
-        // this._opcaoSelecionada = Math.min(this._opcaoSelecionada, max);
-        // this._opcaoSelecionada = Math.max(this._opcaoSelecionada, min);
+        if (this._opcaoSelecionada < min) this._opcaoSelecionada = max;
+        if (this._opcaoSelecionada > max) this._opcaoSelecionada = min;
 
         return -1;
-
     }
 
     obterMenuParaExibir(): Array<[string, () => void, () => boolean]> {
@@ -524,19 +514,17 @@ class App {
                 _spac = Math.max(_spac, 6);
                 var _postHeader = `${_nome}:${" ".repeat(_spac - 5)}${_dataString}  `;
 
-                
-
                 var _postHeaderColor, _postHeaderBGColor;
                 if (i == indPost) {
                     _postHeaderColor = '#FFFFFF';
                     _postHeaderBGColor = '#be772b'
                 } else {
-                    _postHeaderColor = '#394a50';
+                    _postHeaderColor = '#FFFFFF';
                     _postHeaderBGColor = obterCorDoFundo();
                 }
                 exibirTexto(chalk.bgHex(_postHeaderBGColor).hex(_postHeaderColor)(_postHeader));
             
-                exibirTextoPostagem(`${_post.texto}`);
+                exibirTextoPostagem(`${_post.texto}`, "#FFFFFF");
 
                 var _curtidasStr = `${_post.curtidas} curtidas, ${_post.descurtidas} descurtidas.`;
                 if (i == indPost) {
@@ -599,13 +587,38 @@ class App {
         }
     }
 
+    consultarPostagens(): void {
+        cabecalhoPrincipal("Consultar Postagens");
+
+        // Qual perfil será editado:
+        let idDesejado: number | undefined = obterNumeroInteiro("ID: ");
+        let textoDesejado: string | undefined = obterTexto("Texto: ");
+        let hashtagDesejada: string | undefined = obterTexto("Hashtag: ");
+        // let perfilDesejado: Perfil | null | undefined = this.selecionarPerfil();
+
+        if (!idDesejado)        idDesejado = undefined;
+        if (!textoDesejado)     textoDesejado = undefined;
+        if (!hashtagDesejada)   hashtagDesejada = undefined;
+        // if (!perfilDesejado)    perfilDesejado = undefined;
+
+        let postagensDesejadas = this._redeSocial.consultarPostagens(
+            idDesejado, textoDesejado, hashtagDesejada, undefined);
+        
+        if (postagensDesejadas.length > 0) {
+            this.exibirPostagens(postagensDesejadas, "Postagens Encontradas:")
+        } else {
+            exibirTextoNoCentro("Não foram encontradas postagens com esses atributos.")
+        }
+        
+    }
+
     verFeed(): void {
         let postagens = this._redeSocial.obterPostagens();
         cabecalhoPrincipal("PatroFeed");
         this.exibirPostagens(postagens, "PatroFeed");
     }
 
-    selecionarPerfil(): void | null | Perfil {
+    selecionarPerfil(): null | Perfil {
         // Exibir de forma sintetizada os perfis disponíveis.
         this.listarPerfisCurto();
         exibirTexto(`${0} - Cancelar`);
@@ -619,7 +632,7 @@ class App {
 
         if (String(atributoDesejado) === '0' || String(atributoDesejado) === '') {
             exibirTexto("Cancelando...");
-            return;
+            return null;
         }
 
         // O valor inserido é um número? Se sim, deve ser tratado como ID.

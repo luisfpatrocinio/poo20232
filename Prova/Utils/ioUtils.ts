@@ -23,7 +23,7 @@ export function exibirTexto(texto: string): void {
     console.log(chalk.bgHex(_bgHex).hex(_col)(texto));
 }
 
-export function exibirTextoPostagem(texto: string): void {
+export function exibirTextoPostagem(texto: string, color: string = "#FFFFFF"): void {
     let _tamanho = obterLarguraTerminal() - 4;
     for (let i = 0; i < texto.length; i += _tamanho) {
         var _pedaco = texto.substring(i, i + _tamanho);
@@ -35,7 +35,7 @@ export function exibirTextoPostagem(texto: string): void {
         });
 
         readline.cursorTo(process.stdout, 2);
-        console.log(chalk.hex("#000000").bgHex(obterCorDoFundo())(_pedaco));
+        console.log(chalk.hex(color).bgHex(obterCorDoFundo())(_pedaco));
     }
 }
 

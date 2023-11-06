@@ -23,7 +23,7 @@ function exibirTexto(texto) {
     console.log(chalk.bgHex(_bgHex).hex(_col)(texto));
 }
 exports.exibirTexto = exibirTexto;
-function exibirTextoPostagem(texto) {
+function exibirTextoPostagem(texto, color = "#FFFFFF") {
     let _tamanho = (0, viewUtils_1.obterLarguraTerminal)() - 4;
     for (let i = 0; i < texto.length; i += _tamanho) {
         var _pedaco = texto.substring(i, i + _tamanho);
@@ -33,7 +33,7 @@ function exibirTextoPostagem(texto) {
             return chalk.hex('#df84a5').bgHex((0, viewUtils_1.obterCorDoFundo)())(`#${hashtag}`);
         });
         readline.cursorTo(process.stdout, 2);
-        console.log(chalk.hex("#000000").bgHex((0, viewUtils_1.obterCorDoFundo)())(_pedaco));
+        console.log(chalk.hex(color).bgHex((0, viewUtils_1.obterCorDoFundo)())(_pedaco));
     }
 }
 exports.exibirTextoPostagem = exibirTextoPostagem;
