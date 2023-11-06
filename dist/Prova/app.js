@@ -16,6 +16,7 @@ class App {
         // Atributos necessários para gerenciar os IDs dos perfis e postagens.
         this._qntPerfisCriados = 0;
         this._qntPostagensCriadas = 0;
+        this._postagensFavoritas = [];
         this.menuOpcoes = [
             // Nome da opção, função a ser executada, condição para habilitar a opção
             ["Criar Perfil", this.criarPerfil, () => true],
@@ -27,6 +28,7 @@ class App {
             ["Exibir Postagens por Perfil", this.exibirPostagensPorPerfil, () => this._redeSocial.obterPostagens().length > 0 && this._redeSocial.obterPerfis().length > 0],
             ["Exibir Postagens por Hashtag", this.exibirPostagensPorHashtag, () => this._redeSocial.obterPostagens().length > 0],
             ["Exibir Postagens Populares", this.exibirPostagensPopulares, () => this._redeSocial.obterPostagens().length > 0],
+            ["Exibir Postagens Favoritas", this.exibirPostagensFavoritas, () => this._postagensFavoritas.length > 0],
             ["Exibir Hashtags Populares", this.exibirHashtagsPopulares, () => this._redeSocial.obterPostagens().length > 0]
         ];
         this._opcaoSelecionada = 0;
@@ -125,8 +127,9 @@ class App {
                 }
                 _views = String(p.visualizacoesRestantes);
             }
+            var _isFavorite = this._postagensFavoritas.includes(p) ? "1" : "0";
             // @TODO: Colocar a data da postagem de maneira correta.
-            saveString += `${p.id}|${_adv}|${p.texto}|${p.curtidas}|${p.descurtidas}|40|${p.perfil.id}|${_hashtagsString}|${_views}\n`;
+            saveString += `${p.id}|${_adv}|${p.texto}|${p.curtidas}|${p.descurtidas}|40|${p.perfil.id}|${_hashtagsString}|${_views}|${_isFavorite}\n`;
         }
         const file = (0, fs_1.writeFileSync)("savePostagens.txt", saveString);
     }
@@ -170,6 +173,10 @@ class App {
                         // Adicionar ao array de postagens.
                         postagens.push(_cadastroPostagem);
                         this._qntPostagensCriadas++;
+                        // Conferir se é favorita:
+                        if (Boolean(Number(_fichaPostagem[8]))) {
+                            this._postagensFavoritas.push(_cadastroPostagem);
+                        }
                     }
                 }
             });
@@ -203,6 +210,7 @@ class App {
                 return 0;
             return this._opcaoSelecionada + 1;
         }
+        /// @TODO: Wrap
         this._opcaoSelecionada = Math.min(this._opcaoSelecionada, max);
         this._opcaoSelecionada = Math.max(this._opcaoSelecionada, min);
         return -1;
@@ -382,6 +390,17 @@ class App {
             }
         }
     }
+    favoritarPostagem(_postagem) {
+        var _ind = this._postagensFavoritas.indexOf(_postagem);
+        if (_ind !== -1) {
+            // A postagem já está favoritada, então a removeremos
+            this._postagensFavoritas.splice(_ind, 1);
+        }
+        else {
+            // A postagem não está nos favoritos, então a adicionaremos
+            this._postagensFavoritas.push(_postagem);
+        }
+    }
     exibirPostagens(postagens, header = "") {
         var rsync = require('readline-sync');
         var _pagina = 0;
@@ -404,10 +423,19 @@ class App {
                 max++;
                 // Post atual:
                 var _post = postagens[n];
+                var isFavorite = this._postagensFavoritas.includes(_post);
+                var isPopular = _post.ehPopular();
                 // Exibir textos da postagem:
                 var _dataString = _post.data.toUTCString();
-                var _spac = (0, viewUtils_1.obterLarguraTerminal)() - 2 - _dataString.length - _post.perfil.nome.length;
-                var _postHeader = `${_post.perfil.nome}:${" ".repeat(_spac - 5)}${_dataString}`;
+                var _nome = _post.perfil.nome;
+                if (isFavorite) {
+                    _nome = `[♥] ` + _nome;
+                }
+                if (isPopular) {
+                    _nome = `[P] ` + _nome;
+                }
+                var _spac = (0, viewUtils_1.obterLarguraTerminal)() - 2 - _dataString.length - _nome.length;
+                var _postHeader = `${_nome}:${" ".repeat(_spac - 5)}${_dataString}  `;
                 var _postHeaderColor, _postHeaderBGColor;
                 if (i == indPost) {
                     _postHeaderColor = '#FFFFFF';
@@ -449,7 +477,7 @@ class App {
             var key = rsync.keyIn('', {
                 hideEchoBack: true,
                 mask: '',
-                limit: 'AaSsZXCzxc ',
+                limit: 'FfAaSsZXCzxc ',
                 hideCursor: true,
             });
             key = key.toString().toLowerCase();
@@ -463,6 +491,8 @@ class App {
                 _post.curtir();
             if (key == 's')
                 _post.descurtir();
+            if (key == 'f')
+                this.favoritarPostagem(_post);
             indPost = Math.min(indPost, max);
             indPost = Math.max(indPost, min);
             this.salvarPostagens();
@@ -644,6 +674,12 @@ class App {
             return;
         }
         this.exibirPostagens(postagensFiltradas, `Postagens Populares:`);
+    }
+    exibirPostagensFavoritas() {
+        (0, viewUtils_1.cabecalhoPrincipal)("Exibir Postagens Favoritas");
+        // Procurar por todas as postagens.
+        let postagens = this._postagensFavoritas;
+        this.exibirPostagens(postagens, `Postagens Favoritas:`);
     }
     exibirHashtagsPopulares() {
         (0, viewUtils_1.cabecalhoPrincipal)("Exibir Hashtags Populares");

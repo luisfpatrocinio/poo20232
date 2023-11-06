@@ -26,6 +26,11 @@ function exibirTextoPostagem(texto) {
     let _tamanho = (0, viewUtils_1.obterLarguraTerminal)() - 4;
     for (let i = 0; i < texto.length; i += _tamanho) {
         var _pedaco = texto.substring(i, i + _tamanho);
+        // Use uma expressão regular para encontrar hashtags no pedaço
+        _pedaco = _pedaco.replace(/#(\w+)/g, (match, hashtag) => {
+            // Destaque as hashtags com uma cor usando o chalk
+            return chalk.hex('#df84a5').bgHex((0, viewUtils_1.obterCorDoFundo)())(`#${hashtag}`);
+        });
         readline.cursorTo(process.stdout, 2);
         console.log(chalk.bgHex((0, viewUtils_1.obterCorDoFundo)())(_pedaco));
     }

@@ -30,14 +30,14 @@ OK - Executar Opção
 OK Leitura e gravação de arquivos (ao iniciar e encerrar o programa)
 
 # Extras X2:
-- Exibir postagens populares
-- Exibir hashtags populares (as que estão presentes em mais postagens)
+OK Exibir postagens populares
+OK Exibir hashtags populares (as que estão presentes em mais postagens)
 
 # Extras X3:
 - Exibir postagens classificando por data, curtidas, descurtidas, visualizações
 - Excluir postagens por perfil, hashtag ou data
 - Favoritar postagem (auto-explicativo)
-- Exibir postagens favoritas
+OK - Exibir postagens favoritas
 - Arquivar postagem (impedir de ser exibida normalmente, mas permitir que seja exibida por meio de uma opção no menu)
 - Exibir postagens arquivadas
 
@@ -53,11 +53,14 @@ OK - Menu interativo (com setas e teclas de atalho)
 import { keyIn } from "readline-sync";
 
 OK - String vazia no nome de usuario deve cancelar a criação de perfil.
-Impedir que crie usuarios com mesmos atributos
-Impedir que digite-se hashtag
+OK -Impedir que crie usuarios com mesmos atributos
+OK - Impedir que digite-se hashtag
 // http://patorjk.com/software/taag/
 Impedir que exiba mais que N perfis na lista
 Hashtags do texto da postagem tem que entrar na lista de hashtags (tornando-a postagem avançada)
+
+- Colocar cor na hashtag
+- Destacar posts populares
 
 7. (1,0) Adicione persistência em arquivos para perfis e postagens e permita a carga e
 salvamento ao inicializar e finalizar a aplicação.

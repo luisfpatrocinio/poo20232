@@ -1,6 +1,3 @@
-postagensCriadas:47
-37|0|Eh rajada doido oh|8|2|40|9||
-39|1|lalala #teste|0|0|40|8|teste|9
-40|1|Celular #teste|0|0|40|8|teste|9
-41|1|garrafa de agua #cafe #teste|0|0|40|9|cafe¨teste|9
-42|1|Saudades do Ely #teste #saudades|0|0|40|8|teste¨saudades|9
+postagensCriadas:24
+8|0|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA ESTOU MORRENDO DE FOME, QUERO TOMAR CALDO DE CANA COM PASTEL. BORA ALMOCAR DOIDO|27|15|40|1|||1
+24|1|Ai chaves ai chavinhoooooo #humor eu gosto de #cafe. Vem deitar com o pai aqui vem gatinha #rajada|0|0|40|1|humor¨cafe¨rajada|7|0

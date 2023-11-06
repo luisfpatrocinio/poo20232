@@ -1,6 +1,2 @@
-perfisCriados:12
-9|Herminio|herminio@gmail.com
-8|Patroca|lalala@gmail.com
-10|Cu|anus@gmail.com
-11|aaa|aaa@aaa.aa
-12|papapap@oioio.com|caaaa@aa.a
+perfisCriados:2
+1|Ryan|ryofac@gmail.com
