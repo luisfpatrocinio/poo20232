@@ -425,7 +425,6 @@ class App {
     listarPerfis(): void {
         
         let perfis = this._redeSocial.obterPerfis();
-        // @TODO: Limitar exibições por página, semelhante a função verFeed
         var _perfisPorPagina = 4;
         var _pagina = 0;
         var _totalPaginas = Math.ceil(perfis.length/_perfisPorPagina);

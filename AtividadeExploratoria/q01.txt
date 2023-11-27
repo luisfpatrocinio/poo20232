@@ -1,0 +1,3 @@
+1. Tipagem incorreta ou ausente.
+2. Referência a valores inválidos ou nulos. Exemplo: tentar obter o valor de uma variável não inicializada.
+3. Erro ao carregar arquivo não existente.

@@ -19,7 +19,6 @@ class RedeSocial {
         return this._repPerfis.consultar(id, nome, email);
     }
     incluirPostagem(postagem) {
-        // @TODO: Checar se já não existe uma postagem com mesmo id e que todos os atributos estejam preenchidos.
         this._repPostagens.incluir(postagem);
     }
     // Retorna todas as postagens caso não haja argumentos

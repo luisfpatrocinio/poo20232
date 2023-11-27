@@ -1,0 +1,2 @@
+Exceções são erros inesperados que acontecem durante a execução do código.
+A diferença entre exceção e erro comum é que ela só pode ser percebida durante a execução.

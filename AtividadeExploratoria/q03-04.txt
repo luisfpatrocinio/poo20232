@@ -1,0 +1,11 @@
+Como o TypeScript implementa o tratamento de exceções?
+
+O Typescript utiliza o mesmo sistema de exceções do Javascript durante a execução. São utilizados blocos try, catch e finally para lidar com as exceções, fazendo uso também da classe Error.
+
+Essa classe Error possui sub-classes para tipos específicos de erro, como TypeError e SyntaxError. No Typescript podemos usar essa classe para criar objetos de erros personalizados ou para capturar informações detalhadas sobre exceções durante a execução do código.
+
+Basicamente a estrutura do Error tem duas propriedades principais: name e message. Mas nada impede que sejam construídos novas propriedades.
+
+Ao lançar um erro utilizando a palavra-chave 'throw', estamos, na verdade, criando uma instância da classe Error (ou de suas sub-classes). Durante o tratamento de erro via try catch, podemos lidar com esses objetos personalizando a resposta com base no tipo de erro ocorrido. (Tratamento de erros)
+
+Basicamente o bloco try-catch impede que um erro aconteça durante o Try, e retorna o tratamento do erro no bloco catch. Além disso temos o bloco 'finally' que executa uma ação específica independente do resultado.

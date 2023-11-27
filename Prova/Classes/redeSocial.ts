@@ -20,7 +20,6 @@ export class RedeSocial {
     }
 
     incluirPostagem(postagem: Postagem): void {
-        // @TODO: Checar se já não existe uma postagem com mesmo id e que todos os atributos estejam preenchidos.
         this._repPostagens.incluir(postagem);
     }
 

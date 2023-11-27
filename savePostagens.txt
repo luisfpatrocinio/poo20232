@@ -1,5 +1,4 @@
-postagensCriadas:41
-8|0|aaaa|1|0|40|1|||0
-11|0|Testando|0|0|40|1|||0
-24|0|Notebook|17|12|40|1|||0
-29|1|Testando #teste|0|0|40|1|teste|4|1
+postagensCriadas:8
+1|0|Mensagem de teste.|7|0|40|1|||0
+3|1|Estou com frio #segundou|0|0|40|1|segundou|5|1
+8|1|Hoje o dia esta lindo. #segundou|8|4|40|2|segundou|7|1
