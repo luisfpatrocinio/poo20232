@@ -1,0 +1,16 @@
+01.
+
+02.
+
+03.
+
+4) Crie duas contas e teste o método transferir de modo que a conta a ser debitada
+não possua saldo suficiente. Explique o que ocorreu.
+R: O meu método transferir trazia um retorno booleano, com uma checagem que validava se a operação seria poderia ser realizada. Portanto, no fim da operação, não acontecia a transferência.
+
+5) Instancie uma classe banco e crie duas contas. Adicione-as à instancia do banco.
+Chame o método transferir novamente passando um valor que lance a exceção na
+classe conta. Você considera que o lançamento da exceção foi “propagado” para o
+método conta.transferir(), banco.transferir() e o método transferir do script app?
+Como você avalia a confiabilidade dessa implementação.
+R: 

@@ -1,3 +1,5 @@
+import { InsufficientFundsError, NegativeValueError } from "./Exceptions/exceptions";
+
 export class Account {
     private _id: number;
     private _name: string
@@ -21,26 +23,27 @@ export class Account {
         return this._id;
     }
   
+    validateValue(value: number): void {
+        if (value <= 0) {
+            throw new NegativeValueError();
+        }
+    }
+
     deposit(value: number): void {
         this._balance = this._balance + value;
     }
   
-    withdraw(value: number): boolean {
-        if (this._balance - value < 0) {
-            return false;
+    withdraw(amount: number): void {
+        this.validateValue(amount);
+        if (amount > this._balance) {
+            throw new InsufficientFundsError();
         }
-  
-        this._balance = this._balance - value;
-        return true;
+        this._balance -= amount;
     }
   
-    transfer(destinyAccount: Account, value: number): boolean {
-        if (!this.withdraw(value)) {
-            return false;
-        }
-  
+    transfer(destinyAccount: Account, value: number): void {
+        this.withdraw(value);
         destinyAccount.deposit(value);
-        return true;
     }
   
     toString () {

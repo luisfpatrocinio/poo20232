@@ -86,3 +86,23 @@ export class Bank {
       return this.bankBalance() / this.qntAccounts()
     }
 }
+
+function main() {
+    // let patroBank = new Bank();
+    // patroBank.insertAccount(new Account(1, "João", 1000));
+    // patroBank.insertAccount(new Account(1, "Maria", 1000));
+    
+    var c1 = new Account(1, "João", 1000);
+    var c2 = new Account(2, "Maria", 1000);
+    try {
+        c1.transfer(c2, 200);
+        console.log(c1.toString());
+        c1.transfer(c2, 2000);
+    } catch (error: any) {
+        console.log(error.message);
+    }
+        
+    console.log(c1.toString());
+}
+
+main();
