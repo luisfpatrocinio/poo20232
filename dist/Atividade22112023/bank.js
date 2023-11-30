@@ -1,15 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Bank = void 0;
+const exceptions_js_1 = require("./Exceptions/exceptions.js");
 const account_js_1 = require("./account.js");
 class Bank {
     constructor() {
         this._accounts = [];
     }
+    get accounts() {
+        return this._accounts;
+    }
     insertAccount(account) {
-        if (this.consult(account.id) == null) {
-            this._accounts.push(account);
-        }
+        this._accounts.push(account);
     }
     consult(id) {
         let desiredAccount = null;
@@ -18,6 +20,9 @@ class Bank {
                 desiredAccount = this._accounts[i];
                 break;
             }
+        }
+        if (desiredAccount == null) {
+            throw new exceptions_js_1.AccountNotFoundError();
         }
         return desiredAccount;
     }
@@ -80,7 +85,6 @@ function main() {
     var c2 = new account_js_1.Account(2, "Maria", 1000);
     try {
         c1.transfer(c2, 200);
-        console.log(c1.toString());
         c1.transfer(c2, 2000);
     }
     catch (error) {

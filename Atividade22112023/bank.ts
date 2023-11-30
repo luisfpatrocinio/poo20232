@@ -1,22 +1,28 @@
+import { AccountNotFoundError } from './Exceptions/exceptions.js';
 import {Account, Saving} from './account.js';
 
 export class Bank {
     private _accounts: Account[] = []
 
-    public insertAccount(account: Account): void {      
-      if (this.consult(account.id) == null){
-        this._accounts.push(account);
-      }
+    get accounts(): Account[] {
+        return this._accounts;
     }
 
-    public consult(id: number): Account | null {
-        let desiredAccount: Account | null = null;
+    public insertAccount(account: Account): void {      
+        this._accounts.push(account);
+    }
 
+    public consult(id: number): Account {
+        let desiredAccount: Account | null = null;
         for (let i: number = 0; i < this._accounts.length; i++) {
             if (this._accounts[i].id == id) {
                 desiredAccount = this._accounts[i];
                 break;
             }
+        }
+        
+        if (desiredAccount == null) {
+            throw new AccountNotFoundError();
         }
 
         return desiredAccount;
@@ -96,7 +102,6 @@ function main() {
     var c2 = new Account(2, "Maria", 1000);
     try {
         c1.transfer(c2, 200);
-        console.log(c1.toString());
         c1.transfer(c2, 2000);
     } catch (error: any) {
         console.log(error.message);
