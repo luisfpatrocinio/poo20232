@@ -1,3 +1,5 @@
+import { Account } from "../account";
+
 export class AppError extends Error {
     constructor(message: string) {
         super(message);
@@ -13,15 +15,16 @@ export class NegativeValueError extends AppError {
 }
 
 export class InsufficientFundsError extends AppError {
-    constructor() {
-        super("Saldo insuficiente.");
+    constructor(message: string = "Saldo insuficiente.") {
+        super(message);
         this.name = "InsufficientFundsError";
     }
 }
 
+// Exceções de Contas
 export class AccountError extends AppError {
     constructor(message: string) {
-        super("Erro relacionado a conta.");
+        super(message);
         this.name = "AccountError";
     }
 }
@@ -30,5 +33,27 @@ export class AccountNotFoundError extends AccountError {
     constructor(message: string) {
         super(message);
         this.name = "AccountNotFoundError";
+    }
+}
+
+export class TransferToYourselfError extends AccountError {
+    constructor(message: string) {
+        super(message);
+        this.name = "TransferToYourselfError";
+    }
+}
+
+// Exceções de Usuário
+export class UserError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = "UserError";
+    }
+}
+
+export class UserCancelError extends UserError {
+    constructor(message: string) {
+        super(message);
+        this.name = "UserCancelError";
     }
 }

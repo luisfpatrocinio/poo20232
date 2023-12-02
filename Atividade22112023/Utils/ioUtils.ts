@@ -13,6 +13,20 @@ export function getText(msg: string): string {
     return _text;
 }
 
+export function getNumber(msg: string): number {
+    // Validar texto:
+    // - Não pode ser vazio
+    // - Não pode conter texto
+    
+    let _text: string = question(msg);
+    if (_text.trim().length <= 0) {
+        throw new AppError("O texto não pode ser vazio.");
+    }
+
+    let _number: number = Number(_text);
+    return _number;
+}
+
 export function enterToContinue(): void {
     var readline = require('readline');
 

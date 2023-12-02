@@ -13,6 +13,12 @@ class Bank {
     insertAccount(account) {
         this._accounts.push(account);
     }
+    /**
+     * Retorna a conta com o ID especificado.
+     * @param id - O ID da conta desejada.
+     * @returns A conta com o ID especificado.
+     * @throws {AccountNotFoundError} Se a conta com o ID especificado não for encontrada.
+     */
     consult(id) {
         let desiredAccount = null;
         for (let i = 0; i < this._accounts.length; i++) {
@@ -22,10 +28,15 @@ class Bank {
             }
         }
         if (desiredAccount == null) {
-            throw new exceptions_js_1.AccountNotFoundError();
+            throw new exceptions_js_1.AccountNotFoundError(`A conta ${id} não foi encontrada.`);
         }
         return desiredAccount;
     }
+    /**
+     * Retorna o ID da conta
+     * @param id
+     * @returns
+     */
     consultById(id) {
         let desiredId = -1;
         for (let i = 0; i < this._accounts.length; i++) {

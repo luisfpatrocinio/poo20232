@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AccountNotFoundError = exports.AccountError = exports.InsufficientFundsError = exports.NegativeValueError = exports.AppError = void 0;
+exports.UserCancelError = exports.UserError = exports.TransferToYourselfError = exports.AccountNotFoundError = exports.AccountError = exports.InsufficientFundsError = exports.NegativeValueError = exports.AppError = void 0;
 class AppError extends Error {
     constructor(message) {
         super(message);
@@ -16,15 +16,16 @@ class NegativeValueError extends AppError {
 }
 exports.NegativeValueError = NegativeValueError;
 class InsufficientFundsError extends AppError {
-    constructor() {
-        super("Saldo insuficiente.");
+    constructor(message = "Saldo insuficiente.") {
+        super(message);
         this.name = "InsufficientFundsError";
     }
 }
 exports.InsufficientFundsError = InsufficientFundsError;
+// Exceções de Contas
 class AccountError extends AppError {
     constructor(message) {
-        super("Erro relacionado a conta.");
+        super(message);
         this.name = "AccountError";
     }
 }
@@ -36,3 +37,25 @@ class AccountNotFoundError extends AccountError {
     }
 }
 exports.AccountNotFoundError = AccountNotFoundError;
+class TransferToYourselfError extends AccountError {
+    constructor(message) {
+        super(message);
+        this.name = "TransferToYourselfError";
+    }
+}
+exports.TransferToYourselfError = TransferToYourselfError;
+// Exceções de Usuário
+class UserError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = "UserError";
+    }
+}
+exports.UserError = UserError;
+class UserCancelError extends UserError {
+    constructor(message) {
+        super(message);
+        this.name = "UserCancelError";
+    }
+}
+exports.UserCancelError = UserCancelError;

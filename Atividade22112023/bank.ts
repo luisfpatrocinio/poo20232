@@ -12,23 +12,34 @@ export class Bank {
         this._accounts.push(account);
     }
 
+    /**
+     * Retorna a conta com o ID especificado.
+     * @param id - O ID da conta desejada.
+     * @returns A conta com o ID especificado.
+     * @throws {AccountNotFoundError} Se a conta com o ID especificado não for encontrada.
+     */
     public consult(id: number): Account {
         let desiredAccount: Account | null = null;
         for (let i: number = 0; i < this._accounts.length; i++) {
             if (this._accounts[i].id == id) {
                 desiredAccount = this._accounts[i];
-                break;
+                break;  
             }
         }
         
         if (desiredAccount == null) {
-            throw new AccountNotFoundError();
+            throw new AccountNotFoundError(`A conta ${id} não foi encontrada.`);
         }
 
         return desiredAccount;
     }
 
-    private consultById(id: number): number {
+    /**
+     * Retorna o ID da conta
+     * @param id 
+     * @returns 
+     */
+    public consultById(id: number): number {
         let desiredId: number = -1;
 
         for (let i: number = 0; i < this._accounts.length; i++) {

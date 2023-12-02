@@ -16,27 +16,69 @@ class App {
         this.menuOptions = [
             ["Cadastrar Conta", this.registerAccount, () => true],
             ["Consultar Conta", this.consultAccount, () => true],
-            // ["Excluir Conta", this.deleteAccount, () => true],
+            ["Excluir Conta", this.deleteAccount, () => true],
             // ["Sacar", this.withdraw, () => true],
             // ["Depositar", this.deposit, () => true],
-            // ["Transferir", this.transfer, () => true],
+            ["Transferir", this.transfer, () => { return this._bank.accounts.length > 1; }],
             // ["Sair", this.exit, () => true]
         ];
         this.selectedOption = -1;
     }
     getNextAccountID() {
-        return 1;
         let id = 1;
         if (this._bank.accounts.length > 0) {
             id = this._bank.accounts[this._bank.accounts.length - 1].id + 1;
         }
         return id;
     }
-    // Métodos
+    /**
+     * Obtém uma conta a partir de seu ID.
+     * @returns A conta com o ID especificado.
+     * @throws {UserCancelError} Se o usuário cancelar a ação.
+     * @throws {AccountNotFoundError} Se a conta não for encontrada.
+     */
+    getAccountById() {
+        // Exibe um resumo das contas.
+        this.showAccountsShort();
+        console.log(`0 - Cancelar`);
+        // Obtém o ID da conta
+        let id = (0, ioUtils_1.getNumber)("Digite o ID da conta: ");
+        if (id == 0) {
+            // Retorna para o menu anterior.
+            this.previousView();
+            // Lançar erro.
+            throw new exceptions_1.UserCancelError("Ação cancelada pelo usuário.");
+        }
+        let account;
+        try {
+            // Verifica se a conta existe, e a retorna.
+            account = this._bank.consult(id);
+            return account;
+        }
+        catch (error) {
+            if (error instanceof exceptions_1.AccountNotFoundError) {
+                // Retorna para o menu anterior.
+                this.previousView();
+            }
+        }
+        // Se chegou até aqui, é porque a conta não foi encontrada.
+        throw new exceptions_1.AccountNotFoundError("Conta não encontrada.");
+    }
+    // Métodos de Menus
+    previousView() {
+        this._viewStack.pop();
+    }
+    /**
+     * Exibe a listagem de contas de maneira resumida.
+     */
+    showAccountsShort() {
+        this._bank.accounts.forEach((a) => {
+            console.log(`Conta ${a.id}: ${a.name} - Saldo: ${a.balance}`);
+        });
+    }
+    // Métodos do Banco
     registerAccount() {
-        // Cabeçalho
-        (0, visualUtils_1.clearTerminal)();
-        console.log("Cadastrar Conta");
+        (0, menuUtils_1.showHeader)("Registrar Conta");
         // Obter dados da conta
         let id = this.getNextAccountID();
         let name = (0, ioUtils_1.getText)("Digite o nome do cliente: ");
@@ -48,23 +90,51 @@ class App {
         // Exibir mensagem de sucesso
         console.log("Conta cadastrada com sucesso!");
         console.log(newAccount.toString());
-        this._viewStack.pop();
+        this.previousView();
         return;
     }
     consultAccount() {
-        (0, visualUtils_1.clearTerminal)();
-        console.log("Consultar Conta");
-        let id = parseInt((0, ioUtils_1.getText)("Digite o ID da conta: "));
-        try {
-            let account = this._bank.consult(id);
-            console.log(account.toString());
+        (0, menuUtils_1.showHeader)("Consultar Conta");
+        let account = this.getAccountById();
+        // Exibir informações da conta.
+        console.log(account.toString());
+        // Retornar
+        this.previousView();
+    }
+    deleteAccount() {
+        (0, menuUtils_1.showHeader)("Excluir Conta");
+        let account = this.getAccountById();
+        this._bank.deleteAccount(account.id);
+        // Retornar
+        this.previousView();
+    }
+    transfer() {
+        let transferAccounts = [];
+        while (transferAccounts.length < 2) {
+            (0, menuUtils_1.showHeader)("Transferir Valores");
+            if (transferAccounts.length > 0) {
+                console.log(`Transferindo de ${transferAccounts[0].name} para:`);
+            }
+            let _acc = this.getAccountById();
+            if (transferAccounts.includes(_acc)) {
+                this.previousView();
+                throw new exceptions_1.TransferToYourselfError("Impossível transferir para si mesmo.");
+            }
+            transferAccounts.push(_acc);
         }
-        catch (error) {
-            if (error instanceof exceptions_1.AccountNotFoundError) {
-                console.log("Conta não encontrada.");
+        (0, menuUtils_1.showHeader)(`Transferindo de ${transferAccounts[0].name} para ${transferAccounts[1].name}.`);
+        console.log("Quanto deseja transferir?");
+        let _value = (0, ioUtils_1.getNumber)("Valor: ");
+        try {
+            this._bank.transfer(transferAccounts[0].id, transferAccounts[1].id, _value);
+        }
+        catch (_e) {
+            if (_e instanceof exceptions_1.InsufficientFundsError) {
+                throw new exceptions_1.InsufficientFundsError(`A conta de ${transferAccounts[0].name} não possui saldo suficiente.`);
             }
         }
-        this._viewStack.pop();
+        console.log(`R$${_value.toFixed(2)} transferido da conta ${transferAccounts[0].name} para ${transferAccounts[1].name} com sucesso.`);
+        this.previousView();
     }
     getOptionsToShow() {
         let optionsToShow = [];
@@ -92,7 +162,6 @@ class App {
         }
         let funcao = optionsToShow[this.selectedOption - 1][1];
         this._viewStack.push(funcao);
-        // funcao.call(this);
     }
     exit() {
         console.log("Saindo...");
@@ -109,9 +178,9 @@ class App {
                 }
             }
             catch (_e) {
-                console.log("Erro inesperado!");
-                console.log(_e.message);
+                (0, menuUtils_1.showError)(_e);
             }
+            // Essa checagem garante que o EnterToContinue só aconteça a partir de telas que não envolvam seleção de opções do usuário.
             if (this.selectedOption == -1) {
                 (0, ioUtils_1.enterToContinue)();
             }
