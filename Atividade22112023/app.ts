@@ -3,7 +3,7 @@ import {Bank} from './bank';
 import {getText, enterToContinue, getNumber} from './Utils/ioUtils';
 import {clearTerminal} from './Utils/visualUtils';
 import { Stack, showError, showHeader } from './Utils/menuUtils';
-import { AccountNotFoundError, InsufficientFundsError, TransferToYourselfError, UserCancelError } from './Exceptions/exceptions';
+import { AccountNotFoundError, InsufficientFundsError, NegativeValueError, TransferToYourselfError, UserCancelError } from './Exceptions/exceptions';
 import { showCenterText } from '../utils';
 
 class App {
@@ -54,7 +54,7 @@ class App {
             this.previousView();
 
             // Lançar erro.
-            throw new UserCancelError("Ação cancelada pelo usuário.");
+            throw new UserCancelError();
         }
 
         let account: Account;
@@ -96,8 +96,29 @@ class App {
         let name: string = getText("Digite o nome do cliente: ");
         let balance: number = parseFloat(getText("Digite o saldo inicial da conta: "));
 
+        // Perguntar tipo de conta:
+        let option = -1;
+        console.log("Deseja criar uma conta corrente ou poupança?");
+        console.log("1 - Corrente\n2 - Poupança\n0 - Cancelar");
+        while (option < 0 || option > 2) {
+            option = getNumber("Opção: ");
+        }
+
+        // Cancelar
+        if (option == 0) {
+            this.previousView();
+            throw new UserCancelError();
+        }     
+
         // Instanciar nova conta
-        let newAccount: Account = new Account(id, name, balance);
+        let newAccount: Account | Saving;
+        if (option == 1) {
+            newAccount = new Account(id, name, balance);
+        } else {
+            let interestRate = getNumber("Taxa de juros: ");
+            newAccount = new Saving(id, name, balance, interestRate);
+        }
+        
 
         // Inserir conta no banco
         this._bank.insertAccount(newAccount);
@@ -160,10 +181,12 @@ class App {
         } catch (_e) {
             if (_e instanceof InsufficientFundsError) {
                 throw new InsufficientFundsError(`A conta de ${transferAccounts[0].name} não possui saldo suficiente.`);
+            } else if (_e instanceof NegativeValueError) {
+                throw new NegativeValueError(`Não é permitido transferir valor negativo.`);
             }
         }
         
-        console.log(`R$${_value.toFixed(2)} transferido da conta ${transferAccounts[0].name} para ${transferAccounts[1].name} com sucesso.`)
+        console.log(`Transferência realizada com sucesso.`);
         this.previousView();
     }
 

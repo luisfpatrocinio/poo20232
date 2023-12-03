@@ -9,8 +9,8 @@ class AppError extends Error {
 }
 exports.AppError = AppError;
 class NegativeValueError extends AppError {
-    constructor() {
-        super("O valor não pode ser negativo.");
+    constructor(message = "O valor não pode ser negativo.") {
+        super(message);
         this.name = "NegativeValueError";
     }
 }
@@ -53,7 +53,7 @@ class UserError extends Error {
 }
 exports.UserError = UserError;
 class UserCancelError extends UserError {
-    constructor(message) {
+    constructor(message = "Ação cancelada pelo usuário.") {
         super(message);
         this.name = "UserCancelError";
     }

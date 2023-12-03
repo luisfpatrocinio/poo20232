@@ -96,5 +96,13 @@ class Saving extends Account {
         super(id, name, balance);
         this._interestRate = interestRate;
     }
+    toString() {
+        return `
+        ID da Conta: ${this._id}
+        Nome do titular: ${this._name}
+        Saldo em conta: ${this._balance}
+        Taxa de juros: ${this._interestRate}
+        `;
+    }
 }
 exports.Saving = Saving;

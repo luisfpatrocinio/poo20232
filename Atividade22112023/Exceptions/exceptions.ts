@@ -8,8 +8,8 @@ export class AppError extends Error {
 }
 
 export class NegativeValueError extends AppError {
-    constructor() {
-        super("O valor não pode ser negativo.");
+    constructor(message: string = "O valor não pode ser negativo.") {
+        super(message);
         this.name = "NegativeValueError";
     }
 }
@@ -52,7 +52,7 @@ export class UserError extends Error {
 }
 
 export class UserCancelError extends UserError {
-    constructor(message: string) {
+    constructor(message: string = "Ação cancelada pelo usuário.") {
         super(message);
         this.name = "UserCancelError";
     }

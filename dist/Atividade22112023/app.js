@@ -47,7 +47,7 @@ class App {
             // Retorna para o menu anterior.
             this.previousView();
             // Lançar erro.
-            throw new exceptions_1.UserCancelError("Ação cancelada pelo usuário.");
+            throw new exceptions_1.UserCancelError();
         }
         let account;
         try {
@@ -83,8 +83,27 @@ class App {
         let id = this.getNextAccountID();
         let name = (0, ioUtils_1.getText)("Digite o nome do cliente: ");
         let balance = parseFloat((0, ioUtils_1.getText)("Digite o saldo inicial da conta: "));
+        // Perguntar tipo de conta:
+        let option = -1;
+        console.log("Deseja criar uma conta corrente ou poupança?");
+        console.log("1 - Corrente\n2 - Poupança\n0 - Cancelar");
+        while (option < 0 || option > 2) {
+            option = (0, ioUtils_1.getNumber)("Opção: ");
+        }
+        // Cancelar
+        if (option == 0) {
+            this.previousView();
+            throw new exceptions_1.UserCancelError();
+        }
         // Instanciar nova conta
-        let newAccount = new account_1.Account(id, name, balance);
+        let newAccount;
+        if (option == 1) {
+            newAccount = new account_1.Account(id, name, balance);
+        }
+        else {
+            let interestRate = (0, ioUtils_1.getNumber)("Taxa de juros: ");
+            newAccount = new account_1.Saving(id, name, balance, interestRate);
+        }
         // Inserir conta no banco
         this._bank.insertAccount(newAccount);
         // Exibir mensagem de sucesso
@@ -132,8 +151,11 @@ class App {
             if (_e instanceof exceptions_1.InsufficientFundsError) {
                 throw new exceptions_1.InsufficientFundsError(`A conta de ${transferAccounts[0].name} não possui saldo suficiente.`);
             }
+            else if (_e instanceof exceptions_1.NegativeValueError) {
+                throw new exceptions_1.NegativeValueError(`Não é permitido transferir valor negativo.`);
+            }
         }
-        console.log(`R$${_value.toFixed(2)} transferido da conta ${transferAccounts[0].name} para ${transferAccounts[1].name} com sucesso.`);
+        console.log(`Transferência realizada com sucesso.`);
         this.previousView();
     }
     getOptionsToShow() {

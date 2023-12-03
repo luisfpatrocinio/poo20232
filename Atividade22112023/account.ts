@@ -5,11 +5,11 @@ import { InsufficientFundsError, NegativeValueError } from "./Exceptions/excepti
  */
 export class Account {
     /** Identificador da conta */
-    private _id: number;
+    protected _id: number;
     /** Nome do titular da conta*/
-    private _name: string
+    protected _name: string
     /** Saldo da conta */
-    private _balance: number;
+    protected _balance: number;
   
     /**
      * @param id Identificador da Conta
@@ -113,5 +113,14 @@ export class Saving extends Account {
     constructor(id: number, name: string, balance: number, interestRate: number) {
         super(id, name, balance);
         this._interestRate = interestRate;
+    }
+    
+    toString() {
+        return `
+        ID da Conta: ${this._id}
+        Nome do titular: ${this._name}
+        Saldo em conta: ${this._balance}
+        Taxa de juros: ${this._interestRate}
+        `;
     }
 }
