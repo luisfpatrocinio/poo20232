@@ -1,6 +1,6 @@
-import { Tributavel } from "./tributavel";
+import { ITributavel } from "./tributavel";
 
-export class SeguroDeVida implements Tributavel {
+export class SeguroDeVida implements ITributavel {
     calculaTributos(): number {
         return 50;
     }

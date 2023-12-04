@@ -1,9 +1,9 @@
-import { Tributavel } from "./tributavel";
+import { ITributavel } from "./tributavel";
 
 export class AuditoriaInterna {
-    private _tributaveis: Array<Tributavel> = new Array<Tributavel>;
+    private _tributaveis: Array<ITributavel> = new Array<ITributavel>;
 
-    public adicionar(tributavel: Tributavel): void {
+    public adicionar(tributavel: ITributavel): void {
         this._tributaveis.push(tributavel);
     }
 

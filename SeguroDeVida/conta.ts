@@ -1,4 +1,4 @@
-import { Tributavel } from "./tributavel";
+import { ITributavel } from "./tributavel";
 
 export abstract class Conta {
     private _nome: string;
@@ -26,7 +26,7 @@ export abstract class Conta {
     }
 }
 
-export class ContaCorrente extends Conta implements Tributavel {
+export class ContaCorrente extends Conta implements ITributavel {
     constructor(nome: string, saldo: number) {
         super(nome, saldo);
     }
