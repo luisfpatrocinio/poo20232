@@ -2,6 +2,7 @@
 import {Perfil} from './Classes/perfil';
 import {Postagem, PostagemAvancada} from './Classes/postagem';
 import {RedeSocial} from './Classes/redeSocial';
+import { Option } from './Classes/option';
 
 // Importar Utils
 import { exibirTexto, exibirTextoPostagem, exibirTextoCentralizado, obterTexto, enterToContinue, obterNumeroInteiro} from './Utils/ioUtils';
@@ -27,21 +28,21 @@ class App {
 
     private _postagensFavoritas: Array<Postagem> = [];
     
-    private menuOpcoes: Array<[string, () => void, () => boolean]> = [
+    private menuOpcoes: Array<Option> = [
         // Nome da opção, função a ser executada, condição para habilitar a opção
-        ["Criar Perfil",    this.criarPerfil,   () => true],
-        ["Listar Perfis",   this.listarPerfis,  () => this._redeSocial.obterPerfis().length > 0],
-        ["Editar Perfis",   this.editarPerfis,  () => this._redeSocial.obterPerfis().length > 0],
-        ["Excluir Perfil",  this.excluirPerfil, () => this._redeSocial.obterPerfis().length > 0],
-        ["Criar Postagem",  this.criarPostagem, () => this._redeSocial.obterPerfis().length > 0],
-        ["Ver Feed",        this.verFeed,       () => this._redeSocial.obterPostagens().length > 0],
-        ["Consultar Postagens",         this.consultarPostagens,       () => this._redeSocial.obterPostagens().length > 0],
-        ["Exibir Postagens por Perfil", this.exibirPostagensPorPerfil,  () => this._redeSocial.obterPostagens().length > 0 && this._redeSocial.obterPerfis().length > 0],
-        ["Exibir Postagens por Hashtag", this.exibirPostagensPorHashtag,    () => this._redeSocial.obterPostagens().length > 0],
-        ["Exibir Postagens Populares", this.exibirPostagensPopulares,    () => this._redeSocial.obterPostagens().length > 0],
-        ["Exibir Postagens Favoritas", this.exibirPostagensFavoritas,    () => this._postagensFavoritas.length > 0],
-        ["Exibir Hashtags Populares", this.exibirHashtagsPopulares,    () => this._redeSocial.obterPostagens().length > 0]
-    ]
+        new Option("Criar Perfil", this.criarPerfil, () => true),
+        new Option("Listar Perfis", this.listarPerfis, () => this._redeSocial.obterPerfis().length > 0),
+        new Option("Editar Perfis", this.editarPerfis, () => this._redeSocial.obterPerfis().length > 0),
+        new Option("Excluir Perfil", this.excluirPerfil, () => this._redeSocial.obterPerfis().length > 0),
+        new Option("Criar Postagem", this.criarPostagem, () => this._redeSocial.obterPerfis().length > 0),
+        new Option("Ver Feed", this.verFeed, () => this._redeSocial.obterPostagens().length > 0),
+        new Option("Consultar Postagens", this.consultarPostagens, () => this._redeSocial.obterPostagens().length > 0),
+        new Option("Exibir Postagens por Perfil", this.exibirPostagensPorPerfil, () => this._redeSocial.obterPostagens().length > 0 && this._redeSocial.obterPerfis().length > 0),
+        new Option("Exibir Postagens por Hashtag", this.exibirPostagensPorHashtag, () => this._redeSocial.obterPostagens().length > 0),
+        new Option("Exibir Postagens Populares", this.exibirPostagensPopulares, () => this._redeSocial.obterPostagens().length > 0),
+        new Option("Exibir Postagens Favoritas", this.exibirPostagensFavoritas, () => this._postagensFavoritas.length > 0),
+        new Option("Exibir Hashtags Populares", this.exibirHashtagsPopulares, () => this._redeSocial.obterPostagens().length > 0)
+    ];
 
     private _opcaoSelecionada : number = 0;
 
@@ -259,13 +260,13 @@ class App {
         return -1;
     }
 
-        obterMenuParaExibir(): Array<[string, () => void, () => boolean]> {
-        var menu = new Array<[string, () => void, () => boolean]>;
+    obterMenuParaExibir(): Array<Option> {
+        let menu = new Array<Option>;
 
-        // Filtramos o menu, para mostrar apenas as opções que satisfaçam a função no índice 2.
+        // Filtramos o menu, para mostrar apenas as opções que satisfaçam a função de Option.condition.
         for (let i = 0; i < this.menuOpcoes.length; i++) {
             var opt = this.menuOpcoes[i];
-            if (opt[2]()) {
+            if (opt.condition()) {
                 menu.push(opt); 
             }
         }
@@ -284,9 +285,9 @@ class App {
         for (let i = 0; i < menuParaExibir.length; i++) {
             let selectedStr = (i === this._opcaoSelecionada) ? "> " : "";
             if (i === this._opcaoSelecionada) {
-                exibirTextoEsquerda(chalk.inverse.bold(`${selectedStr} ${menuParaExibir[i][0]}`));
+                exibirTextoEsquerda(chalk.inverse.bold(`${selectedStr} ${menuParaExibir[i].text}`));
             } else {
-                exibirTextoEsquerda(`${selectedStr} - ${menuParaExibir[i][0]}`);
+                exibirTextoEsquerda(`${selectedStr} - ${menuParaExibir[i].text}`);
             }
         }
         var onExit = this._opcaoSelecionada === menuParaExibir.length;
@@ -307,7 +308,7 @@ class App {
         }
 
         const opcoesValidas = this.obterMenuParaExibir();
-        let funcao = opcoesValidas[opcao-1][1];
+        let funcao = opcoesValidas[opcao-1].callback;
         funcao.call(this);
         enterToContinue();
     }

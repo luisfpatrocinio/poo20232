@@ -1,4 +1,0 @@
-postagensCriadas:11
-1|0|Eu sou estudante de ADS.|0|0|40|1|||0
-2|0|Eu sou professor de ADS.|0|0|40|2|||0
-8|1|Tou #carente.|0|0|40|2|carente|6|0
