@@ -1,0 +1,2 @@
+Sim, apesar de bastante parecido, o Typescript possui algumas diferenças significativas, como a captura de exceções por tipos específicos, uma vez que a linguagem é tipada.
+É possível conferir qual o tipo do erro (via instanceof) e executar um tratamento específico.

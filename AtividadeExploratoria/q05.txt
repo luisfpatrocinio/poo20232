@@ -1,0 +1,9 @@
+Como você pode criar exceções personalizadas em TypeScript?
+
+A criação de exceções no Typescript se dá basicamente com a criação de classes que estende a classe Error, que possui alguns atributos que pode ser interessante alterar e personalizar de acordo com seu programa. São eles:
+name: Representa o nome do erro, pode ser útil para identificar o tipo específico do erro.
+message: Mensagem descritiva do erro, fornecendo detalhes.
+stack: Representa uma string com uma pilha de todas as chamadas no momento em que o erro ocorreu. Super útil para depuração.
+
+ 
+

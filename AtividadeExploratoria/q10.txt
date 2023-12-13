@@ -1,0 +1,1 @@
+Testar e depurar exceções em TypeScript envolve o uso de várias ferramentas e técnicas, incluindo try, catch, e finally para gerenciar exceções, bem como a criação e lançamento de exceções personalizadas. 

@@ -1,1 +1,0 @@
-Como você pode criar exceções personalizadas em TypeScript?

@@ -1,0 +1,11 @@
+TypeError: Ocorre quando uma operação é realizada em um tipo de dado incompatível. Por exemplo, tentar chamar um método em uma variável que não é um objeto.
+
+ReferenceError: Surge quando uma referência a uma variável que não foi declarada ou está fora do escopo é feita.
+
+RangeError: Indica que um valor está fora da faixa permitida. Por exemplo, ao tentar criar um array com um tamanho negativo.
+
+SyntaxError: Ocorre quando há um erro de sintaxe no código.
+
+PromiseRejectionError: Associado ao uso de Promises, este erro ocorre quando uma Promise é rejeitada, mas não é tratada com um bloco catch.
+
+CustomError (Exceção Personalizada): Além dos tipos integrados, você pode criar suas próprias exceções personalizadas estendendo a classe Error.
